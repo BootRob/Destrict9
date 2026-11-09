@@ -7,19 +7,8 @@
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/staff.css">
   <style>
-    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    .topbar { display: flex; align-items: center; gap: var(--lbg-space-6); padding: var(--lbg-space-3) var(--lbg-space-6); }
-    .topbar img { height: 32px; display: block; }
-    .topbar .title { font-family: var(--lbg-font-heading); font-weight: 700; font-size: var(--lbg-text-lg); padding-left: var(--lbg-space-6); border-left: 1px solid rgba(255,255,255,.3); }
-    .topbar nav { display: flex; gap: var(--lbg-space-2); }
-    .topbar nav a { color: inherit; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); padding: var(--lbg-space-2) var(--lbg-space-3); border-radius: var(--lbg-radius-md); text-decoration: none; }
-    .topbar nav a[aria-current="page"] { background: rgba(255,255,255,.15); }
-    .topbar .me { margin-left: auto; display: flex; align-items: center; gap: var(--lbg-space-3); }
-    .topbar .me .avatar { background: var(--lbg-white); color: var(--lbg-racing-green); }
-    .topbar .me small { display: block; font-size: 12px; opacity: .85; }
-    .topbar .me strong { font-family: var(--lbg-font-strong); }
-
     .layout { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
     aside { border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; background: var(--lbg-white); }
     aside h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-2); margin: 0; }
@@ -73,30 +62,13 @@
     .back { display: none; }
 
     @media (max-width: 1080px) { main { grid-template-columns: 1fr; } .details { display: none; } }
-    @media (max-width: 760px) {
-      .layout { grid-template-columns: 1fr; }
-      .layout.chatting aside { display: none; }
-      .layout:not(.chatting) main { display: none; }
-      .topbar .title { display: none; }
-      .back { display: inline-flex; }
-    }
   </style>
 </head>
-<body>
+<body class="staff">
   <div class="proto-strip">Concept prototype · synthetic data only</div>
-  <header class="topbar lbg-surface--racing">
-    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
-    <span class="title" id="hub-title">Hub</span>
-    <nav aria-label="Hub sections">
-      <a href="/staff/" aria-current="page">Joiners</a>
-      <a href="/staff/guides.html">Guides</a>
-    </nav>
-    <div class="me">
-      <span class="avatar" id="me-avatar"></span>
-      <span><strong id="me-name"></strong><small id="me-role"></small></span>
-      <button class="link-btn" id="logout" type="button">Log out</button>
-    </div>
-  </header>
+  <div class="staff-app">
+  <nav id="staff-nav" class="staff-nav"></nav>
+  <div class="staff-main">
   <div class="conn-banner" id="conn" hidden>Reconnecting…</div>
 
   <div class="layout" id="layout">
@@ -139,23 +111,19 @@
       </div>
     </main>
   </div>
+  </div>
+  </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script type="module">
-  import { api, logout, initials, fmtShort, fmtDate, daysUntil, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
+  import { mountShell, setNavBadge, HUB_TITLES } from '/js/staff-shell.js';
+  import { api, initials, fmtShort, fmtDate, daysUntil, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
 
-  const HUB_TITLES = { manager: 'Manager hub', recruiter: 'Recruiter hub', buddy: 'Buddy hub' };
-  const ROLE_ORDER = ['manager', 'recruiter', 'buddy'];
-  const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter', buddy: 'Buddy' };
+  const ROLE_ORDER = ['recruiter', 'manager'];
+  const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter' };
 
-  document.getElementById('logout').addEventListener('click', logout);
-
-  const { user: me } = await api('/api/me');
+  const me = await mountShell('messages');
   const hubTitle = HUB_TITLES[me.role] ?? 'Hub';
-  document.getElementById('hub-title').textContent = hubTitle;
-  document.getElementById('me-name').textContent = me.name;
-  document.getElementById('me-role').textContent = `${me.roleLabel} · ${me.jobTitle}`;
-  document.getElementById('me-avatar').textContent = initials(me.name);
 
   const $ = (id) => document.getElementById(id);
   const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
@@ -177,7 +145,7 @@
           make('span', { className: 'row' },
             make('strong', { textContent: j.name }),
             c.lastMessage ? make('time', { textContent: fmtShort(c.lastMessage.createdAt) }) : ''),
-          make('small', { textContent: `${j.jobTitle} · ${days >= 0 ? `starts in ${days} days` : 'started'}` }),
+          make('small', { textContent: j.status === 'invited' ? `${j.jobTitle} · invite sent, not activated yet` : `${j.jobTitle} · ${days >= 0 ? `starts in ${days} days` : 'started'}` }),
           make('span', { className: 'row' },
             make('span', { className: 'preview', textContent: c.lastMessage ? `${c.lastMessage.senderId === me.id ? 'You: ' : ''}${c.lastMessage.body}` : 'No messages yet' }),
             c.unread ? make('span', { className: 'badge', textContent: c.unread, ariaLabel: `${c.unread} unread` }) : '')));
@@ -187,6 +155,7 @@
     }));
     const total = conversations.reduce((n, c) => n + c.unread, 0);
     document.title = `${total ? `(${total}) ` : ''}${hubTitle} · Joiner companion`;
+    setNavBadge('messages', total);
   }
 
   function renderDetails(c) {
@@ -267,8 +236,12 @@
   socket.on('connect', async () => {
     els.conn.hidden = true;
     await loadList();
-    if (activeId != null) open(activeId);
+    // Deep link from the applicants page: /staff/?c=<conversationId>
+    const linked = Number(new URLSearchParams(location.search).get('c'));
+    if (activeId == null && conversations.some((c) => c.id === linked)) open(linked);
+    else if (activeId != null) open(activeId);
   });
+  socket.on('conversations:changed', loadList);
   socket.on('disconnect', () => { els.conn.hidden = false; });
   socket.on('connect_error', (err) => { if (err.message === 'unauthorised') location.href = '/login.html'; else els.conn.hidden = false; });
   socket.on('message:new', onMessage);
