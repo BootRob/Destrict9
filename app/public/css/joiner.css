@@ -31,6 +31,7 @@ body.joiner { background: var(--lbg-grey-100); }
 .jnav a, .jnav button { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: grid; justify-items: center; gap: 2px; min-height: 48px; font-size: 12px; color: var(--lbg-grey-600); font-family: var(--lbg-font-strong); font-weight: 700; }
 .jnav a:focus-visible, .jnav button:focus-visible { outline: 2px solid var(--lbg-black); outline-offset: -2px; }
 .jnav img { width: 22px; height: 22px; opacity: .55; }
+.jnav img[src$="/quote.svg"] { filter: brightness(0); } /* the icon is white by default */
 .jnav [aria-current="page"] { color: var(--lbg-heritage-green); }
 .jnav [aria-current="page"] img { opacity: 1; }
 .jnav [aria-current="page"]::before { content: ""; width: 24px; height: 3px; border-radius: 2px; background: var(--lbg-heritage-green); margin-bottom: 2px; }
