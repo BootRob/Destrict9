@@ -8,7 +8,8 @@ const current = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
 function apply(theme) {
   root.dataset.theme = theme;
   try { localStorage.setItem('theme', theme); } catch { /* not saved, still applies for this visit */ }
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#101312' : '#024731');
+  const joiner = document.body.classList.contains('joiner'); // the joiner app uses the stone/near-black "Pass" palette
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? (joiner ? '#070908' : '#101312') : (joiner ? '#ece8e0' : '#024731'));
   document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
 }
 

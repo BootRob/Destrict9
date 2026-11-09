@@ -46,8 +46,7 @@ export async function mountShell(active) {
       make('span', { className: 'who' },
         make('strong', { textContent: me.name }),
         make('small', { textContent: `${me.roleLabel} · ${me.jobTitle}` })),
-      makeThemeToggle({ label: true }),
-      logoutBtn),
+      make('div', { className: 'me-actions' }, logoutBtn, makeThemeToggle())),
   );
 
   // Unread count on Messages, wherever you are in the hub.
