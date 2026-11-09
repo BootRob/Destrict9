@@ -23,7 +23,7 @@
     .countdown b { display: block; font-family: var(--lbg-font-heading); font-size: var(--lbg-text-h2); line-height: 1.1; }
     .people-view { flex: 1; overflow-y: auto; padding: var(--lbg-space-6) var(--lbg-space-4); }
     .people-view h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); margin-bottom: var(--lbg-space-3); }
-    .people { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-3); }
+    .people { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--lbg-space-3); }
     .person {
       display: flex; align-items: center; gap: var(--lbg-space-3); width: 100%; text-align: left; cursor: pointer;
       border: 0; background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card);
