@@ -185,14 +185,15 @@ export function mountJourney(container, { onOpenChat } = {}) {
 
   function render(journey) {
     const step = journey.steps.find((s) => s.id === selected);
-    container.replaceChildren(
+    container.replaceChildren(...[
       make('h2', { textContent: 'Your journey' }),
       renderTracker(journey.steps, {
         selected,
         onSelect: (id) => { selected = selected === id ? null : id; render(last); },
       }),
       step ? detailPanel(step, journey) : card(journey, onOpenChat),
-      step ? make('button', { type: 'button', className: 'link-btn step-back', textContent: 'Back to your next step', onclick: () => { selected = null; render(last); } }) : null);
+      step ? make('button', { type: 'button', className: 'link-btn step-back', textContent: 'Back to your next step', onclick: () => { selected = null; render(last); } }) : null,
+    ].filter(Boolean)); // replaceChildren would print a null child as the text "null"
     container.hidden = false;
   }
 
