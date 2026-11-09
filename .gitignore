@@ -22,3 +22,6 @@ appsettings.Development.json
 # Claude Code local config (shared team skills are committed)
 .claude/*
 !.claude/skills/
+
+# App local database
+app/data/

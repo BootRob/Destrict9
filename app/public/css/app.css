@@ -1,0 +1,93 @@
+/* App styles built on brand/tokens.css (lbg-style skill). Use tokens, not raw hex. */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+button, input, textarea { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+.proto-strip {
+  background: var(--lbg-charcoal); color: var(--lbg-white);
+  font-size: var(--lbg-text-sm); line-height: var(--lbg-lh-sm);
+  text-align: center; padding: var(--lbg-space-1) var(--lbg-space-4);
+}
+
+.avatar {
+  width: 40px; height: 40px; flex: none; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--lbg-heritage-green); color: var(--lbg-white);
+  font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm);
+}
+.avatar--lg { width: 48px; height: 48px; font-size: var(--lbg-text-md); }
+.avatar--racing { background: var(--lbg-racing-green); }
+
+.link-btn {
+  background: none; border: 0; padding: var(--lbg-space-2); min-height: 44px; cursor: pointer;
+  font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm);
+  color: inherit; text-decoration: underline;
+}
+
+/* ---------- Form fields ---------- */
+.field { display: grid; gap: var(--lbg-space-1); margin-bottom: var(--lbg-space-4); }
+.field label { font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); }
+.field input {
+  min-height: 48px; padding: 0 var(--lbg-space-4);
+  border: 1px solid var(--lbg-grey-600); border-radius: var(--lbg-radius-md); background: var(--lbg-white);
+}
+.field input:focus-visible { border-color: var(--lbg-black); }
+.form-error {
+  color: var(--lbg-error); font-size: var(--lbg-text-sm); margin: 0 0 var(--lbg-space-4);
+  display: flex; gap: var(--lbg-space-2); align-items: flex-start;
+}
+.form-error img { width: 18px; margin-top: 1px; }
+
+/* ---------- Thread ---------- */
+.thread { overflow-y: auto; padding: var(--lbg-space-4); display: flex; flex-direction: column; gap: var(--lbg-space-1); }
+.thread-empty { margin: auto; color: var(--lbg-grey-600); text-align: center; }
+.day-sep {
+  align-self: center; margin: var(--lbg-space-4) 0 var(--lbg-space-2);
+  font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; color: var(--lbg-grey-600);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.msg { display: flex; flex-direction: column; max-width: 80%; margin-bottom: var(--lbg-space-2); }
+.msg--mine { align-self: flex-end; align-items: flex-end; }
+.msg--theirs { align-self: flex-start; align-items: flex-start; }
+.bubble {
+  padding: var(--lbg-space-3) var(--lbg-space-4); border-radius: var(--lbg-radius-lg);
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.msg--mine .bubble { background: var(--lbg-heritage-green); color: var(--lbg-white); border-bottom-right-radius: 4px; }
+.msg--theirs .bubble { background: var(--lbg-grey-100); color: var(--lbg-black); border-bottom-left-radius: 4px; }
+.msg-meta { font-size: 12px; color: var(--lbg-grey-600); margin-top: 2px; padding: 0 var(--lbg-space-1); }
+
+.typing { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); padding: 0 var(--lbg-space-4) var(--lbg-space-2); font-style: italic; }
+
+.composer {
+  display: flex; gap: var(--lbg-space-2); align-items: flex-end;
+  padding: var(--lbg-space-3) var(--lbg-space-4);
+  border-top: 1px solid var(--lbg-grey-200); background: var(--lbg-white);
+}
+.composer textarea {
+  flex: 1; resize: none; min-height: 48px; max-height: 140px;
+  padding: 12px var(--lbg-space-4); line-height: var(--lbg-lh-md);
+  border: 1px solid var(--lbg-grey-600); border-radius: var(--lbg-radius-md); background: var(--lbg-white);
+}
+.composer .lbg-btn { width: auto; min-width: 88px; }
+.composer-error { color: var(--lbg-error); font-size: var(--lbg-text-sm); padding: 0 var(--lbg-space-4) var(--lbg-space-2); margin: 0; }
+
+.conn-banner {
+  background: var(--lbg-grey-100); color: var(--lbg-charcoal); text-align: center;
+  font-size: var(--lbg-text-sm); padding: var(--lbg-space-1) var(--lbg-space-4);
+}
+
+/* ---------- Rendered onboarding guides (js/markdown.js) ---------- */
+.guide-body { line-height: var(--lbg-lh-md); overflow-wrap: anywhere; }
+.guide-body h2 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: var(--lbg-space-6) 0 var(--lbg-space-2); }
+.guide-body h3, .guide-body h4, .guide-body h5 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); margin: var(--lbg-space-6) 0 var(--lbg-space-2); }
+.guide-body p, .guide-body ul, .guide-body ol { margin: 0 0 var(--lbg-space-3); }
+.guide-body ul, .guide-body ol { padding-left: var(--lbg-space-6); }
+.guide-body li { margin-bottom: var(--lbg-space-1); }
+.guide-body blockquote { margin: 0 0 var(--lbg-space-4); padding: var(--lbg-space-2) var(--lbg-space-3); border-left: 4px solid var(--lbg-grey-400); background: var(--lbg-grey-100); color: var(--lbg-charcoal); font-size: var(--lbg-text-sm); }
+.guide-body table { border-collapse: collapse; width: 100%; margin: 0 0 var(--lbg-space-4); font-size: var(--lbg-text-sm); }
+.guide-body th, .guide-body td { text-align: left; vertical-align: top; padding: var(--lbg-space-2); border-bottom: 1px solid var(--lbg-grey-200); }
+.guide-body th { font-family: var(--lbg-font-strong); }
+.guide-body code { background: var(--lbg-grey-100); padding: 0 4px; border-radius: 4px; font-size: .95em; }
+.guide-body strong { font-family: var(--lbg-font-strong); }

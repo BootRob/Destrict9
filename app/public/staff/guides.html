@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Onboarding guides · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .topbar { display: flex; align-items: center; gap: var(--lbg-space-6); padding: var(--lbg-space-3) var(--lbg-space-6); }
+    .topbar img { height: 32px; display: block; }
+    .topbar .title { font-family: var(--lbg-font-heading); font-weight: 700; font-size: var(--lbg-text-lg); padding-left: var(--lbg-space-6); border-left: 1px solid rgba(255,255,255,.3); }
+    .topbar nav { display: flex; gap: var(--lbg-space-2); }
+    .topbar nav a { color: inherit; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); padding: var(--lbg-space-2) var(--lbg-space-3); border-radius: var(--lbg-radius-md); text-decoration: none; }
+    .topbar nav a[aria-current="page"] { background: rgba(255,255,255,.15); }
+    .topbar .me { margin-left: auto; display: flex; align-items: center; gap: var(--lbg-space-3); }
+    .topbar .me .avatar { background: var(--lbg-white); color: var(--lbg-racing-green); }
+    .topbar .me small { display: block; font-size: 12px; opacity: .85; }
+    .topbar .me strong { font-family: var(--lbg-font-strong); }
+
+    .layout { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
+    aside { border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; background: var(--lbg-white); }
+    aside h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-2); margin: 0; }
+    aside .sub { padding: 0 var(--lbg-space-6) var(--lbg-space-4); margin: 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    aside .new { margin: 0 var(--lbg-space-6) var(--lbg-space-4); width: auto; }
+    .list { list-style: none; margin: 0; padding: 0 var(--lbg-space-3) var(--lbg-space-4); overflow-y: auto; }
+    .item { display: block; width: 100%; text-align: left; cursor: pointer; padding: var(--lbg-space-3); border: 0; border-radius: var(--lbg-radius-md); background: none; margin-bottom: 2px; }
+    .item:hover { background: var(--lbg-grey-100); }
+    .item[aria-current="true"] { background: var(--lbg-mint); }
+    .item strong { display: block; font-family: var(--lbg-font-strong); }
+    .item small { font-size: 12px; color: var(--lbg-grey-600); }
+
+    main { min-height: 0; min-width: 0; display: flex; flex-direction: column; background: var(--lbg-white); }
+    .head { display: flex; align-items: center; gap: var(--lbg-space-4); padding: var(--lbg-space-4) var(--lbg-space-6); border-bottom: 1px solid var(--lbg-grey-200); }
+    .head h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; }
+    .head p { margin: 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .head .actions { margin-left: auto; display: flex; gap: var(--lbg-space-2); }
+    .head .lbg-btn { width: auto; min-width: 96px; }
+    .reader { flex: 1; overflow-y: auto; padding: var(--lbg-space-6); }
+    .reader .guide-body { max-width: 720px; }
+
+    .editor { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+    .editor textarea {
+      width: 100%; height: 100%; resize: none; border: 0; border-right: 1px solid var(--lbg-grey-200); padding: var(--lbg-space-6);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6; background: var(--lbg-grey-100);
+    }
+    .editor textarea:focus-visible { outline: 2px solid var(--lbg-heritage-green); outline-offset: -2px; }
+    .editor .preview { overflow-y: auto; padding: var(--lbg-space-6); }
+    .editor .preview-label { font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-3); }
+    .hint { font-size: 12px; color: var(--lbg-grey-600); padding: var(--lbg-space-2) var(--lbg-space-6); margin: 0; border-top: 1px solid var(--lbg-grey-200); }
+    .error { color: var(--lbg-error); font-size: var(--lbg-text-sm); padding: var(--lbg-space-2) var(--lbg-space-6); margin: 0; }
+    .saved { color: var(--lbg-heritage-green); font-size: var(--lbg-text-sm); font-family: var(--lbg-font-strong); }
+    .empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--lbg-grey-600); padding: var(--lbg-space-8); }
+
+    @media (max-width: 900px) { .editor { grid-template-columns: 1fr; } .editor .preview { display: none; } }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .layout.open aside { display: none; }
+      .layout:not(.open) main { display: none; }
+      .topbar .title { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="topbar lbg-surface--racing">
+    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+    <span class="title" id="hub-title">Hub</span>
+    <nav aria-label="Hub sections">
+      <a href="/staff/">Joiners</a>
+      <a href="/staff/guides.html" aria-current="page">Guides</a>
+    </nav>
+    <div class="me">
+      <span class="avatar" id="me-avatar"></span>
+      <span><strong id="me-name"></strong><small id="me-role"></small></span>
+      <button class="link-btn" id="logout" type="button">Log out</button>
+    </div>
+  </header>
+
+  <div class="layout" id="layout">
+    <aside>
+      <h2>Onboarding guides</h2>
+      <p class="sub" id="sub">What joiners can read, and what the assistant answers from.</p>
+      <button class="lbg-btn lbg-btn--primary new" id="new" type="button" hidden>New guide</button>
+      <ul class="list" id="list"></ul>
+    </aside>
+
+    <main>
+      <div class="empty" id="empty"><p>Pick a guide to read it.</p></div>
+
+      <div class="head" id="head" hidden>
+        <button class="link-btn" id="back" type="button" hidden>Back</button>
+        <div><h1 id="title"></h1><p id="meta"></p></div>
+        <div class="actions">
+          <span class="saved" id="saved" role="status" hidden>Saved</span>
+          <button class="lbg-btn lbg-btn--secondary" id="cancel" type="button" hidden>Cancel</button>
+          <button class="lbg-btn lbg-btn--primary" id="edit" type="button" hidden>Edit</button>
+          <button class="lbg-btn lbg-btn--primary" id="save" type="button" hidden>Save</button>
+        </div>
+      </div>
+      <div class="reader" id="reader" hidden><div class="guide-body" id="body"></div></div>
+      <div class="editor" id="editor" hidden>
+        <textarea id="source" aria-label="Guide text (Markdown)" spellcheck="true"></textarea>
+        <div class="preview"><p class="preview-label">Preview: what joiners see</p><div class="guide-body" id="preview"></div></div>
+      </div>
+      <p class="error" id="error" role="alert" hidden></p>
+      <p class="hint" id="hint" hidden>Markdown: start with <b># Title</b>, use <b>## Heading</b> for sections, <b>- </b> for bullets, <b>**bold**</b>, and <b>| tables |</b>. Synthetic content only. The assistant uses your changes as soon as you save.</p>
+    </main>
+  </div>
+
+<script type="module">
+  import { api, logout, initials, fmtShort } from '/js/chat.js';
+  import { renderMarkdown } from '/js/markdown.js';
+
+  const HUB_TITLES = { manager: 'Manager hub', recruiter: 'Recruiter hub', buddy: 'Buddy hub' };
+  const ROLE_LABELS = { manager: 'hiring manager', recruiter: 'recruiter', buddy: 'buddy' };
+  const TEMPLATE = '# New guide title\n\n> Synthetic document for the LaunchPad prototype. Not real policy.\n\nOne or two sentences saying what this guide covers.\n\n## First section\n- A fact joiners need\n- Another fact\n';
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
+  $('logout').addEventListener('click', logout);
+
+  const { user: me } = await api('/api/me');
+  $('hub-title').textContent = HUB_TITLES[me.role] ?? 'Hub';
+  $('me-name').textContent = me.name;
+  $('me-role').textContent = `${me.roleLabel} · ${me.jobTitle}`;
+  $('me-avatar').textContent = initials(me.name);
+
+  let guides = [];
+  let canEdit = false;
+  let current = null;   // the guide being viewed or edited, or { id: null } for a new one
+  let editing = false;
+  let dirty = false;
+
+  const updatedLine = (g) => `Updated ${fmtShort(g.updatedAt)}${g.updatedBy ? ` by ${g.updatedBy.name} (${ROLE_LABELS[g.updatedBy.role] ?? g.updatedBy.role})` : ''}`;
+
+  function renderList() {
+    $('list').replaceChildren(...guides.map((g) => {
+      const b = make('button', { type: 'button', className: 'item' }, make('strong', { textContent: g.title }), make('small', { textContent: updatedLine(g) }));
+      b.setAttribute('aria-current', String(g.id === current?.id));
+      b.addEventListener('click', () => confirmLeave() && openGuide(g.id));
+      return make('li', {}, b);
+    }));
+  }
+
+  function show(mode) {
+    editing = mode === 'edit';
+    $('empty').hidden = mode !== 'empty';
+    $('head').hidden = mode === 'empty';
+    $('reader').hidden = mode !== 'read';
+    $('editor').hidden = !editing;
+    $('hint').hidden = !editing;
+    $('edit').hidden = mode !== 'read' || !canEdit;
+    $('save').hidden = $('cancel').hidden = !editing;
+    $('error').hidden = true;
+    $('back').hidden = mode === 'empty';
+    $('layout').classList.toggle('open', mode !== 'empty');
+  }
+
+  async function openGuide(id) {
+    const { guide } = await api(`/api/guides/${encodeURIComponent(id)}`);
+    current = guide; dirty = false;
+    $('title').textContent = guide.title;
+    $('meta').textContent = updatedLine(guide);
+    $('body').replaceChildren(renderMarkdown(guide.markdown, { skipTitle: true }));
+    show('read');
+    renderList();
+    history.replaceState(null, '', `#${guide.id}`);
+  }
+
+  function startEdit(guide) {
+    current = guide; dirty = false;
+    $('title').textContent = guide.id ? `Editing: ${guide.title}` : 'New guide';
+    $('meta').textContent = guide.id ? updatedLine(guide) : 'Joiners will see it as soon as you save.';
+    $('source').value = guide.markdown;
+    updatePreview();
+    show('edit');
+    $('source').focus();
+  }
+
+  const updatePreview = () => $('preview').replaceChildren(renderMarkdown($('source').value, { skipTitle: true }));
+  $('source').addEventListener('input', () => { dirty = true; updatePreview(); });
+  const confirmLeave = () => !editing || !dirty || confirm('Discard your unsaved changes?');
+  window.addEventListener('beforeunload', (e) => { if (editing && dirty) e.preventDefault(); });
+
+  $('edit').addEventListener('click', () => startEdit(current));
+  $('new').addEventListener('click', () => confirmLeave() && startEdit({ id: null, title: 'New guide', markdown: TEMPLATE }));
+  $('cancel').addEventListener('click', () => { if (!confirmLeave()) return; dirty = false; current?.id ? openGuide(current.id) : show('empty'); });
+  $('back').addEventListener('click', () => { if (!confirmLeave()) return; dirty = false; current = null; show('empty'); renderList(); });
+
+  $('save').addEventListener('click', async () => {
+    $('save').disabled = true;
+    $('error').hidden = true;
+    try {
+      const markdown = $('source').value;
+      const { guide } = current.id
+        ? await api(`/api/guides/${encodeURIComponent(current.id)}`, { method: 'PUT', body: JSON.stringify({ markdown, baseUpdatedAt: current.updatedAt }) })
+        : await api('/api/guides', { method: 'POST', body: JSON.stringify({ markdown }) });
+      dirty = false;
+      await loadList();
+      await openGuide(guide.id);
+      $('saved').hidden = false;
+      setTimeout(() => { $('saved').hidden = true; }, 2500);
+    } catch (err) {
+      $('error').textContent = err.message;
+      $('error').hidden = false;
+    } finally {
+      $('save').disabled = false;
+    }
+  });
+
+  async function loadList() {
+    ({ guides, canEdit } = await api('/api/guides'));
+    $('new').hidden = !canEdit;
+    $('sub').textContent = canEdit
+      ? `${guides.length} guides. Joiners can read these, and the assistant answers from them.`
+      : `${guides.length} guides. These are what your joiners read. Managers and recruiters can edit them.`;
+    renderList();
+  }
+
+  try {
+    await loadList();
+  } catch (err) {
+    $('sub').textContent = `Guides couldn't be loaded (${err.message}). If the server was started before guides were added, restart it.`;
+    throw err;
+  }
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  if (guides.some((g) => g.id === fromHash)) openGuide(fromHash);
+  else show('empty');
+</script>
+</body>
+</html>
