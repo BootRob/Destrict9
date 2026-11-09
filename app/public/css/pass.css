@@ -1,0 +1,166 @@
+/* "The Pass" look for the joiner app and the staff app: Hanken Grotesk, warm stone and ink in light mode, a joiner pass card as the hero
+   (graphite in light mode, brand green in dark mode). Scoped to body.joiner and body.staff.
+   Load after theme.css. Design mocks: ~/Hackathon/design-mocks (g1-grotesk, with g2-serif's green card in dark mode). */
+
+@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/brand/fonts/hanken-grotesk-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Hanken Grotesk"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/brand/fonts/hanken-grotesk-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+/* Tokens: type, plus the stone palette for light mode */
+body.joiner, body.staff {
+  --lbg-font-heading: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --lbg-font-body: var(--lbg-font-heading);
+  --lbg-font-strong: var(--lbg-font-heading);
+  --pass-page: #ece8e0;
+  --pass-lime: #0be248;
+  --lbg-grey-100: #f3f0ea;
+  --lbg-grey-200: #d9d4c8;
+  --lbg-grey-300: #c9c3b5;
+  --lbg-grey-600: #6c6a63;
+  --lbg-shadow-card: 0 1px 0 #d9d4c8, 0 14px 30px -18px rgba(0, 0, 0, .25);
+  --pass-card-bg: radial-gradient(120% 100% at 100% 0%, #1d2a25 0%, #0a0d0c 55%), #0a0d0c;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+/* Dark mode: near-black page, and the green pass card */
+html[data-theme="dark"] body.joiner, html[data-theme="dark"] body.staff {
+  --pass-page: #070908;
+  --lbg-white: #121614;
+  --lbg-grey-100: #1a1f1c;
+  --lbg-grey-200: #2a302d;
+  --lbg-grey-300: #3b423e;
+  --lbg-mint: #14352a;
+  --lbg-shadow-card: 0 0 0 1px rgba(255, 255, 255, .1);
+  --pass-card-bg: radial-gradient(120% 100% at 100% 0%, #11a574 0%, #006a4d 38%, #024731 80%), #024731;
+}
+body.joiner { background: color-mix(in srgb, var(--pass-page) 72%, #000); }
+html[data-theme="dark"] body.joiner { background: #000; }
+html[data-theme="dark"] body.staff { background: var(--pass-page); }
+body.staff { background: var(--pass-page); }
+body.joiner :is(h1, h2, h3), body.staff :is(h1, h2, h3) { font-weight: 600; letter-spacing: -.03em; }
+.joiner .phone, .joiner .jpage { background: var(--pass-page); }
+.joiner :focus-visible, .staff :focus-visible { box-shadow: none; outline: 3px solid var(--lbg-heritage-green); outline-offset: 2px; }
+html[data-theme="dark"] :is(.joiner, .staff) :focus-visible { outline-color: var(--pass-lime); }
+
+/* Buttons are pills */
+.joiner .lbg-btn, .staff .lbg-btn { border-radius: 99px; min-height: 54px; font-size: 17px; font-weight: 600; padding: 0 24px; }
+.joiner .lbg-btn--secondary, .staff .lbg-btn--secondary { border-width: 1.5px; }
+
+/* App bar */
+.joiner .appbar { background: color-mix(in srgb, var(--pass-page) 88%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom-color: var(--lbg-grey-200); }
+.joiner .appbar .theme-toggle { border: 1px solid var(--lbg-grey-200); width: 40px; height: 40px; margin-left: auto; }
+.joiner .appbar .avatar { background: var(--lbg-black); color: var(--lbg-white); letter-spacing: .06em; }
+/* theme.css forces white text on .avatar; on the light dark-mode circle the letters must be black */
+html[data-theme="dark"] .joiner .appbar .avatar { background: #f2f4f3; color: #070908; }
+
+/* Hero: greeting, the pass, and the countdown facts */
+.joiner .hero { background: none; color: var(--lbg-black); padding: var(--lbg-space-8) var(--lbg-space-4) 0; }
+.joiner .hero .eyebrow { color: var(--lbg-heritage-green); opacity: 1; letter-spacing: .14em; }
+html[data-theme="dark"] .joiner .hero .eyebrow { color: var(--pass-lime); }
+.joiner .hero h1 { font-size: 42px; line-height: 1.02; letter-spacing: -.04em; margin: 0 0 8px; }
+.joiner .hero #job { color: var(--lbg-grey-600); margin: 0 0 22px; }
+
+.pass { position: relative; aspect-ratio: 1.586; border-radius: 22px; padding: 20px 22px; color: #eef3f0; overflow: hidden; isolation: isolate; background: var(--pass-card-bg); transform: rotate(-1.2deg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .2) inset, 0 24px 40px -14px rgba(0, 0, 0, .55), 0 4px 10px rgba(0, 0, 0, .25); }
+.pass::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .09) 46%, transparent 54%); }
+.pass .horse { position: absolute; right: -26px; bottom: -34px; width: 230px; opacity: .13; z-index: -1; }
+.pass .pass-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.pass .pass-top img { height: 30px; filter: none; }
+.pass .chip { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--pass-lime); border: 1px solid rgba(11, 226, 72, .5); padding: 4px 9px; border-radius: 99px; }
+.pass .pass-who { position: absolute; left: 22px; right: 22px; bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.pass .nm { font-size: 26px; line-height: 1.05; font-weight: 600; letter-spacing: -.03em; }
+.pass .rl { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #a9bcb3; margin-top: 6px; }
+html[data-theme="dark"] .pass .rl, html[data-theme="dark"] .pass .no { color: #b6dccb; }
+.pass .no { font-size: 10px; font-weight: 600; letter-spacing: .14em; color: #a9bcb3; text-align: right; text-transform: uppercase; flex: none; }
+.pass .no b { display: block; font-size: 24px; line-height: 1.1; letter-spacing: -.02em; color: #fff; text-transform: none; }
+
+.joiner .facts { display: grid; grid-template-columns: repeat(2, 1fr); margin: 28px 0 0; border-top: 1px solid var(--lbg-black); }
+.joiner .facts div { padding: 14px 0 0; }
+.joiner .facts div + div, .joiner .facts div[hidden] + div { padding-left: 14px; border-left: 1px solid var(--lbg-grey-200); }
+.joiner .facts div[hidden] + div { border-left: 0; padding-left: 0; }
+.joiner .facts dt { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--lbg-grey-600); }
+.joiner .facts dd { margin: 4px 0 0; font-size: 32px; line-height: 1; font-weight: 600; letter-spacing: -.03em; }
+.joiner .facts dd small { font-size: 14px; font-weight: 400; color: var(--lbg-grey-600); letter-spacing: 0; }
+
+/* Sections */
+.joiner .jsection { padding-top: 36px; }
+.joiner .jsection h2, .joiner .journey h2 { font-size: 22px; line-height: 1.2; margin-bottom: 14px; }
+
+/* Journey: progress and tracker */
+.joiner .progress-label strong { font-weight: 600; }
+.joiner .progress-track { height: 6px; background: var(--lbg-grey-200); margin-bottom: 18px; }
+.joiner .progress-fill { background: linear-gradient(90deg, var(--lbg-heritage-green), var(--pass-lime)); }
+.joiner .tracker li { font-size: 10.5px; }
+.joiner .tracker .dot { background: var(--pass-page); border-color: var(--lbg-grey-300); }
+.joiner .tracker .done .dot { background: var(--lbg-black); border-color: var(--lbg-black); }
+.joiner .tracker .done .dot img { filter: brightness(0) invert(1); }
+html[data-theme="dark"] .joiner .tracker .done .dot img { filter: brightness(0); }
+.joiner .tracker .done::before, .joiner .tracker .current::before { background: var(--lbg-heritage-green); }
+html[data-theme="dark"] .joiner .tracker .done::before, html[data-theme="dark"] .joiner .tracker .current::before { background: var(--pass-lime); }
+.joiner .tracker .current .dot { border-color: var(--lbg-heritage-green); box-shadow: 0 0 0 4px color-mix(in srgb, var(--pass-lime) 30%, transparent); }
+.joiner .tracker .current .dot::after { background: var(--pass-lime); }
+.joiner .tracker li.selected .tracker-step { background: none; }
+.joiner .tracker li.selected .dot { box-shadow: 0 0 0 3px var(--lbg-black); }
+
+/* Next-step card and step detail */
+.joiner .next-step, .joiner .step-detail { border-radius: 26px; padding: 22px; }
+.joiner .next-step h3 { font-size: 26px; line-height: 1.1; }
+.joiner .next-step .eyebrow, .joiner .step-detail .eyebrow { letter-spacing: .12em; }
+.joiner .next-step--quiet { background: var(--lbg-grey-100); }
+.joiner .step-detail--upcoming { background: var(--lbg-grey-100); }
+body.joiner .next-step.lbg-surface--racing, body.joiner .next-step.lbg-surface--heritage { background: #0b0c0b; color: #fff; }
+html[data-theme="dark"] body.joiner .next-step.lbg-surface--racing, html[data-theme="dark"] body.joiner .next-step.lbg-surface--heritage { background: #14201b; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }
+.joiner .next-step .lbg-btn--accent { background: var(--pass-lime); color: #04200f; }
+.joiner .terms { border-radius: 18px; }
+
+/* Help and people rows */
+.joiner .task.lbg-card, .joiner .person.lbg-card { border-radius: 22px; }
+.joiner .task .icon { border-radius: 14px; }
+.joiner .task .icon--ai, html[data-theme="dark"] .joiner .task .icon--ai { background: var(--lbg-black); color: var(--pass-lime); }
+html[data-theme="dark"] .joiner .task .icon--ai { color: #04803a; }
+.joiner .person .avatar { background: var(--lbg-black); color: var(--lbg-white); }
+html[data-theme="dark"] .joiner .person .avatar { background: #f2f4f3; color: #070908; }
+.joiner .person--quiet { border-color: var(--lbg-grey-300); border-width: 1.5px; }
+.joiner .person--quiet .avatar { background: var(--lbg-grey-300); color: var(--lbg-grey-600); }
+.joiner .person .unread, .joiner .jnav .nav-count { background: var(--pass-lime); color: #04200f; font-weight: 700; }
+
+/* Bottom nav */
+.joiner .jnav { background: color-mix(in srgb, var(--pass-page) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-top-color: var(--lbg-grey-200); }
+.joiner .jnav a, .joiner .jnav button { font-weight: 600; letter-spacing: .02em; }
+.joiner .jnav [aria-current="page"] { color: var(--lbg-black); }
+.joiner .jnav [aria-current="page"]::before { background: var(--pass-lime); }
+html[data-theme="dark"] .joiner .jnav [aria-current="page"] { color: var(--lbg-black); }
+html[data-theme="dark"] .joiner .jnav [aria-current="page"]::before { background: var(--pass-lime); }
+
+/* Chat screen: same page colour as the rest of the app (the panel, composer and rows were white) */
+.joiner .cw-panel, .joiner .chatpage #chat, .joiner .composer { background: var(--pass-page); }
+.joiner .composer { border-top-color: var(--lbg-grey-200); }
+.joiner .cw-row { background: var(--lbg-white); box-shadow: var(--lbg-shadow-card); border-radius: 18px; }
+.joiner .cw-row--locked:hover { background: var(--lbg-white); }
+.joiner .msg--theirs .bubble { background: var(--lbg-white); box-shadow: var(--lbg-shadow-card); }
+.joiner .msg--mine .bubble { background: var(--lbg-black); color: var(--lbg-white); }
+html[data-theme="dark"] .joiner .msg--mine .bubble { background: #f2f4f3; color: #070908; }
+.joiner .field input, .joiner .composer textarea, .joiner .composer input { background: var(--lbg-white); }
+
+/* ---------- Staff app ---------- */
+.staff .staff-main, .staff .page-scroll { background: var(--pass-page); }
+.staff .page-head h1 { font-size: 2.5rem; line-height: 1.1; letter-spacing: -.04em; }
+.staff .lbg-btn--sm { min-height: 40px; padding: 0 18px; font-size: 15px; }
+.staff .lbg-card, .staff .modal { border-radius: 22px; }
+
+/* Sidebar: the pass card's surface (graphite in light mode, brand green in dark mode) with the horse behind it */
+.staff .staff-nav { position: relative; isolation: isolate; background: var(--pass-card-bg); color: #eef3f0; overflow-y: auto; }
+.staff .staff-nav::before { content: ""; position: absolute; z-index: -1; left: -30px; bottom: 60px; width: 300px; height: 300px; background: url("/brand/logos/horse-white.svg") center / contain no-repeat; opacity: .07; pointer-events: none; }
+.staff .staff-nav .brand span { font-weight: 600; letter-spacing: -.02em; }
+.staff .staff-nav ul a { border-radius: 14px; font-weight: 600; }
+.staff .staff-nav ul a[aria-current="page"] { background: rgba(255, 255, 255, .13); }
+.staff .staff-nav ul a[aria-current="page"]::before { background: var(--pass-lime); }
+.staff .staff-nav .nav-badge { background: var(--pass-lime); color: #04200f; font-weight: 700; }
+html[data-theme="dark"] .staff .staff-nav .me .avatar, .staff .staff-nav .me .avatar { background: #f2f4f3; color: #070908; }
+.staff .staff-nav .me { border-top-color: rgba(255, 255, 255, .2); }
+.staff .staff-nav .me .link-btn { color: #eef3f0; }
+/* Log out link with the icon-only theme switch to its right */
+.staff .staff-nav .me .me-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--lbg-space-1); }
+.staff .staff-nav .me .me-actions .link-btn { grid-column: auto; padding-left: 0; }
+.staff .staff-nav .me .me-actions .theme-toggle { grid-column: auto; justify-self: auto; width: 40px; height: 40px; color: #eef3f0; border: 1px solid rgba(255, 255, 255, .25); }
+.staff .staff-nav .me .me-actions .theme-toggle:hover { background: rgba(255, 255, 255, .14); }
+.joiner .cw-head.lbg-surface--racing { background: var(--pass-card-bg); color: #eef3f0; }
