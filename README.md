@@ -19,7 +19,7 @@ Workday records the joining process, but nobody guides the joiner through it. We
 
 Side quests we took on:
 
-- **Always-on chatbot grounded in synthetic policies.** The onboarding assistant answers only from 14 fictional guides, lists the documents it used, and hands off to the right person when it can't answer. Recruiters and managers edit the guides in the app.
+- **Always-on chatbot grounded in synthetic policies.** The onboarding assistant answers only from fictional guides, lists the documents it used, and hands off to the right person when it can't answer. Recruiters and managers edit the guides in the app.
 - **Manager's view.** The Day 1 checklist.
 - **Event-driven unlocks.** Each step unlocks the next, and every screen updates live.
 
