@@ -2,6 +2,7 @@
 // the signed-in user and log out. Each staff page has <nav id="staff-nav"> and calls
 // `const me = await mountShell('messages')` (or 'applicants', 'checklist', 'guides').
 import { api, logout, initials } from '/js/chat.js';
+import { makeThemeToggle } from '/js/theme-toggle.js';
 
 const NAV = [
   { id: 'applicants', label: 'Applicants', href: '/staff/applicants.html', icon: '/brand/icons/job-type.svg', roles: ['recruiter'] },
@@ -45,6 +46,7 @@ export async function mountShell(active) {
       make('span', { className: 'who' },
         make('strong', { textContent: me.name }),
         make('small', { textContent: `${me.roleLabel} · ${me.jobTitle}` })),
+      makeThemeToggle({ label: true }),
       logoutBtn),
   );
 

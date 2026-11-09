@@ -1,6 +1,7 @@
 // Shared bottom navigation for the joiner pages, including the unread-message count on Chats.
 // Add class="joiner" to <body> and <script type="module" src="/js/joiner-shell.js"></script>.
 import { api } from '/js/chat.js';
+import { makeThemeToggle } from '/js/theme-toggle.js';
 
 const NAV = [
   { id: 'journey', label: 'Journey', href: '/joiner/', icon: 'list-style-tick-rounded-black' },
@@ -25,6 +26,14 @@ document.body.append(make('nav', { className: 'jnav', ariaLabel: 'Main' },
     if (n.id === here) a.setAttribute('aria-current', 'page');
     return a;
   })));
+
+// Light/dark switch in the top bar (the home and chat pages have .appbar, the others .jbar).
+const bar = document.querySelector('.appbar, .jbar');
+if (bar) {
+  const toggle = makeThemeToggle();
+  const avatar = bar.querySelector('.avatar');
+  if (avatar) bar.insertBefore(toggle, avatar); else bar.append(toggle);
+}
 
 // Unread count: on the Chats item, in the tab title, and as a 'chat:unread' event for the page.
 const baseTitle = document.title;
