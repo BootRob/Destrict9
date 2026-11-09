@@ -50,7 +50,7 @@ Because edits in the app change files in the repo, commit the guide changes you 
 
 ## Manager Day 1 checklist
 
-Hiring managers get a **Day 1 checklist** at `/staff/checklist.html` (linked from the hub header on this branch, and from the sidebar once merged with feat/recruiter-onboarding). For each recruit it shows:
+Hiring managers get a **Day 1 checklist** at `/staff/checklist.html` (open it directly on this branch; it becomes a sidebar entry once merged with feat/recruiter-onboarding). For each recruit it shows:
 
 - **Items with due dates** counted back in working days from the start date, flagged **overdue** if they slip: laptop and peripherals (showing the recruit's laptop choice when that data exists), access badge, accounts and system access, reception told, desk, induction and IT setup, team lunch, and a welcome message.
 - **Optional items** (workplace adjustments, shift or rota) that can be marked **Not needed**.
