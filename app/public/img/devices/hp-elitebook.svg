@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" role="img" aria-labelledby="t">
+  <title id="t">HP EliteBook 840 14-inch laptop in natural silver (illustration)</title>
+  <defs>
+    <linearGradient id="lid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3e6ea"/>
+      <stop offset=".5" stop-color="#cdd1d7"/>
+      <stop offset="1" stop-color="#b9bec5"/>
+    </linearGradient>
+    <linearGradient id="lidEdge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a9aeb6"/>
+      <stop offset=".5" stop-color="#d6d9de"/>
+      <stop offset="1" stop-color="#a9aeb6"/>
+    </linearGradient>
+    <linearGradient id="deck" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dadde2"/>
+      <stop offset=".4" stop-color="#c3c7ce"/>
+      <stop offset="1" stop-color="#9da2aa"/>
+    </linearGradient>
+    <linearGradient id="deckTop" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c0c4cb"/>
+      <stop offset=".5" stop-color="#eceef1"/>
+      <stop offset="1" stop-color="#c0c4cb"/>
+    </linearGradient>
+    <radialGradient id="wall" cx=".5" cy=".62" r=".75">
+      <stop offset="0" stop-color="#3d8cff"/>
+      <stop offset=".45" stop-color="#0f4fc0"/>
+      <stop offset="1" stop-color="#061a4d"/>
+    </radialGradient>
+    <linearGradient id="petal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#bfe3ff"/>
+      <stop offset=".55" stop-color="#5aa6ff"/>
+      <stop offset="1" stop-color="#1a5fd6" stop-opacity=".2"/>
+    </linearGradient>
+    <radialGradient id="core" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffffff" stop-opacity=".9"/><stop offset="1" stop-color="#9fd0ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="glare" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".14"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity=".03"/>
+      <stop offset=".46" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <clipPath id="screen"><rect x="172" y="52" width="456" height="282" rx="3"/></clipPath>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+
+  <ellipse cx="400" cy="440" rx="360" ry="26" fill="url(#shadow)"/>
+
+  <!-- lid: silver frame, black glass bezel, deeper chin than the Mac -->
+  <rect x="150" y="26" width="500" height="338" rx="14" fill="url(#lidEdge)"/>
+  <rect x="153" y="29" width="494" height="332" rx="12" fill="url(#lid)"/>
+  <rect x="162" y="38" width="476" height="316" rx="7" fill="#0b0c0e"/>
+
+  <!-- display -->
+  <g clip-path="url(#screen)">
+    <rect x="172" y="52" width="456" height="282" fill="url(#wall)"/>
+    <g transform="translate(400 222)" filter="url(#soft)" opacity=".95">
+      <g fill="url(#petal)">
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(0)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(45)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(90)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(135)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(180)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(225)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(270)"/>
+        <ellipse cx="62" cy="0" rx="70" ry="22" transform="rotate(315)"/>
+      </g>
+      <circle r="38" fill="url(#core)"/>
+    </g>
+    <!-- taskbar -->
+    <rect x="172" y="318" width="456" height="16" fill="#0a1630" opacity=".55"/>
+    <g fill="#fff" opacity=".6">
+      <rect x="352" y="322" width="8" height="8" rx="2"/><rect x="366" y="322" width="8" height="8" rx="2"/>
+      <rect x="380" y="322" width="8" height="8" rx="2"/><rect x="394" y="322" width="8" height="8" rx="2"/>
+      <rect x="408" y="322" width="8" height="8" rx="2"/><rect x="422" y="322" width="8" height="8" rx="2"/>
+      <rect x="436" y="322" width="8" height="8" rx="2"/>
+    </g>
+  </g>
+  <!-- webcam with privacy shutter -->
+  <rect x="388" y="42" width="24" height="7" rx="3.5" fill="#1b1d21"/>
+  <circle cx="395" cy="45.5" r="2.2" fill="#24344a"/>
+  <rect x="399" y="43" width="11" height="5" rx="2.5" fill="#3a3d43"/>
+  <rect x="162" y="38" width="476" height="316" rx="7" fill="url(#glare)"/>
+
+  <!-- hinge -->
+  <rect x="190" y="362" width="420" height="8" rx="3" fill="#8e939b"/>
+  <rect x="190" y="362" width="420" height="2" rx="1" fill="#6d7179"/>
+
+  <!-- base -->
+  <path d="M100 370 H700 L752 404 Q754 411 745 413 H55 Q46 411 48 404 Z" fill="url(#deck)"/>
+  <path d="M100 370 H700 L711 377 H89 Z" fill="url(#deckTop)" opacity=".9"/>
+  <path d="M55 413 H745 Q741 421 728 422 H72 Q59 421 55 413 Z" fill="#8a8f97"/>
+  <path d="M100 370 H700" stroke="#f4f5f7" stroke-width="1.2" opacity=".8"/>
+  <!-- rubber feet glimpse -->
+  <rect x="110" y="421" width="40" height="3" rx="1.5" fill="#5d6168"/>
+  <rect x="650" y="421" width="40" height="3" rx="1.5" fill="#5d6168"/>
+</svg>

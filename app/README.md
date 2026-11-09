@@ -1,6 +1,6 @@
 # Joiner companion: messaging prototype
 
-A new joiner (on a phone) chats privately with each of their people: their **hiring manager**, **recruiter** and **buddy**. Staff use a desktop web hub. Everything sits behind a login, is styled with the `lbg-style` skill, and uses only synthetic data.
+A recruit (on a phone) follows their journey from offer to Day 30: conditional offer, pre-employment screening, unconditional offer, laptop choice and meeting their manager. Along the way they chat privately with their **recruiter** and, once their offer is unconditional, their **hiring manager**. Staff use a desktop web app. Everything sits behind a login, is styled with the `lbg-style` skill, and uses only synthetic data.
 
 ## Run it
 
@@ -50,7 +50,7 @@ Because edits in the app change files in the repo, commit the guide changes you 
 
 ## Manager Day 1 checklist
 
-Hiring managers get a **Day 1 checklist** at `/staff/checklist.html` (open it directly on this branch; it becomes a sidebar entry once merged with feat/recruiter-onboarding). For each recruit it shows:
+Hiring managers get a **Day 1 checklist** in the staff sidebar (`/staff/checklist.html`). For each recruit it shows:
 
 - **Items with due dates** counted back in working days from the start date, flagged **overdue** if they slip: laptop and peripherals (showing the recruit's laptop choice when that data exists), access badge, accounts and system access, reception told, desk, induction and IT setup, team lunch, and a welcome message.
 - **Optional items** (workplace adjustments, shift or rota) that can be marked **Not needed**.
@@ -63,35 +63,77 @@ The state is kept in its own tables (`checklist_items`, `checklist_day1`, `prest
 ## Try both sides at once
 
 1. Normal window: open http://localhost:3000 and log in as **Alex Kim** (joiner). You land on the mobile screen with Alex's three people. Use the browser's device mode (F12, then Ctrl+Shift+M) to see it at phone size.
-2. Private window: log in as one of Alex's people (**Sam Reid**, **Jordan Ellis** or **Maya Okafor**). You land on the staff hub.
+2. Private window: log in as one of Alex's people (**Sam Reid** or **Jordan Ellis**). You land on the staff hub.
 3. Send messages either way. They appear instantly, with typing indicators, unread badges and "Seen" receipts.
 
 Each private window has its own cookies, so the two logins don't clash. For a third person at once, use a different browser or browser profile.
 
 | Account | Role | Joiners / people |
 |---|---|---|
-| alex.kim@example.com | Joiner | Manager Sam, recruiter Jordan, buddy Maya |
-| priya.shah@example.com | Joiner | Manager Sam, recruiter Jordan, **no buddy yet** |
-| owen.davies@example.com | Joiner | Manager Hannah, recruiter Jordan, buddy Rhys |
+| alex.kim@example.com | Joiner | Offer accepted, laptop not chosen yet. Recruiter Jordan, manager Sam |
+| priya.shah@example.com | Joiner | Waiting for her screening result. Recruiter Jordan only, so far |
+| owen.davies@example.com | Joiner | Offer accepted, HP laptop chosen. Recruiter Jordan, manager Hannah |
 | sam.reid@example.com | Hiring manager | Alex, Priya |
 | hannah.price@example.com | Hiring manager | Owen |
-| jordan.ellis@example.com | Recruiter | Alex, Priya, Owen |
-| maya.okafor@example.com | Buddy | Alex |
-| rhys.morgan@example.com | Buddy | Owen |
+| jordan.ellis@example.com | Recruiter | Alex, Priya, Owen, plus 8 applicants (start here for onboarding) |
+| leah.thompson@example.com | Recruiter | 2 applicants of her own (shows recruiters only see their own candidates) |
 
 The password for every account is `demo1234`. These are demo credentials for synthetic users, not secrets.
 
+## The recruit's journey
+
+The recruit's home screen shows a **progress bar from offer to Day 30** (8 steps), plus a card for whatever needs doing next.
+
+| Step | What the recruit does | What moves it on |
+|---|---|---|
+| Conditional offer | Views the offer (role, salary, contract, start date) and accepts or declines | Recruit |
+| Screening details | Goes to ClearPath, the third-party screening company (simulated), completes their details there, then taps **I've added my details** | Recruit |
+| Screening checks | Sees what's being checked and a typical timeframe. "No news is normal" | Recruiter records the result: clear or not clear |
+| Unconditional offer | Accepts or rejects | Recruit |
+| Meet your manager | The hiring-manager chat opens; the recruit chooses a laptop | Recruit |
+| Day 1, Week 1, Day 30 | Countdown and milestones | The calendar, from the start date |
+
+- **Laptop choice:** an Apple MacBook Pro or HP EliteBook 840, with pictures and specs (`public/img/devices/*.svg`, our own illustrations). The recommended one depends on the role. It can be changed until a week before the start date, and the recruiter can see the choice. To use official product photos, replace the two SVG files.
+- **Privacy:** the app never collects personal details for screening. The recruit gives them directly to ClearPath, and the app only records when they confirmed. `/clearpath.html` is a plainly labelled stand-in for ClearPath's own site.
+- **Rules:** every step checks the current stage, so steps can't be skipped or repeated. Declines and not-clear results end the journey gracefully. The recruiter sees the reason, and the internal result note is never shown to the recruit.
+- **Live updates:** each step updates the recruiter's table instantly, and the recruiter's result updates the recruit's screen. Emails go to the demo mailbox at each step.
+- Code: `journey.js` (server), `js/journey-card.js`, `joiner/offer.html`, `joiner/screening.html` and `joiner/device.html`.
+
+## Recruiter onboarding
+
+The journey starts with the recruiter, before anyone has an account.
+
+1. Log in as **Jordan Ellis** and open **Applicants**. The table lists Jordan's candidates: some *successful*, some *unsuccessful*, some still *interviewing*, and three already onboarded. Use the summary tiles to filter.
+2. Click **Onboard** on a successful candidate (Ben, Chloe or Daniel) and confirm. This:
+   - creates their joiner account in an **invited** state, which can't log in yet
+   - opens their chat with Jordan, with a welcome message waiting
+   - emails their **conditional offer** with a one-time activation link
+3. Open the **demo mailbox** (`/mailbox.html`, or the "View the email" link) and click **Activate my account**.
+4. The candidate sets a password and lands in the joiner app on their conditional offer. Jordan's table updates live at every step after that. Priya is already waiting for a screening result, so you can try **Record result** straight away.
+
+Details:
+- **Activation links:**
+  - Only a SHA-256 hash of the token is stored.
+  - Links last 7 days and work once.
+  - **Resend invite** issues a new link and kills the old one.
+- **Permissions:** recruiters only see and onboard their own candidates. Managers don't see the Applicants page.
+- **Email is simulated.** `mailer.js` stores each email and the demo mailbox shows it.
+  - To send real email, replace `sendEmail` with a call to an email service, for example Azure Communication Services.
+  - Set `PUBLIC_URL` so links point at the deployed site.
+  - Turn the mailbox off with `DEMO_MAILBOX=off`. Anyone who can open it can activate any invited account, so it must be off anywhere real.
+
 ## Design choices
 
-- **Private 1:1 chats.** Each conversation is between one joiner and one of their people, so a question for the buddy isn't seen by the manager. Staff can see who else is in a joiner's circle, but not those conversations.
-- **One hub for all staff roles.** Managers, recruiters and buddies share `/staff/`, titled by role. Each sees only the joiners they're assigned to.
-- **Unassigned roles are shown, not hidden.** A joiner with no buddy yet sees a placeholder explaining when one will arrive.
+- **Private 1:1 chats.** Each conversation is between one joiner and one of their people, so a question for the recruiter isn't seen by the manager. Staff can see who else is in a joiner's circle, but not those conversations.
+- **Staff get a desktop web app; joiners get a phone app.** Staff pages share a left sidebar (`js/staff-shell.js`, `css/staff.css`) with sections by role: Applicants (recruiters), Messages and Guides.
+- **One hub for all staff roles.** Managers and recruiters share `/staff/`, titled by role. Each sees only the joiners they're assigned to.
+- **The manager chat is earned, not assumed.** Until the unconditional offer is accepted, the recruit sees a placeholder explaining when they'll be connected.
 - **Real vs simulated:** messaging is real and works end to end. The login is a demo login against seeded accounts, standing in for company SSO. Assignments come from the seed data; there's no admin screen yet.
 
 ## How it works
 
 - **`db.js`**:
-  - The SQLite schema: `users` (with a role of joiner, manager, recruiter or buddy), `sessions`, `conversations` (one per joiner per assigned staff member, with `kind` = their relationship) and `messages`.
+  - The SQLite schema: `users` (with a role of joiner, manager or recruiter), `sessions`, `conversations` (one per joiner per assigned staff member, with `kind` = their relationship) and `messages`.
   - Seeds the demo data. Passwords are hashed with scrypt.
   - The database is in `app/data/`, which git ignores. `npm run reset` re-seeds it. A schema version bump rebuilds it automatically.
 - **`server.js`**:
@@ -111,6 +153,18 @@ The password for every account is `demo1234`. These are demo credentials for syn
   - `brand/`, copied from the skill
 
 ## API
+
+Onboarding endpoints (the rest are below):
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/api/applicants` | Recruiters only: their applicants with a `stage` of successful, unsuccessful, interviewing, invited or active |
+| POST | `/api/applicants/:id/onboard` | Recruiters only: onboard a successful applicant |
+| POST | `/api/applicants/:id/resend` | Recruiters only: new activation link, old one revoked |
+| GET | `/api/activate?token=` | Who an activation link is for |
+| POST | `/api/activate` | `{ token, password }`: activates the account and signs in |
+| GET | `/api/mailbox` | Demo only: all simulated emails |
+
 
 | Method | Path | Purpose |
 |---|---|---|
@@ -145,5 +199,6 @@ The password for every account is `demo1234`. These are demo credentials for syn
 - Email notification when a joiner messages (from Rob's notes).
 - An optional group chat for the joiner and all their people.
 - Recruiter hands over to the manager once checks clear.
-- A screen to assign a buddy, which creates the conversation and notifies the joiner.
+- Start-date email from the manager once the offer is accepted, updating the countdown (from ideas.md).
+- A "read before you start" checklist linking to the purpose, values and travel guides.
 - Deployment to Azure App Service so it runs on a real phone.

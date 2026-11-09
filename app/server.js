@@ -7,6 +7,9 @@ import { db, verifyPassword, STAFF_ROLES, ROLE_LABELS } from './db.js';
 import * as assistant from './assistant.js';
 import * as guides from './guides.js';
 import * as checklist from './checklist.js';
+import * as onboarding from './onboarding.js';
+import * as journey from './journey.js';
+import { MAILBOX_ENABLED, listEmails } from './mailer.js';
 
 const PORT = Number(process.env.PORT) || 3000;
 const SESSION_MS = 7 * 24 * 3600_000;
@@ -14,7 +17,7 @@ const MAX_MESSAGE = 2000;
 const publicDir = fileURLToPath(new URL('./public/', import.meta.url));
 
 // ---------- queries ----------
-const USER_COLS = 'u.id, u.name, u.email, u.role, u.job_title, u.location, u.start_date';
+const USER_COLS = 'u.id, u.name, u.email, u.role, u.status, u.job_title, u.location, u.start_date';
 const CONV_SUMMARY = `
   c.id, c.kind, c.joiner_id, c.staff_id,
   (SELECT body       FROM messages m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) AS last_body,
@@ -25,7 +28,7 @@ const CONV_SUMMARY = `
 const q = {
   userByEmail:   db.prepare('SELECT * FROM users WHERE email = ?'),
   userById:      db.prepare(`SELECT ${USER_COLS} FROM users u WHERE u.id = ?`),
-  sessionUser:   db.prepare(`SELECT ${USER_COLS} FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ? AND s.expires_at > ?`),
+  sessionUser:   db.prepare(`SELECT ${USER_COLS} FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token = ? AND s.expires_at > ? AND u.status = 'active'`),
   createSession: db.prepare('INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, ?)'),
   deleteSession: db.prepare('DELETE FROM sessions WHERE token = ?'),
   conversation:  db.prepare('SELECT * FROM conversations WHERE id = ?'),
@@ -43,7 +46,7 @@ const q = {
 
 const publicUser = (u) => u && ({
   id: u.id, name: u.name, email: u.email, role: u.role, roleLabel: ROLE_LABELS[u.role],
-  jobTitle: u.job_title, location: u.location, startDate: u.start_date,
+  jobTitle: u.job_title, location: u.location, startDate: u.start_date, status: u.status,
 });
 const toMessage = (m, senderName) => ({
   id: m.id, conversationId: m.conversation_id, senderId: m.sender_id, senderName: senderName ?? m.sender_name,
@@ -120,22 +123,30 @@ const server = createServer(app);
 const io = new Server(server);
 
 app.disable('x-powered-by');
+app.set('trust proxy', true); // so req.protocol is right behind Azure's HTTPS front end
 app.use(express.json({ limit: '64kb' })); // room for a full guide (guides.MAX_GUIDE_CHARS)
 
 app.post('/api/login', (req, res) => {
   const email = String(req.body?.email ?? '').trim().toLowerCase();
   const user = q.userByEmail.get(email);
+  if (user?.status === 'invited') {
+    return res.status(403).json({ error: "Your account isn't set up yet. Use the activation link in your welcome email." });
+  }
   if (!user || !verifyPassword(req.body?.password ?? '', user.password_hash)) {
     return res.status(401).json({ error: 'Email or password is incorrect' });
   }
+  startSession(res, user);
+  res.json({ user: publicUser(user), home: homeFor(user) });
+});
+
+function startSession(res, user) {
   const token = randomBytes(32).toString('base64url');
   q.createSession.run(token, user.id, new Date(Date.now() + SESSION_MS).toISOString());
   res.cookie('sid', token, {
     httpOnly: true, sameSite: 'lax', path: '/', maxAge: SESSION_MS,
     secure: process.env.NODE_ENV === 'production',
   });
-  res.json({ user: publicUser(user), home: homeFor(user) });
-});
+}
 
 app.post('/api/logout', (req, res) => {
   const token = parseCookies(req.headers.cookie).sid;
@@ -241,8 +252,104 @@ app.get('/api/day1', requireAuth, requireJoiner, (req, res) => {
   res.json({ day1: checklist.day1For(req.user.email), training: checklist.trainingFor(req.user.email) });
 });
 
+// ---------- recruiter onboarding ----------
+const requireRecruiter = (req, res, next) => (req.user.role === 'recruiter' ? next() : res.status(403).json({ error: 'Only recruiters can manage applicants' }));
+const publicOrigin = (req) => process.env.PUBLIC_URL?.replace(/\/$/, '') || `${req.protocol}://${req.get('host')}`;
+const onboardingError = (res, err) => {
+  if (!err.status) console.error('Onboarding failed:', err);
+  res.status(err.status ?? 500).json({ error: err.status ? err.message : 'Something went wrong. Please try again.' });
+};
+
+app.get('/api/applicants', requireAuth, requireRecruiter, (req, res) => {
+  res.json({ applicants: onboarding.listApplicants(req.user.id), mailbox: MAILBOX_ENABLED });
+});
+
+app.post('/api/applicants/:id/onboard', requireAuth, requireRecruiter, (req, res) => {
+  try {
+    const result = onboarding.onboard(req.user, Number(req.params.id), publicOrigin(req));
+    // Staff who are online join the new chat rooms straight away and refresh their lists.
+    for (const { id, staffId } of result.conversations) {
+      io.in(`user:${staffId}`).socketsJoin(`conv:${id}`);
+      io.to(`user:${staffId}`).emit('conversations:changed');
+    }
+    res.json({ applicant: result.applicant, email: result.email });
+  } catch (err) { onboardingError(res, err); }
+});
+
+app.post('/api/applicants/:id/resend', requireAuth, requireRecruiter, (req, res) => {
+  try {
+    res.json(onboarding.resendInvite(req.user, Number(req.params.id), publicOrigin(req)));
+  } catch (err) { onboardingError(res, err); }
+});
+
+app.get('/api/activate', (req, res) => {
+  try {
+    res.json({ invite: onboarding.inviteInfo(req.query.token) });
+  } catch (err) { onboardingError(res, err); }
+});
+
+app.post('/api/activate', (req, res) => {
+  try {
+    const { userId, applicantId } = onboarding.activate(req.body?.token, req.body?.password);
+    const user = q.userById.get(userId);
+    startSession(res, user);
+    const applicant = applicantId && onboarding.getApplicant(applicantId);
+    if (applicant) io.to(`user:${applicant.recruiterId}`).emit('applicant:updated', applicant);
+    for (const staff of q.circleOf.all(userId)) io.to(`user:${staff.id}`).emit('conversations:changed');
+    res.json({ user: publicUser(user), home: homeFor(user) });
+  } catch (err) { onboardingError(res, err); }
+});
+
+app.post('/api/applicants/:id/screening-result', requireAuth, requireRecruiter, (req, res) => {
+  try {
+    const applicant = journey.recordScreeningResult(req.user, Number(req.params.id), req.body?.result, req.body?.note, publicOrigin(req));
+    io.to(`user:${applicant.userId}`).emit('journey:updated');
+    res.json({ applicant });
+  } catch (err) { onboardingError(res, err); }
+});
+
+// ---------- the recruit's journey (joiners only) ----------
+const requireJoinerRole = (req, res, next) => (req.user.role === 'joiner' ? next() : res.status(403).json({ error: 'Only for new joiners' }));
+/** Tell the recruiter (live table) and the recruit's other tabs that the journey moved. */
+const journeyMoved = (applicant) => {
+  io.to(`user:${applicant.recruiterId}`).emit('applicant:updated', applicant);
+  io.to(`user:${applicant.userId}`).emit('journey:updated');
+};
+const journeyAction = (fn) => (req, res) => {
+  try {
+    const applicant = fn(req);
+    journeyMoved(applicant);
+    res.json({ journey: journey.journeyFor(req.user) });
+  } catch (err) { onboardingError(res, err); }
+};
+
+app.get('/api/journey', requireAuth, requireJoinerRole, (req, res) => {
+  try { res.json({ journey: journey.journeyFor(req.user) }); } catch (err) { onboardingError(res, err); }
+});
+app.post('/api/journey/conditional/accept', requireAuth, requireJoinerRole, journeyAction((req) => journey.acceptConditional(req.user, publicOrigin(req))));
+app.post('/api/journey/decline', requireAuth, requireJoinerRole, journeyAction((req) => journey.declineOffer(req.user, req.body?.offer, req.body?.reason)));
+app.post('/api/journey/screening', requireAuth, requireJoinerRole, journeyAction((req) => journey.submitScreening(req.user, publicOrigin(req))));
+app.post('/api/journey/device', requireAuth, requireJoinerRole, journeyAction((req) => journey.chooseDevice(req.user, req.body?.device)));
+app.post('/api/journey/unconditional/accept', requireAuth, requireJoinerRole, journeyAction((req) => {
+  const { applicant, managerConversation: { id, staffId } } = journey.acceptUnconditional(req.user);
+  // Manager and recruit join the new chat room straight away and refresh their lists.
+  for (const userId of [staffId, req.user.id]) {
+    io.in(`user:${userId}`).socketsJoin(`conv:${id}`);
+    io.to(`user:${userId}`).emit('conversations:changed');
+  }
+  return applicant;
+}));
+
+// Demo only: the simulated inbox for every invite email. Turn off with DEMO_MAILBOX=off.
+app.get('/api/mailbox', (req, res) => {
+  if (!MAILBOX_ENABLED) return res.status(404).json({ error: 'Not found' });
+  res.json({ emails: listEmails() });
+});
+app.use('/mailbox.html', (req, res, next) => (MAILBOX_ENABLED ? next() : res.status(404).end()));
+
 app.get('/', (req, res) => res.redirect(homeFor(userForCookieHeader(req.headers.cookie))));
 app.use('/joiner', pageFor((u) => u.role === 'joiner'));
+app.use('/staff/applicants.html', pageFor((u) => u.role === 'recruiter'));
 app.use('/staff', pageFor((u) => STAFF_ROLES.includes(u.role)));
 app.use(express.static(publicDir));
 
@@ -256,6 +363,7 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   const me = socket.data.user;
+  socket.join(`user:${me.id}`);
   for (const { id } of q.convIdsFor.all({ me: me.id })) socket.join(`conv:${id}`);
 
   socket.on('message:send', (payload, ack = () => {}) => {

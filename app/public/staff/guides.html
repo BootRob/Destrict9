@@ -7,19 +7,8 @@
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/staff.css">
   <style>
-    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-    .topbar { display: flex; align-items: center; gap: var(--lbg-space-6); padding: var(--lbg-space-3) var(--lbg-space-6); }
-    .topbar img { height: 32px; display: block; }
-    .topbar .title { font-family: var(--lbg-font-heading); font-weight: 700; font-size: var(--lbg-text-lg); padding-left: var(--lbg-space-6); border-left: 1px solid rgba(255,255,255,.3); }
-    .topbar nav { display: flex; gap: var(--lbg-space-2); }
-    .topbar nav a { color: inherit; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); padding: var(--lbg-space-2) var(--lbg-space-3); border-radius: var(--lbg-radius-md); text-decoration: none; }
-    .topbar nav a[aria-current="page"] { background: rgba(255,255,255,.15); }
-    .topbar .me { margin-left: auto; display: flex; align-items: center; gap: var(--lbg-space-3); }
-    .topbar .me .avatar { background: var(--lbg-white); color: var(--lbg-racing-green); }
-    .topbar .me small { display: block; font-size: 12px; opacity: .85; }
-    .topbar .me strong { font-family: var(--lbg-font-strong); }
-
     .layout { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
     aside { border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; background: var(--lbg-white); }
     aside h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-2); margin: 0; }
@@ -59,25 +48,14 @@
       .layout { grid-template-columns: 1fr; }
       .layout.open aside { display: none; }
       .layout:not(.open) main { display: none; }
-      .topbar .title { display: none; }
     }
   </style>
 </head>
-<body>
+<body class="staff">
   <div class="proto-strip">Concept prototype · synthetic data only</div>
-  <header class="topbar lbg-surface--racing">
-    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
-    <span class="title" id="hub-title">Hub</span>
-    <nav aria-label="Hub sections">
-      <a href="/staff/">Joiners</a>
-      <a href="/staff/guides.html" aria-current="page">Guides</a>
-    </nav>
-    <div class="me">
-      <span class="avatar" id="me-avatar"></span>
-      <span><strong id="me-name"></strong><small id="me-role"></small></span>
-      <button class="link-btn" id="logout" type="button">Log out</button>
-    </div>
-  </header>
+  <div class="staff-app">
+  <nav id="staff-nav" class="staff-nav"></nav>
+  <div class="staff-main">
 
   <div class="layout" id="layout">
     <aside>
@@ -109,23 +87,20 @@
       <p class="hint" id="hint" hidden>Markdown: start with <b># Title</b>, use <b>## Heading</b> for sections, <b>- </b> for bullets, <b>**bold**</b>, and <b>| tables |</b>. Synthetic content only. The assistant uses your changes as soon as you save.</p>
     </main>
   </div>
+  </div>
+  </div>
 
 <script type="module">
-  import { api, logout, initials, fmtShort } from '/js/chat.js';
+  import { api, fmtShort } from '/js/chat.js';
+  import { mountShell } from '/js/staff-shell.js';
   import { renderMarkdown } from '/js/markdown.js';
 
-  const HUB_TITLES = { manager: 'Manager hub', recruiter: 'Recruiter hub', buddy: 'Buddy hub' };
-  const ROLE_LABELS = { manager: 'hiring manager', recruiter: 'recruiter', buddy: 'buddy' };
+  const ROLE_LABELS = { manager: 'hiring manager', recruiter: 'recruiter' };
   const TEMPLATE = '# New guide title\n\n> Synthetic document for the LaunchPad prototype. Not real policy.\n\nOne or two sentences saying what this guide covers.\n\n## First section\n- A fact joiners need\n- Another fact\n';
   const $ = (id) => document.getElementById(id);
   const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
-  $('logout').addEventListener('click', logout);
 
-  const { user: me } = await api('/api/me');
-  $('hub-title').textContent = HUB_TITLES[me.role] ?? 'Hub';
-  $('me-name').textContent = me.name;
-  $('me-role').textContent = `${me.roleLabel} · ${me.jobTitle}`;
-  $('me-avatar').textContent = initials(me.name);
+  const me = await mountShell('guides');
 
   let guides = [];
   let canEdit = false;

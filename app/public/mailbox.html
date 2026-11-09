@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo mailbox · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: var(--lbg-grey-100); }
+    .banner { background: var(--lbg-charcoal); color: var(--lbg-white); padding: var(--lbg-space-3) var(--lbg-space-6); display: flex; gap: var(--lbg-space-4); align-items: center; }
+    .banner strong { font-family: var(--lbg-font-strong); }
+    .banner p { margin: 0; font-size: var(--lbg-text-sm); opacity: .9; }
+    .banner .lbg-btn { margin-left: auto; width: auto; min-height: 40px; padding: 8px 16px; font-size: var(--lbg-text-md); }
+    .layout { flex: 1; display: grid; grid-template-columns: 380px 1fr; min-height: 0; }
+    aside { background: var(--lbg-white); border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; }
+    aside h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-1); }
+    aside .sub { margin: 0; padding: 0 var(--lbg-space-6) var(--lbg-space-4); color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    aside .sub a { color: var(--lbg-link-green); }
+    .list { list-style: none; margin: 0; padding: 0; overflow-y: auto; border-top: 1px solid var(--lbg-grey-200); }
+    .item { display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--lbg-grey-200); background: none; cursor: pointer; padding: var(--lbg-space-4) var(--lbg-space-6); }
+    .item:hover { background: var(--lbg-grey-100); }
+    .item[aria-current="true"] { background: var(--lbg-mint); }
+    .item .row { display: flex; justify-content: space-between; gap: var(--lbg-space-2); font-size: var(--lbg-text-sm); }
+    .item .row strong { font-family: var(--lbg-font-strong); }
+    .item time { color: var(--lbg-grey-600); font-size: 12px; white-space: nowrap; }
+    .item .subject { display: block; font-family: var(--lbg-font-strong); font-weight: 700; margin-top: 2px; }
+    .item .to { display: block; color: var(--lbg-grey-600); font-size: 12px; }
+    main { overflow-y: auto; padding: var(--lbg-space-8); }
+    .email { max-width: 680px; margin: 0 auto; background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); overflow: hidden; }
+    .email header { padding: var(--lbg-space-6); border-bottom: 1px solid var(--lbg-grey-200); }
+    .email header h2 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0 0 var(--lbg-space-3); }
+    .email header dl { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--lbg-space-3); margin: 0; font-size: var(--lbg-text-sm); }
+    .email header dt { color: var(--lbg-grey-600); }
+    .email header dd { margin: 0; }
+    .email .brandbar { padding: var(--lbg-space-6); }
+    .email .brandbar img { height: 32px; display: block; }
+    .email .content { padding: var(--lbg-space-6); white-space: pre-wrap; line-height: var(--lbg-lh-md); }
+    .email .cta { padding: 0 var(--lbg-space-6) var(--lbg-space-8); }
+    .email .cta .lbg-btn { max-width: 320px; }
+    .email .cta small { display: block; margin-top: var(--lbg-space-3); color: var(--lbg-grey-600); font-size: 12px; overflow-wrap: anywhere; }
+    .email footer { background: var(--lbg-grey-100); color: var(--lbg-grey-600); font-size: 12px; padding: var(--lbg-space-4) var(--lbg-space-6); }
+    .empty { display: grid; place-items: center; height: 100%; color: var(--lbg-grey-600); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="banner">
+    <div>
+      <strong>Demo mailbox</strong>
+      <p>Stands in for the candidate's personal inbox. In production these emails go out through an email service, and this page doesn't exist.</p>
+    </div>
+    <button class="lbg-btn lbg-btn--on-dark" id="refresh" type="button">Refresh</button>
+  </div>
+  <div class="layout">
+    <aside>
+      <h1>Sent emails</h1>
+      <p class="sub" id="sub"></p>
+      <ul class="list" id="list"></ul>
+    </aside>
+    <main id="reader"><div class="empty"><p>No emails yet. Onboard an applicant from the recruiter hub.</p></div></main>
+  </div>
+
+<script type="module">
+  import { fmtShort } from '/js/chat.js';
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null && c !== false)); return n; };
+
+  const params = new URLSearchParams(location.search);
+  let toFilter = params.get('to')?.toLowerCase() ?? null;
+  let emails = [];
+  let activeId = null;
+
+  function renderReader(e) {
+    if (!e) { $('reader').replaceChildren(make('div', { className: 'empty' }, make('p', { textContent: 'No emails yet. Onboard an applicant from the recruiter hub.' }))); return; }
+    const sent = new Date(e.createdAt).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    $('reader').replaceChildren(make('article', { className: 'email' },
+      make('header', {},
+        make('h2', { textContent: e.subject }),
+        make('dl', {},
+          make('dt', { textContent: 'From' }), make('dd', { textContent: e.from }),
+          make('dt', { textContent: 'To' }), make('dd', { textContent: e.toName ? `${e.toName} <${e.to}>` : e.to }),
+          make('dt', { textContent: 'Sent' }), make('dd', { textContent: sent }))),
+      make('div', { className: 'brandbar lbg-surface--racing' }, make('img', { src: '/brand/logos/lbg-logo-white.svg', alt: 'Lloyds Banking Group' })),
+      make('div', { className: 'content', textContent: e.body }),
+      e.actionUrl ? make('div', { className: 'cta' },
+        make('a', { className: 'lbg-btn lbg-btn--primary', href: e.actionUrl, target: '_blank', rel: 'noopener', textContent: e.actionLabel || 'Open' }),
+        make('small', { textContent: `Or paste this link into your browser: ${e.actionUrl}` })) : null,
+      make('footer', { textContent: 'Concept prototype. Synthetic data only. This email was not really sent.' })));
+  }
+
+  function render() {
+    const shown = toFilter ? emails.filter((e) => e.to.toLowerCase() === toFilter) : emails;
+    const sub = $('sub');
+    sub.replaceChildren(make('span', { textContent: toFilter ? `${shown.length} to ${toFilter} · ` : `${shown.length} emails` }));
+    if (toFilter) {
+      const all = make('a', { href: '/mailbox.html', textContent: 'show all' });
+      all.addEventListener('click', (ev) => { ev.preventDefault(); toFilter = null; history.replaceState(null, '', '/mailbox.html'); render(); });
+      sub.append(all);
+    }
+    if (!shown.some((e) => e.id === activeId)) activeId = shown[0]?.id ?? null;
+    $('list').replaceChildren(...shown.map((e) => {
+      const btn = make('button', { type: 'button', className: 'item' },
+        make('span', { className: 'row' }, make('strong', { textContent: e.from }), make('time', { textContent: fmtShort(e.createdAt) })),
+        make('span', { className: 'subject', textContent: e.subject }),
+        make('span', { className: 'to', textContent: `To ${e.to}` }));
+      btn.setAttribute('aria-current', String(e.id === activeId));
+      btn.addEventListener('click', () => { activeId = e.id; render(); });
+      return make('li', {}, btn);
+    }));
+    renderReader(shown.find((e) => e.id === activeId));
+  }
+
+  async function load() {
+    const res = await fetch('/api/mailbox');
+    if (!res.ok) { $('reader').replaceChildren(make('div', { className: 'empty' }, make('p', { textContent: 'The demo mailbox is switched off.' }))); return; }
+    emails = (await res.json()).emails;
+    render();
+  }
+  $('refresh').addEventListener('click', load);
+  await load();
+</script>
+</body>
+</html>

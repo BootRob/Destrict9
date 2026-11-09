@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applicants · Recruiter hub</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/staff.css">
+  <style>
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: var(--lbg-space-3); margin-bottom: var(--lbg-space-6); }
+    .stat {
+      text-align: left; cursor: pointer; border: 2px solid transparent; background: var(--lbg-white);
+      border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-4) var(--lbg-space-6);
+    }
+    .stat:hover { border-color: var(--lbg-grey-300); }
+    .stat[aria-pressed="true"] { border-color: var(--lbg-heritage-green); }
+    .stat b { display: block; font-family: var(--lbg-font-heading); font-size: 2.25rem; line-height: 2.5rem; }
+    .stat span { font-size: var(--lbg-text-sm); color: var(--lbg-grey-700); font-family: var(--lbg-font-strong); font-weight: 700; }
+    .stat--todo b { color: var(--lbg-heritage-green); }
+    .stat b { font-size: 2rem; line-height: 2.25rem; }
+    .result-choices { display: grid; gap: var(--lbg-space-2); margin: var(--lbg-space-3) 0; }
+    .result-choices label { display: flex; gap: var(--lbg-space-3); align-items: flex-start; padding: var(--lbg-space-3); border: 1px solid var(--lbg-grey-300); border-radius: var(--lbg-radius-md); cursor: pointer; }
+    .result-choices label:has(input:checked) { border-color: var(--lbg-heritage-green); background: var(--lbg-mint); }
+    .result-choices strong { display: block; font-family: var(--lbg-font-strong); }
+    .result-choices small { color: var(--lbg-grey-700); }
+    #result-note { width: 100%; min-height: 72px; padding: var(--lbg-space-3); border: 1px solid var(--lbg-grey-600); border-radius: var(--lbg-radius-md); font: inherit; margin-bottom: var(--lbg-space-4); }
+
+    .table-card { background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); overflow: hidden; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--lbg-space-4); padding: var(--lbg-space-4) var(--lbg-space-6); border-bottom: 1px solid var(--lbg-grey-200); }
+    .toolbar h2 { margin: 0; font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); }
+    .search { min-height: 44px; width: 320px; padding: 0 var(--lbg-space-4); border: 1px solid var(--lbg-grey-600); border-radius: var(--lbg-radius-md); }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--lbg-grey-700); font-family: var(--lbg-font-strong); padding: var(--lbg-space-3) var(--lbg-space-4); background: var(--lbg-grey-100); white-space: nowrap; }
+    th:first-child, td:first-child { padding-left: var(--lbg-space-6); }
+    th:last-child, td:last-child { padding-right: var(--lbg-space-6); text-align: right; }
+    td { padding: var(--lbg-space-4); border-top: 1px solid var(--lbg-grey-200); vertical-align: middle; }
+    tr.flash td { animation: flash 1.6s ease-out; }
+    @keyframes flash { from { background: var(--lbg-mint); } to { background: transparent; } }
+    .cand { display: flex; align-items: center; gap: var(--lbg-space-3); }
+    .cand strong { display: block; font-family: var(--lbg-font-strong); }
+    .cand small, .muted { color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .note { display: block; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); margin-top: 2px; max-width: 280px; }
+    .row-actions { display: inline-flex; gap: var(--lbg-space-2); align-items: center; justify-content: flex-end; }
+    .row-actions a { font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); color: var(--lbg-link-green); }
+    .empty-row td { text-align: center !important; color: var(--lbg-grey-600); padding: var(--lbg-space-12); }
+    .error { color: var(--lbg-error); }
+  </style>
+</head>
+<body class="staff">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <div class="staff-app">
+    <nav id="staff-nav" class="staff-nav"></nav>
+    <div class="staff-main">
+      <div class="page-scroll">
+        <div class="page">
+          <div class="page-head">
+            <div>
+              <h1>Applicants</h1>
+              <p>Candidates you're recruiting for. Onboard successful candidates to invite them to the joiner app.</p>
+            </div>
+            <a class="lbg-btn lbg-btn--secondary lbg-btn--sm" id="mailbox-link" href="/mailbox.html" target="_blank" rel="noopener" hidden>Open demo mailbox</a>
+          </div>
+
+          <div class="stats" id="stats" role="group" aria-label="Filter applicants"></div>
+
+          <div class="table-card">
+            <div class="toolbar">
+              <h2 id="table-title">All applicants</h2>
+              <input class="search" id="search" type="search" placeholder="Search by name, role or location" aria-label="Search applicants">
+            </div>
+            <table>
+              <thead>
+                <tr><th>Candidate</th><th>Role</th><th>Hiring manager</th><th>Applied</th><th>Start date</th><th>Status</th><th>Action</th></tr>
+              </thead>
+              <tbody id="rows"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="modal" id="confirm">
+    <form method="dialog" class="modal-body">
+      <h2 id="confirm-title"></h2>
+      <p>This will:</p>
+      <ul id="confirm-list"></ul>
+      <p class="error" id="confirm-error" role="alert" hidden></p>
+      <div class="actions">
+        <button class="lbg-btn lbg-btn--secondary" value="cancel" type="submit">Cancel</button>
+        <button class="lbg-btn lbg-btn--primary" id="confirm-go" value="go" type="submit">Send invite</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="result">
+    <form method="dialog" class="modal-body">
+      <h2 id="result-title">Record screening result</h2>
+      <p id="result-lead">Enter the result from ClearPath, the screening company.</p>
+      <div class="result-choices">
+        <label><input type="radio" name="result" value="clear"><span><strong>Clear</strong><small>Sends the unconditional offer for them to accept.</small></span></label>
+        <label><input type="radio" name="result" value="not_clear"><span><strong>Not clear</strong><small>Withdraws the conditional offer. They're asked to talk it through with you.</small></span></label>
+      </div>
+      <label class="muted" for="result-note">Internal note (optional, not shown to the candidate)</label>
+      <textarea id="result-note" maxlength="500"></textarea>
+      <div class="actions">
+        <button class="lbg-btn lbg-btn--secondary" value="cancel" type="submit">Cancel</button>
+        <button class="lbg-btn lbg-btn--primary" id="result-go" value="go" type="submit" disabled>Save result</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module">
+  import { api, initials, fmtDate } from '/js/chat.js';
+  import { mountShell } from '/js/staff-shell.js';
+
+  const me = await mountShell('applicants');
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null && c !== false)); return n; };
+
+  const IN_JOURNEY = ['invited', 'conditional_offer', 'screening', 'unconditional_offer'];
+  const FILTERS = [
+    { id: 'all', label: 'All applicants', test: () => true },
+    { id: 'successful', label: 'Ready to onboard', test: (a) => a.stage === 'successful', todo: true },
+    { id: 'result', label: 'Result needed', test: (a) => a.stage === 'screening_submitted', todo: true },
+    { id: 'journey', label: 'Offer in progress', test: (a) => IN_JOURNEY.includes(a.stage) },
+    { id: 'accepted', label: 'Accepted', test: (a) => a.stage === 'accepted' },
+    { id: 'interviewing', label: 'Interviewing', test: (a) => a.stage === 'interviewing' },
+    { id: 'closed', label: 'Unsuccessful or declined', test: (a) => ['unsuccessful', 'declined', 'withdrawn'].includes(a.stage) },
+  ];
+  const STAGE_LABELS = {
+    successful: 'Successful', unsuccessful: 'Unsuccessful', interviewing: 'Interviewing',
+    invited: 'Offer sent', conditional_offer: 'Conditional offer', screening: 'Screening form',
+    screening_submitted: 'Result needed', unconditional_offer: 'Unconditional offer',
+    accepted: 'Accepted', declined: 'Declined', withdrawn: 'Offer withdrawn',
+  };
+  const DEVICE_NAMES = { mac: 'MacBook Pro', hp: 'HP EliteBook' };
+  function stageNote(a) {
+    switch (a.stage) {
+      case 'invited': return `Sent ${fmtShortDate(a.onboardedAt)} · account not activated yet`;
+      case 'conditional_offer': return 'Waiting for them to accept';
+      case 'screening': return `Accepted ${fmtShortDate(a.conditionalAcceptedAt)} · filling in screening form`;
+      case 'screening_submitted': return `Screening form sent ${fmtShortDate(a.screeningSubmittedAt)}`;
+      case 'unconditional_offer': return `Sent ${fmtShortDate(a.unconditionalSentAt)} · waiting for them to accept`;
+      case 'accepted': return `Accepted ${fmtShortDate(a.unconditionalAcceptedAt)} · laptop: ${DEVICE_NAMES[a.device] ?? 'not chosen yet'}`;
+      case 'declined': return `Declined the ${a.declinedOffer} offer${a.declineReason ? `: "${a.declineReason}"` : ''}`;
+      case 'withdrawn': return 'Screening not clear';
+      default: return a.outcomeNote;
+    }
+  }
+
+  let applicants = [];
+  let filter = 'all';
+  let flashId = null;
+  let mailboxOn = false;
+
+  const fmtShortDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+  function renderStats() {
+    $('stats').replaceChildren(...FILTERS.map((f) => {
+      const btn = make('button', { type: 'button', className: `stat${f.todo ? ' stat--todo' : ''}` },
+        make('b', { textContent: applicants.filter(f.test).length }),
+        make('span', { textContent: f.label }));
+      btn.setAttribute('aria-pressed', String(filter === f.id));
+      btn.addEventListener('click', () => { filter = f.id; render(); });
+      return btn;
+    }));
+  }
+
+  function actionCell(a) {
+    const cell = make('div', { className: 'row-actions' });
+    if (a.stage === 'successful') {
+      const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--primary lbg-btn--sm', textContent: 'Onboard' });
+      btn.addEventListener('click', () => confirmOnboard(a));
+      cell.append(btn);
+    } else if (a.stage === 'invited') {
+      const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary lbg-btn--sm', textContent: 'Resend invite' });
+      btn.addEventListener('click', () => resend(a, btn));
+      if (mailboxOn) cell.append(make('a', { href: `/mailbox.html?to=${encodeURIComponent(a.email)}`, target: '_blank', rel: 'noopener', textContent: 'View email' }));
+      cell.append(btn);
+    } else if (a.stage === 'screening_submitted') {
+      const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--primary lbg-btn--sm', textContent: 'Record result' });
+      btn.addEventListener('click', () => recordResult(a));
+      cell.append(btn);
+    } else if (a.conversationId && a.stage !== 'invited') {
+      cell.append(make('a', { href: `/staff/?c=${a.conversationId}`, textContent: 'Message' }));
+    } else {
+      cell.append(make('span', { className: 'muted', textContent: '-' }));
+    }
+    return cell;
+  }
+
+  function render() {
+    renderStats();
+    const f = FILTERS.find((x) => x.id === filter);
+    $('table-title').textContent = f.label;
+    const term = $('search').value.trim().toLowerCase();
+    const rows = applicants.filter(f.test).filter((a) => !term || `${a.name} ${a.jobTitle} ${a.location} ${a.email}`.toLowerCase().includes(term));
+    if (!rows.length) {
+      $('rows').replaceChildren(make('tr', { className: 'empty-row' }, make('td', { colSpan: 7, textContent: term ? 'No applicants match your search.' : 'Nobody here right now.' })));
+      return;
+    }
+    $('rows').replaceChildren(...rows.map((a) => {
+      const tr = make('tr', {},
+        make('td', {}, make('div', { className: 'cand' },
+          make('span', { className: 'avatar avatar--racing', textContent: initials(a.name) }),
+          make('span', {}, make('strong', { textContent: a.name }), make('small', { textContent: a.email })))),
+        make('td', {}, make('span', { textContent: a.jobTitle }), make('span', { className: 'note', textContent: a.location })),
+        make('td', { textContent: a.hiringManager.name }),
+        make('td', { className: 'muted', textContent: fmtShortDate(a.appliedAt) }),
+        make('td', { className: a.startDate ? '' : 'muted', textContent: a.startDate ? fmtDate(a.startDate) : '-' }),
+        make('td', {},
+          make('span', { className: `pill pill--${a.stage}`, textContent: STAGE_LABELS[a.stage] ?? a.stage }),
+          stageNote(a) ? make('span', { className: 'note', textContent: stageNote(a) }) : null),
+        make('td', {}, actionCell(a)));
+      if (a.id === flashId) tr.classList.add('flash');
+      return tr;
+    }));
+    flashId = null;
+  }
+
+  function upsert(applicant) {
+    const i = applicants.findIndex((x) => x.id === applicant.id);
+    if (i >= 0) applicants[i] = applicant; else applicants.unshift(applicant);
+    flashId = applicant.id;
+    render();
+  }
+
+  let toastTimer;
+  function toast(text, link) {
+    const t = $('toast');
+    t.replaceChildren(make('span', { textContent: text }), link ? make('a', { href: link.href, target: '_blank', rel: 'noopener', textContent: link.label }) : null);
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 8000);
+  }
+
+  function confirmOnboard(a) {
+    const first = a.name.split(' ')[0];
+    $('confirm-title').textContent = `Onboard ${a.name}?`;
+    $('confirm-list').replaceChildren(
+      make('li', { textContent: `Send ${first} their conditional offer by email at ${a.email}, with a link to set up the joiner app.` }),
+      make('li', { textContent: `Open a chat between you and ${first} in the app.` }),
+      make('li', { textContent: `Guide them through accepting, screening and their unconditional offer. They'll meet ${a.hiringManager.name}, their hiring manager, once they accept it.` }));
+    $('confirm-error').hidden = true;
+    const dialog = $('confirm');
+    dialog.returnValue = '';
+    dialog.showModal();
+    dialog.onclose = async () => {
+      if (dialog.returnValue !== 'go') return;
+      try {
+        const { applicant } = await api(`/api/applicants/${a.id}/onboard`, { method: 'POST' });
+        upsert(applicant);
+        toast(`Invite sent to ${applicant.name}.`, mailboxOn ? { href: `/mailbox.html?to=${encodeURIComponent(applicant.email)}`, label: 'View the email' } : null);
+      } catch (err) {
+        toast(`Couldn't onboard ${a.name}: ${err.message}`);
+      }
+    };
+  }
+
+  function recordResult(a) {
+    const dialog = $('result');
+    const form = dialog.querySelector('form');
+    form.reset();
+    $('result-go').disabled = true;
+    $('result-title').textContent = `Screening result for ${a.name}`;
+    form.onchange = () => { $('result-go').disabled = !form.result.value; };
+    dialog.returnValue = '';
+    dialog.showModal();
+    dialog.onclose = async () => {
+      if (dialog.returnValue !== 'go') return;
+      try {
+        const { applicant } = await api(`/api/applicants/${a.id}/screening-result`, { method: 'POST', body: JSON.stringify({ result: form.result.value, note: $('result-note').value }) });
+        upsert(applicant);
+        toast(applicant.stage === 'unconditional_offer' ? `Unconditional offer sent to ${applicant.name}.` : `${applicant.name}'s offer has been withdrawn.`,
+          mailboxOn ? { href: `/mailbox.html?to=${encodeURIComponent(applicant.email)}`, label: 'View the email' } : null);
+      } catch (err) {
+        toast(err.message);
+      }
+    };
+  }
+
+  async function resend(a, btn) {
+    btn.disabled = true;
+    try {
+      const { applicant } = await api(`/api/applicants/${a.id}/resend`, { method: 'POST' });
+      upsert(applicant);
+      toast(`New link sent to ${applicant.name}. The old one no longer works.`, mailboxOn ? { href: `/mailbox.html?to=${encodeURIComponent(applicant.email)}`, label: 'View the email' } : null);
+    } catch (err) {
+      toast(err.message);
+      btn.disabled = false;
+    }
+  }
+
+  $('search').addEventListener('input', render);
+
+  async function load() {
+    const data = await api('/api/applicants');
+    applicants = data.applicants;
+    mailboxOn = data.mailbox;
+    $('mailbox-link').hidden = !mailboxOn;
+    render();
+  }
+  await load();
+
+  // Live: flips "Invite sent" to "Active in app" the moment the joiner activates.
+  const socket = io();
+  socket.on('applicant:updated', (applicant) => {
+    const before = applicants.find((x) => x.id === applicant.id)?.stage;
+    upsert(applicant);
+    if (before === applicant.stage) return; // e.g. a laptop choice: refresh the row quietly
+    const live = {
+      conditional_offer: `${applicant.name} has activated their app and is viewing their offer.`,
+      screening: `${applicant.name} accepted their conditional offer.`,
+      screening_submitted: `${applicant.name} sent their screening details. Record the result when it arrives.`,
+      accepted: `${applicant.name} accepted their unconditional offer.`,
+      declined: `${applicant.name} declined their offer.`,
+    }[applicant.stage];
+    if (live) toast(live);
+  });
+  socket.on('connect', () => { if (applicants.length) load(); });
+</script>
+</body>
+</html>

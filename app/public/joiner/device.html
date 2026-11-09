@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#024731">
+  <title>Choose your laptop · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
+  <style>
+    body { background: var(--lbg-grey-100); }
+    .devices { display: grid; gap: var(--lbg-space-4); }
+    .device {
+      position: relative; display: block; cursor: pointer; background: var(--lbg-white);
+      border: 2px solid var(--lbg-grey-200); border-radius: var(--lbg-radius-lg); overflow: hidden;
+      box-shadow: var(--lbg-shadow-card); transition: border-color .15s, box-shadow .15s;
+    }
+    .device:hover { border-color: var(--lbg-grey-400); }
+    .device:has(input:checked) { border-color: var(--lbg-heritage-green); box-shadow: 0 0 0 4px var(--lbg-mint), var(--lbg-shadow-card); }
+    .device:has(input:focus-visible) { box-shadow: var(--lbg-focus-ring); }
+    .device input { position: absolute; opacity: 0; pointer-events: none; }
+    .device .photo { background: linear-gradient(180deg, var(--lbg-grey-100), var(--lbg-white)); padding: var(--lbg-space-4) var(--lbg-space-4) 0; }
+    .device .photo img { display: block; width: 100%; height: auto; aspect-ratio: 800 / 520; }
+    .device .info { padding: var(--lbg-space-4) var(--lbg-space-6) var(--lbg-space-6); }
+    .device h2 { margin: 0 0 var(--lbg-space-1); font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); }
+    .device .best { margin: 0 0 var(--lbg-space-3); color: var(--lbg-grey-700); font-size: var(--lbg-text-sm); }
+    .device ul { margin: 0; padding-left: var(--lbg-space-6); font-size: var(--lbg-text-sm); }
+    .device li { margin-bottom: 2px; }
+    .tag { position: absolute; top: var(--lbg-space-3); left: var(--lbg-space-3); z-index: 1; padding: 2px 10px; border-radius: var(--lbg-radius-pill); background: var(--lbg-heritage-green); color: var(--lbg-white); font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; }
+    .tick { position: absolute; top: var(--lbg-space-3); right: var(--lbg-space-3); z-index: 1; width: 32px; height: 32px; border-radius: 50%; background: var(--lbg-heritage-green); display: none; place-items: center; }
+    .tick img { width: 16px; filter: brightness(0) invert(1); }
+    .device:has(input:checked) .tick { display: grid; }
+    .sticky { position: sticky; bottom: 0; background: var(--lbg-white); padding: var(--lbg-space-4) 0 calc(var(--lbg-space-4) + env(safe-area-inset-bottom)); margin-top: var(--lbg-space-6); border-top: 1px solid var(--lbg-grey-200); }
+    .sticky .lbg-btn { max-width: none; }
+    .chosen { display: flex; gap: var(--lbg-space-4); align-items: center; }
+    .chosen img { width: 120px; height: auto; flex: none; }
+    .chosen h2 { margin: 0 0 var(--lbg-space-1); }
+    .chosen p { margin: 0; font-size: var(--lbg-text-sm); color: var(--lbg-grey-700); }
+  </style>
+</head>
+<body>
+<div class="jpage">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="lbg-surface--racing">
+    <div class="jbar">
+      <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
+      <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+    </div>
+    <div class="jhead">
+      <p class="eyebrow">Your kit</p>
+      <h1 id="title">Choose your laptop</h1>
+      <p id="lead">Loading…</p>
+    </div>
+  </header>
+
+  <main class="jbody">
+    <section id="not-yet" hidden>
+      <div class="callout-note"><p>You can choose your laptop once you've accepted your unconditional offer.</p></div>
+      <p><a class="lbg-btn lbg-btn--primary" href="/joiner/" style="max-width:none;margin-top:var(--lbg-space-4)">Back to your journey</a></p>
+    </section>
+
+    <section id="done" hidden>
+      <div class="callout-note">
+        <div class="chosen"><img id="done-img" alt=""><div><h2 id="done-name"></h2><p id="done-text"></p></div></div>
+      </div>
+      <p id="change-wrap"><button class="lbg-btn lbg-btn--secondary" id="change" type="button" style="max-width:none;margin-top:var(--lbg-space-4)">Change my choice</button></p>
+      <p><a class="lbg-btn lbg-btn--primary" href="/joiner/" style="max-width:none">Back to your journey</a></p>
+    </section>
+
+    <form id="pick" hidden>
+      <fieldset style="margin:0">
+        <legend class="visually-hidden" style="position:absolute;left:-9999px">Laptop</legend>
+        <div class="devices" id="devices"></div>
+      </fieldset>
+      <p class="form-error" id="error" role="alert" hidden style="margin-top:var(--lbg-space-4)"><img src="/brand/icons/form-exclamation.svg" alt=""><span></span></p>
+      <div class="sticky"><button class="lbg-btn lbg-btn--primary" id="confirm" type="submit" disabled>Choose a laptop</button></div>
+    </form>
+  </main>
+</div>
+
+<script type="module">
+  import { api, fmtDate } from '/js/chat.js';
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null && c !== false)); return n; };
+
+  let { journey: j } = await api('/api/journey');
+
+  function showPicker() {
+    const d = j.device;
+    $('done').hidden = true;
+    $('pick').hidden = false;
+    $('title').textContent = d.choice ? 'Change your laptop' : 'Choose your laptop';
+    $('lead').textContent = `It'll be set up with everything you need and ready for you on day 1.${d.changeUntil ? ` You can change your mind until ${fmtDate(d.changeUntil)}.` : ''}`;
+    $('devices').replaceChildren(...d.options.map((o) => {
+      const input = make('input', { type: 'radio', name: 'device', value: o.id, checked: o.id === d.choice });
+      input.setAttribute('aria-label', o.name);
+      return make('label', { className: 'device' },
+        input,
+        o.id === d.recommended ? make('span', { className: 'tag', textContent: `Recommended for ${j.offer.jobTitle}s` }) : null,
+        make('span', { className: 'tick' }, make('img', { src: '/brand/icons/checked.svg', alt: '' })),
+        make('div', { className: 'photo' }, make('img', { src: o.image, alt: o.name, width: 800, height: 520 })),
+        make('div', { className: 'info' },
+          make('h2', { textContent: o.name }),
+          make('p', { className: 'best', textContent: `Best for: ${o.bestFor}` }),
+          make('ul', {}, ...o.specs.map((s) => make('li', { textContent: s })))));
+    }));
+    const update = () => {
+      const picked = d.options.find((o) => o.id === new FormData($('pick')).get('device'));
+      $('confirm').disabled = !picked || picked.id === d.choice;
+      $('confirm').textContent = !picked ? 'Choose a laptop' : picked.id === d.choice ? 'This is your current choice' : `Choose the ${picked.name.split(' 14')[0]}`;
+    };
+    $('pick').onchange = update;
+    update();
+  }
+
+  function showDone() {
+    const d = j.device;
+    const o = d.options.find((x) => x.id === d.choice);
+    $('pick').hidden = true;
+    $('done').hidden = false;
+    $('title').textContent = 'Your laptop';
+    $('lead').textContent = 'Sorted. One less thing to think about.';
+    $('done-img').src = o.image;
+    $('done-name').textContent = o.name;
+    $('done-text').textContent = `It'll be set up and waiting for you on day 1${j.offer.startDate ? ` (${fmtDate(j.offer.startDate)})` : ''}. Collect it from reception when you arrive.`;
+    $('change-wrap').hidden = !d.canChange;
+  }
+
+  $('change').addEventListener('click', showPicker);
+  $('pick').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('error').hidden = true;
+    $('confirm').disabled = true;
+    try {
+      ({ journey: j } = await api('/api/journey/device', { method: 'POST', body: JSON.stringify({ device: new FormData($('pick')).get('device') }) }));
+      window.scrollTo(0, 0);
+      showDone();
+    } catch (err) {
+      $('error').querySelector('span').textContent = err.message;
+      $('error').hidden = false;
+      $('confirm').disabled = false;
+    }
+  });
+
+  if (!j.device.available) {
+    $('title').textContent = 'Choose your laptop';
+    $('lead').textContent = 'Coming up soon.';
+    $('not-yet').hidden = false;
+  } else if (j.device.choice) {
+    showDone();
+  } else if (j.device.canChange) {
+    showPicker();
+  } else {
+    $('lead').textContent = 'Your hiring manager will arrange a laptop for you.';
+    $('not-yet').hidden = false;
+    $('not-yet').querySelector('p').textContent = "It's too close to your start date to choose online. Your hiring manager will arrange a laptop for you.";
+  }
+</script>
+</body>
+</html>
