@@ -1,0 +1,20 @@
+{
+  "name": "district9-joiner-companion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Joiner companion prototype: manager web hub and joiner mobile chat",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js",
+    "reset": "node -e \"require('fs').rmSync('data',{recursive:true,force:true})\" && echo 'Database removed; it will be re-seeded on next start'"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
+    "express": "^5.3.0",
+    "socket.io": "^4.8.4"
+  }
+}

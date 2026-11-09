@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#024731">
+  <title>Your guides · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    body { background: var(--lbg-grey-100); }
+    .phone { max-width: 430px; margin: 0 auto; min-height: 100dvh; background: var(--lbg-white); display: flex; flex-direction: column; }
+    .bar { display: flex; align-items: center; gap: var(--lbg-space-2); padding: var(--lbg-space-2) var(--lbg-space-4) var(--lbg-space-4); }
+    .bar a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; }
+    .bar a img { width: 20px; filter: brightness(0) invert(1); }
+    .bar h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; }
+    .bar p { margin: 0; font-size: var(--lbg-text-sm); opacity: .9; }
+    .content { flex: 1; padding: var(--lbg-space-4) var(--lbg-space-4) calc(var(--lbg-space-8) + env(safe-area-inset-bottom)); }
+    .list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-3); }
+    .item { display: flex; align-items: center; gap: var(--lbg-space-3); width: 100%; text-align: left; cursor: pointer; border: 0; background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-4); min-height: 64px; }
+    .item .info { flex: 1; min-width: 0; }
+    .item strong { display: block; font-family: var(--lbg-font-strong); }
+    .item small { font-size: 12px; color: var(--lbg-grey-600); }
+    .item img { width: 12px; flex: none; }
+    .ask { margin-top: var(--lbg-space-6); }
+    .ask p { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-2); }
+    .updated { font-size: 12px; color: var(--lbg-grey-600); margin: var(--lbg-space-6) 0 0; }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="lbg-surface--racing">
+    <div class="bar">
+      <a href="/joiner/" id="back" aria-label="Back"><img src="/brand/icons/arrow-left.svg" alt=""></a>
+      <div><h1 id="title">Your guides</h1><p id="subtitle">Everything you need to know before you start</p></div>
+    </div>
+  </header>
+
+  <div class="content">
+    <ul class="list" id="list"></ul>
+    <article class="guide-body" id="body" hidden></article>
+    <p class="updated" id="updated" hidden></p>
+    <div class="ask" id="ask">
+      <p>Can't find what you need?</p>
+      <a class="lbg-btn lbg-btn--secondary" href="/joiner/#assistant">Ask the onboarding assistant</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { api, fmtShort } from '/js/chat.js';
+  import { renderMarkdown } from '/js/markdown.js';
+
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
+  const fromAssistant = new URLSearchParams(location.search).get('from') === 'assistant';
+  let guides;
+  try {
+    ({ guides } = await api('/api/guides'));
+  } catch (err) {
+    $('subtitle').textContent = `Your guides couldn't be loaded (${err.message}). Please try again shortly.`;
+    throw err;
+  }
+
+  function showList() {
+    $('title').textContent = 'Your guides';
+    $('subtitle').textContent = 'Everything you need to know before you start';
+    $('back').href = '/joiner/';
+    $('body').hidden = true; $('updated').hidden = true; $('list').hidden = false;
+    $('list').replaceChildren(...guides.map((g) => {
+      const b = make('button', { type: 'button', className: 'item' },
+        make('span', { className: 'info' }, make('strong', { textContent: g.title }), make('small', { textContent: `Updated ${fmtShort(g.updatedAt)}` })),
+        make('img', { src: '/brand/icons/chevron-right.svg', alt: '' }));
+      b.addEventListener('click', () => { location.hash = g.id; });
+      return make('li', {}, b);
+    }));
+    document.title = 'Your guides · Joiner companion';
+  }
+
+  async function showGuide(id) {
+    const { guide } = await api(`/api/guides/${encodeURIComponent(id)}`);
+    $('title').textContent = guide.title;
+    $('subtitle').textContent = 'Onboarding guide';
+    // Back goes to the assistant if that's where they came from, otherwise to the guide list.
+    $('back').href = fromAssistant ? '/joiner/#assistant' : '/joiner/guides.html';
+    $('list').hidden = true;
+    $('body').replaceChildren(renderMarkdown(guide.markdown, { skipTitle: true }));
+    $('body').hidden = false;
+    $('updated').textContent = `Last updated ${fmtShort(guide.updatedAt)}${guide.updatedBy ? ` by ${guide.updatedBy.name}` : ''}`;
+    $('updated').hidden = false;
+    document.title = `${guide.title} · Joiner companion`;
+    scrollTo(0, 0);
+  }
+
+  const route = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    return guides.some((g) => g.id === id) ? showGuide(id) : showList();
+  };
+  addEventListener('hashchange', route);
+  route();
+</script>
+</body>
+</html>

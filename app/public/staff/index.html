@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hub · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .topbar { display: flex; align-items: center; gap: var(--lbg-space-6); padding: var(--lbg-space-3) var(--lbg-space-6); }
+    .topbar img { height: 32px; display: block; }
+    .topbar .title { font-family: var(--lbg-font-heading); font-weight: 700; font-size: var(--lbg-text-lg); padding-left: var(--lbg-space-6); border-left: 1px solid rgba(255,255,255,.3); }
+    .topbar nav { display: flex; gap: var(--lbg-space-2); }
+    .topbar nav a { color: inherit; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); padding: var(--lbg-space-2) var(--lbg-space-3); border-radius: var(--lbg-radius-md); text-decoration: none; }
+    .topbar nav a[aria-current="page"] { background: rgba(255,255,255,.15); }
+    .topbar .me { margin-left: auto; display: flex; align-items: center; gap: var(--lbg-space-3); }
+    .topbar .me .avatar { background: var(--lbg-white); color: var(--lbg-racing-green); }
+    .topbar .me small { display: block; font-size: 12px; opacity: .85; }
+    .topbar .me strong { font-family: var(--lbg-font-strong); }
+
+    .layout { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
+    aside { border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; background: var(--lbg-white); }
+    aside h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-2); margin: 0; }
+    aside .sub { padding: 0 var(--lbg-space-6) var(--lbg-space-4); margin: 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .convs { list-style: none; margin: 0; padding: 0 var(--lbg-space-3) var(--lbg-space-4); overflow-y: auto; }
+    .conv {
+      display: flex; gap: var(--lbg-space-3); width: 100%; text-align: left; cursor: pointer;
+      padding: var(--lbg-space-3); border: 0; border-radius: var(--lbg-radius-md); background: none; margin-bottom: 2px;
+    }
+    .conv:hover { background: var(--lbg-grey-100); }
+    .conv[aria-current="true"] { background: var(--lbg-mint); }
+    .conv .info { flex: 1; min-width: 0; }
+    .conv .row { display: flex; justify-content: space-between; gap: var(--lbg-space-2); }
+    .conv strong { font-family: var(--lbg-font-strong); }
+    .conv time, .conv small { font-size: 12px; color: var(--lbg-grey-600); }
+    .conv .preview { display: block; font-size: var(--lbg-text-sm); color: var(--lbg-charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .conv.has-unread .preview { font-family: var(--lbg-font-strong); font-weight: 700; color: var(--lbg-black); }
+    .badge {
+      min-width: 22px; height: 22px; padding: 0 6px; border-radius: var(--lbg-radius-pill);
+      background: var(--lbg-heritage-green); color: var(--lbg-white);
+      font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; display: inline-grid; place-items: center;
+    }
+
+    main { display: grid; grid-template-columns: 1fr 280px; min-height: 0; background: var(--lbg-white); }
+    .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+    .conv-head { display: flex; align-items: center; gap: var(--lbg-space-4); padding: var(--lbg-space-4) var(--lbg-space-6); border-bottom: 1px solid var(--lbg-grey-200); }
+    .conv-head h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; }
+    .conv-head p { margin: 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .chat .thread { flex: 1; padding: var(--lbg-space-6); }
+    .chat .thread .msg { max-width: min(70%, 560px); }
+    .chat .composer { padding: var(--lbg-space-4) var(--lbg-space-6); }
+
+    .details { border-left: 1px solid var(--lbg-grey-200); padding: var(--lbg-space-6); overflow-y: auto; background: var(--lbg-grey-100); }
+    .details h2 { font-size: var(--lbg-text-md); line-height: var(--lbg-lh-md); margin: 0 0 var(--lbg-space-3); }
+    .details section + section { margin-top: var(--lbg-space-6); }
+    .fact { display: flex; align-items: center; gap: var(--lbg-space-2); font-size: var(--lbg-text-sm); margin-bottom: var(--lbg-space-2); }
+    .fact img { width: 18px; height: 18px; }
+    .fact b { font-family: var(--lbg-font-strong); }
+    .circle { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-2); }
+    .circle li { display: flex; align-items: center; gap: var(--lbg-space-3); background: var(--lbg-white); border-radius: var(--lbg-radius-md); padding: var(--lbg-space-2) var(--lbg-space-3); }
+    .circle .avatar { width: 32px; height: 32px; font-size: 12px; }
+    .circle strong { display: block; font-family: var(--lbg-font-strong); font-size: var(--lbg-text-sm); }
+    .circle small { font-size: 12px; color: var(--lbg-grey-600); }
+    .circle li.unassigned { background: transparent; border: 1px dashed var(--lbg-grey-400); }
+    .circle li.unassigned .avatar { background: var(--lbg-grey-200); color: var(--lbg-grey-600); }
+    .circle .you { font-size: 11px; font-family: var(--lbg-font-strong); font-weight: 700; margin-left: auto; color: var(--lbg-heritage-green); }
+    .details .note { font-size: 12px; color: var(--lbg-grey-600); margin: var(--lbg-space-3) 0 0; }
+
+    .empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--lbg-grey-600); padding: var(--lbg-space-8); grid-column: 1 / -1; }
+    .empty img { width: 48px; opacity: .5; margin-bottom: var(--lbg-space-3); }
+    .back { display: none; }
+
+    @media (max-width: 1080px) { main { grid-template-columns: 1fr; } .details { display: none; } }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .layout.chatting aside { display: none; }
+      .layout:not(.chatting) main { display: none; }
+      .topbar .title { display: none; }
+      .back { display: inline-flex; }
+    }
+  </style>
+</head>
+<body>
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="topbar lbg-surface--racing">
+    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+    <span class="title" id="hub-title">Hub</span>
+    <nav aria-label="Hub sections">
+      <a href="/staff/" aria-current="page">Joiners</a>
+      <a href="/staff/guides.html">Guides</a>
+    </nav>
+    <div class="me">
+      <span class="avatar" id="me-avatar"></span>
+      <span><strong id="me-name"></strong><small id="me-role"></small></span>
+      <button class="link-btn" id="logout" type="button">Log out</button>
+    </div>
+  </header>
+  <div class="conn-banner" id="conn" hidden>Reconnecting…</div>
+
+  <div class="layout" id="layout">
+    <aside>
+      <h2>Your joiners</h2>
+      <p class="sub" id="count"></p>
+      <ul class="convs" id="convs"></ul>
+    </aside>
+
+    <main>
+      <div class="empty" id="empty">
+        <div><img src="/brand/icons/quote.svg" alt=""><p>Pick a joiner to see your conversation.</p></div>
+      </div>
+      <div class="chat" id="chat" hidden>
+        <div class="conv-head">
+          <button class="link-btn back" id="back" type="button">Back</button>
+          <span class="avatar avatar--lg avatar--racing" id="j-avatar"></span>
+          <div><h1 id="j-name"></h1><p id="j-role"></p></div>
+        </div>
+        <div class="thread" id="thread" aria-live="polite"></div>
+        <div class="typing" id="typing" hidden></div>
+        <p class="composer-error" id="send-error" role="alert" hidden></p>
+        <form class="composer" id="composer">
+          <textarea id="message" rows="1" maxlength="2000" aria-label="Message"></textarea>
+          <button class="lbg-btn lbg-btn--primary" type="submit">Send</button>
+        </form>
+      </div>
+      <div class="details" id="details" hidden>
+        <section>
+          <h2>Joining details</h2>
+          <div class="fact"><img src="/brand/icons/calendar.svg" alt=""><span>Starts <b id="j-start"></b></span></div>
+          <div class="fact"><img src="/brand/icons/location.svg" alt=""><b id="j-location"></b></div>
+          <div class="fact"><img src="/brand/icons/job-type.svg" alt=""><span id="j-job"></span></div>
+        </section>
+        <section>
+          <h2 id="circle-title">Their people</h2>
+          <ul class="circle" id="circle"></ul>
+          <p class="note">Each chat is private between the joiner and that person.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="module">
+  import { api, logout, initials, fmtShort, fmtDate, daysUntil, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
+
+  const HUB_TITLES = { manager: 'Manager hub', recruiter: 'Recruiter hub', buddy: 'Buddy hub' };
+  const ROLE_ORDER = ['manager', 'recruiter', 'buddy'];
+  const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter', buddy: 'Buddy' };
+
+  document.getElementById('logout').addEventListener('click', logout);
+
+  const { user: me } = await api('/api/me');
+  const hubTitle = HUB_TITLES[me.role] ?? 'Hub';
+  document.getElementById('hub-title').textContent = hubTitle;
+  document.getElementById('me-name').textContent = me.name;
+  document.getElementById('me-role').textContent = `${me.roleLabel} · ${me.jobTitle}`;
+  document.getElementById('me-avatar').textContent = initials(me.name);
+
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
+  const els = { layout: $('layout'), list: $('convs'), empty: $('empty'), chat: $('chat'), details: $('details'), typing: $('typing'), sendError: $('send-error'), conn: $('conn'), message: $('message') };
+
+  const thread = new Thread($('thread'), me.id);
+  const showTyping = typingIndicator(els.typing);
+  let conversations = [];
+  let activeId = null;
+
+  function renderList() {
+    $('count').textContent = conversations.length === 1 ? '1 joiner' : `${conversations.length} joiners`;
+    els.list.replaceChildren(...conversations.map((c) => {
+      const j = c.joiner;
+      const days = daysUntil(j.startDate);
+      const btn = make('button', { type: 'button', className: `conv${c.unread ? ' has-unread' : ''}` },
+        make('span', { className: 'avatar avatar--racing', textContent: initials(j.name) }),
+        make('span', { className: 'info' },
+          make('span', { className: 'row' },
+            make('strong', { textContent: j.name }),
+            c.lastMessage ? make('time', { textContent: fmtShort(c.lastMessage.createdAt) }) : ''),
+          make('small', { textContent: `${j.jobTitle} · ${days >= 0 ? `starts in ${days} days` : 'started'}` }),
+          make('span', { className: 'row' },
+            make('span', { className: 'preview', textContent: c.lastMessage ? `${c.lastMessage.senderId === me.id ? 'You: ' : ''}${c.lastMessage.body}` : 'No messages yet' }),
+            c.unread ? make('span', { className: 'badge', textContent: c.unread, ariaLabel: `${c.unread} unread` }) : '')));
+      btn.setAttribute('aria-current', String(c.id === activeId));
+      btn.addEventListener('click', () => open(c.id));
+      return make('li', {}, btn);
+    }));
+    const total = conversations.reduce((n, c) => n + c.unread, 0);
+    document.title = `${total ? `(${total}) ` : ''}${hubTitle} · Joiner companion`;
+  }
+
+  function renderDetails(c) {
+    const j = c.joiner;
+    $('j-start').textContent = fmtDate(j.startDate);
+    $('j-location').textContent = j.location;
+    $('j-job').textContent = j.jobTitle;
+    $('circle-title').textContent = `${j.name.split(' ')[0]}'s people`;
+    $('circle').replaceChildren(...ROLE_ORDER.map((role) => {
+      const p = c.circle?.[role];
+      if (!p) return make('li', { className: 'unassigned' }, make('span', { className: 'avatar', textContent: '?' }), make('span', {}, make('strong', { textContent: 'Not assigned yet' }), make('small', { textContent: ROLE_LABELS[role] })));
+      return make('li', {},
+        make('span', { className: 'avatar', textContent: initials(p.name) }),
+        make('span', {}, make('strong', { textContent: p.name }), make('small', { textContent: ROLE_LABELS[role] })),
+        p.id === me.id ? make('span', { className: 'you', textContent: 'YOU' }) : '');
+    }));
+  }
+
+  async function loadList() {
+    ({ conversations } = await api('/api/conversations'));
+    renderList();
+  }
+
+  const markRead = () => {
+    if (activeId == null || document.visibilityState !== 'visible') return;
+    const c = conversations.find((x) => x.id === activeId);
+    if (c?.unread) { c.unread = 0; renderList(); }
+    api(`/api/conversations/${activeId}/read`, { method: 'POST' }).catch(() => {});
+  };
+
+  async function open(id) {
+    activeId = id;
+    const c = conversations.find((x) => x.id === id);
+    els.empty.hidden = true;
+    els.chat.hidden = false;
+    els.details.hidden = false;
+    els.layout.classList.add('chatting');
+    els.typing.hidden = true;
+    els.sendError.hidden = true;
+    $('j-name').textContent = c.joiner.name;
+    $('j-avatar').textContent = initials(c.joiner.name);
+    $('j-role').textContent = `${c.joiner.jobTitle} · you're their ${c.kindLabel.toLowerCase()}`;
+    els.message.placeholder = `Message ${c.joiner.name.split(' ')[0]}`;
+    renderDetails(c);
+    renderList();
+    const { messages } = await api(`/api/conversations/${id}/messages`);
+    if (activeId !== id) return;
+    thread.set(messages);
+    thread.scrollToEnd();
+    markRead();
+    els.message.focus();
+  }
+
+  $('back').addEventListener('click', () => {
+    activeId = null;
+    els.layout.classList.remove('chatting');
+    els.chat.hidden = true;
+    els.details.hidden = true;
+    els.empty.hidden = false;
+    renderList();
+  });
+
+  function onMessage(m) {
+    const c = conversations.find((x) => x.id === m.conversationId);
+    if (!c) return loadList();
+    c.lastMessage = { body: m.body, createdAt: m.createdAt, senderId: m.senderId };
+    if (m.conversationId === activeId) {
+      thread.add(m);
+      if (m.senderId !== me.id) { els.typing.hidden = true; markRead(); }
+    } else if (m.senderId !== me.id) {
+      c.unread += 1;
+    }
+    conversations.sort((a, b) => (b.lastMessage?.createdAt ?? '').localeCompare(a.lastMessage?.createdAt ?? ''));
+    renderList();
+  }
+
+  const socket = io();
+  socket.on('connect', async () => {
+    els.conn.hidden = true;
+    await loadList();
+    if (activeId != null) open(activeId);
+  });
+  socket.on('disconnect', () => { els.conn.hidden = false; });
+  socket.on('connect_error', (err) => { if (err.message === 'unauthorised') location.href = '/login.html'; else els.conn.hidden = false; });
+  socket.on('message:new', onMessage);
+  socket.on('conversation:read', ({ conversationId, readerId, at }) => { if (conversationId === activeId && readerId !== me.id) thread.markReadBy(readerId, at); });
+  socket.on('typing', ({ conversationId, name }) => { if (conversationId === activeId) showTyping(name); });
+  document.addEventListener('visibilitychange', markRead);
+
+  bindComposer($('composer'), {
+    onTyping: () => activeId != null && socket.emit('typing', { conversationId: activeId }),
+    onSend: async (body) => {
+      els.sendError.hidden = true;
+      try {
+        const { message } = await emitWithAck(socket, 'message:send', { conversationId: activeId, body });
+        onMessage(message);
+        thread.scrollToEnd();
+      } catch (err) {
+        els.sendError.textContent = err.message;
+        els.sendError.hidden = false;
+        throw err;
+      }
+    },
+  });
+</script>
+</body>
+</html>

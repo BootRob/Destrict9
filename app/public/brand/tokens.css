@@ -1,0 +1,101 @@
+/*
+ * Lloyds Banking Group design tokens.
+ * Values come from lloydsbankinggroup.com (brand-gca stylesheet, Nov 2026).
+ * Copy this file into the app and import it once at the root.
+ */
+:root {
+  /* Brand greens (the class names on the live site are given in brackets) */
+  --lbg-everyday-green: #11b67a;  /* .everyday-green: icons, highlights */
+  --lbg-heritage-green: #006a4d;  /* .heritage-green: primary brand surface, tooltips */
+  --lbg-racing-green:   #024731;  /* .racing-green: darkest surface, hero backgrounds */
+  --lbg-accent-green:   #0be248;  /* .btn-accent: bright call-to-action, use sparingly */
+  --lbg-link-green:     #00864f;  /* links, hero header text, result titles */
+  --lbg-leaf-green:     #62b34f;  /* secondary illustration green */
+  --lbg-mint:           #c7ffc6;  /* pale tint for success backgrounds */
+
+  /* Neutrals */
+  --lbg-black:      #000000;      /* body text, primary buttons */
+  --lbg-white:      #ffffff;
+  --lbg-charcoal:   #323233;      /* secondary dark text and surfaces */
+  --lbg-grey-700:   #505050;
+  --lbg-grey-600:   #767676;      /* disabled text, captions (AA on white) */
+  --lbg-grey-400:   #9b9b9b;
+  --lbg-grey-300:   #c9c9c9;      /* borders */
+  --lbg-grey-200:   #d8d8d8;
+  --lbg-grey-100:   #f1f1f1;      /* disabled background, subtle panels */
+
+  /* Status */
+  --lbg-error:      #bb0000;
+  --lbg-info:       #3373cb;
+
+  /* Typography. The site uses GT Ultra, a licensed font that is NOT bundled here.
+     The system fallbacks render well on phones. */
+  --lbg-font-heading: "GT Ultra Median Bold", "GT Ultra Median", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --lbg-font-body:    "GT Ultra Standard Regular", "GT Ultra Standard", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --lbg-font-strong:  "GT Ultra Standard Bold", "GT Ultra Standard", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Type scale (mobile first; the site uses larger sizes from tablet up) */
+  --lbg-text-h1: 2.25rem;  --lbg-lh-h1: 2.5rem;   /* desktop: 3rem / 3.25rem */
+  --lbg-text-h2: 1.75rem;  --lbg-lh-h2: 2.25rem;  /* desktop: 2.5rem / 3rem */
+  --lbg-text-h3: 1.375rem; --lbg-lh-h3: 1.75rem;
+  --lbg-text-lg: 1.125rem; --lbg-lh-lg: 1.5rem;   /* buttons, lead text */
+  --lbg-text-md: 1rem;     --lbg-lh-md: 1.5rem;
+  --lbg-text-sm: 0.875rem; --lbg-lh-sm: 1.25rem;
+
+  /* Shape */
+  --lbg-radius-sm: 8px;
+  --lbg-radius-md: 12px;   /* buttons, inputs */
+  --lbg-radius-lg: 16px;   /* cards, tooltips, sheets */
+  --lbg-radius-pill: 999px;
+
+  /* Spacing (4px grid) */
+  --lbg-space-1: 4px;  --lbg-space-2: 8px;  --lbg-space-3: 12px; --lbg-space-4: 16px;
+  --lbg-space-6: 24px; --lbg-space-8: 32px; --lbg-space-12: 48px; --lbg-space-15: 60px;
+
+  --lbg-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --lbg-focus-ring: 0 0 0 3px var(--lbg-accent-green);
+}
+
+/* Base */
+body {
+  margin: 0;
+  background: var(--lbg-white);
+  color: var(--lbg-black);
+  font-family: var(--lbg-font-body);
+  font-size: var(--lbg-text-md);
+  line-height: var(--lbg-lh-md);
+  letter-spacing: 0;
+}
+h1, h2, h3 { font-family: var(--lbg-font-heading); font-weight: 700; margin: 0 0 var(--lbg-space-4); }
+h1 { font-size: var(--lbg-text-h1); line-height: var(--lbg-lh-h1); }
+h2 { font-size: var(--lbg-text-h2); line-height: var(--lbg-lh-h2); }
+h3 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); }
+a { color: var(--lbg-link-green); }
+:focus-visible { outline: none; box-shadow: var(--lbg-focus-ring); }
+
+/* Buttons. These match the site: black primary, outlined secondary, bright-green accent,
+   underline on hover, grey when disabled. */
+.lbg-btn {
+  display: flex; align-items: center; justify-content: center; gap: var(--lbg-space-2);
+  width: 100%; max-width: 278px; min-height: 48px;
+  padding: 12px 24px; border-radius: var(--lbg-radius-md); border: 1px solid transparent;
+  font-family: var(--lbg-font-strong); font-weight: 700;
+  font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg);
+  text-decoration: none; cursor: pointer;
+}
+.lbg-btn:hover { text-decoration: underline; }
+.lbg-btn--primary   { background: var(--lbg-black); color: var(--lbg-white); }
+.lbg-btn--secondary { background: transparent; color: var(--lbg-black); border-color: var(--lbg-black); }
+.lbg-btn--secondary:active { background: var(--lbg-black); color: var(--lbg-white); }
+.lbg-btn--accent    { background: var(--lbg-accent-green); color: var(--lbg-black); }
+.lbg-btn--on-dark   { background: var(--lbg-white); color: var(--lbg-black); }
+.lbg-btn:disabled, .lbg-btn[aria-disabled="true"] {
+  background: var(--lbg-grey-100); color: var(--lbg-grey-600); border-color: var(--lbg-grey-100); pointer-events: none;
+}
+
+/* Surfaces */
+.lbg-card { background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-6); }
+.lbg-surface--heritage { background: var(--lbg-heritage-green); color: var(--lbg-white); }
+.lbg-surface--racing   { background: var(--lbg-racing-green);   color: var(--lbg-white); }
+.lbg-surface--subtle   { background: var(--lbg-grey-100); }
+.lbg-surface--pattern  { background: var(--lbg-heritage-green) url("./patterns/cancara-pattern.png") center / cover no-repeat; color: var(--lbg-white); }
