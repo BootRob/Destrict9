@@ -14,6 +14,16 @@ Requires Node 22.13 or later. Storage uses the built-in `node:sqlite`, so there'
 
 Settings go in `app/.env`, which git ignores. Copy `.env.example` to start one. Every setting is optional.
 
+## Tests
+
+```bash
+cd app
+npm install
+npm test
+```
+
+About 110 end-to-end checks in [`test/`](test/): login and roles, private chats and live delivery (`messaging.mjs`), and recruiter onboarding through the whole recruit journey, including the declined and not-clear paths (`journey.mjs`). `test/run.mjs` starts a server for each suite on a free port with a throwaway database, runs the checks over HTTP and sockets, then shuts it down. It never touches `app/data/`, and the assistant runs offline, so no API key or login is needed. To run one suite: `npm test -- messaging.mjs`.
+
 ## Onboarding assistant
 
 Joiners get an **Onboarding assistant** card above their people. It answers recruiter-type questions (checks, start dates, pay, first day, equipment, training) using only the fictional documents in [`knowledge/`](knowledge/). Each answer:
@@ -158,7 +168,7 @@ Onboarding endpoints (the rest are below):
 
 | Method | Path | Purpose |
 |---|---|---|
-| GET | `/api/applicants` | Recruiters only: their applicants with a `stage` of successful, unsuccessful, interviewing, invited or active |
+| GET | `/api/applicants` | Recruiters only: their applicants with a `stage`: `interviewing`, `successful` or `unsuccessful` before onboarding, then `invited`, `conditional_offer`, `screening`, `screening_submitted`, `unconditional_offer`, `accepted`, `declined` or `withdrawn` |
 | POST | `/api/applicants/:id/onboard` | Recruiters only: onboard a successful applicant |
 | POST | `/api/applicants/:id/resend` | Recruiters only: new activation link, old one revoked |
 | GET | `/api/activate?token=` | Who an activation link is for |
@@ -198,7 +208,6 @@ Onboarding endpoints (the rest are below):
 
 - Email notification when a joiner messages (from Rob's notes).
 - An optional group chat for the joiner and all their people.
-- Recruiter hands over to the manager once checks clear.
 - Start-date email from the manager once the offer is accepted, updating the countdown (from ideas.md).
 - A "read before you start" checklist linking to the purpose, values and travel guides.
 - Deployment to Azure App Service so it runs on a real phone.
