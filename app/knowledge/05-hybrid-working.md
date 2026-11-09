@@ -8,7 +8,7 @@
 - In your **first 4 weeks**, expect to be in the office more often (usually 3 to 4 days a week) so you can meet people and learn quickly.
 
 ## Booking a desk
-- Offices use hot desking. Book a desk, or a car park space in Leeds, in the **desk booking app** on your laptop or phone. You can book up to 2 weeks ahead.
+- Offices use hot desking. Book a desk in the **desk booking app** on your laptop or phone. You can book up to 2 weeks ahead.
 - On your first day, a desk near your team is booked for you.
 - Teams have "neighbourhoods": areas of desks set aside for them on their office days. Your manager will show you yours.
 - If you've agreed a workplace adjustment, such as a specific chair or screen, you'll get a fixed desk instead.

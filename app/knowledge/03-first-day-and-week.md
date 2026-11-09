@@ -18,7 +18,7 @@ Most teams dress smart-casual. If you're meeting customers, your manager will te
 ## Day 1
 - Building pass and security briefing (30 minutes).
 - Laptop collection and account setup with the IT Welcome Desk (about 1 hour).
-- Lunch with your team. Your first lunch is paid for.
+- Lunch with your team. If you've completed your pre-start onboarding training (see *Learning and mandatory training*), your first lunch is on us.
 - An afternoon "Welcome to the Bank" induction session.
 
 ## The rest of Week 1

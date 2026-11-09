@@ -18,6 +18,7 @@ Once you've accepted your conditional offer, the onboarding portal unlocks. In t
 - Enter your bank details for pay and your emergency contact.
 - Choose your benefits. The benefits window opens when your checks clear and stays open until 30 days after your start date.
 - Tell us about any workplace adjustments you need (see *Wellbeing, adjustments and support*).
+- Do the pre-start onboarding training, about 40 minutes. Finish it before Day 1 and your first lunch with the team is on us (see *Learning and mandatory training*).
 
 ## 3. Meet your people
 You'll be introduced to two people:

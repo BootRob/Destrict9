@@ -24,5 +24,10 @@ Around Day 30 you'll have a check-in with your manager to:
 - Agree your first objectives for the year.
 Your probation period is **6 months**, with check-ins at 1, 3 and 6 months.
 
-## Before you start
-There's nothing you have to do. If you'd like to prepare, the onboarding portal has optional "Getting to know the Bank" videos (about 40 minutes in total). Your manager may also suggest some reading for your role.
+## Before you start: pre-start onboarding training
+The **pre-start onboarding training** is a short course in the onboarding portal, about 40 minutes in total. It covers:
+- Our purpose and our values (see *Our purpose* and *Our values*).
+- How your first day works, and getting to the office (see *Your first day and first week* and *Getting to the office*).
+- A short quiz at the end.
+
+It's optional, and it isn't part of the mandatory training above, but it's worth doing: **complete it before your first day and your Day 1 lunch with your team is on us.** Your manager can see whether you've finished it. Your manager may also suggest some reading for your role.
