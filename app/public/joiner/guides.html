@@ -25,6 +25,12 @@
     .item img { width: 12px; flex: none; }
     .ask { margin-top: var(--lbg-space-6); }
     .ask p { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-2); }
+    .day1 { background: var(--lbg-mint); border-radius: var(--lbg-radius-lg); padding: var(--lbg-space-4); margin-bottom: var(--lbg-space-6); }
+    .day1 h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); margin: 0 0 var(--lbg-space-2); }
+    .day1 dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: var(--lbg-space-1) var(--lbg-space-3); font-size: var(--lbg-text-sm); }
+    .day1 dt { font-family: var(--lbg-font-strong); font-weight: 700; }
+    .day1 dd { margin: 0; }
+    .day1 p { margin: var(--lbg-space-2) 0 0; font-size: var(--lbg-text-sm); }
     .updated { font-size: 12px; color: var(--lbg-grey-600); margin: var(--lbg-space-6) 0 0; }
   </style>
 </head>
@@ -39,6 +45,7 @@
   </header>
 
   <div class="content">
+    <section class="day1" id="day1" hidden aria-labelledby="day1-title"></section>
     <ul class="list" id="list"></ul>
     <article class="guide-body" id="body" hidden></article>
     <p class="updated" id="updated" hidden></p>
@@ -64,7 +71,24 @@
     throw err;
   }
 
+  // Day 1 details shared by the recruit's manager (from their Day 1 checklist).
+  const { day1, training } = await api('/api/day1').catch(() => ({}));
+  function renderDay1() {
+    const box = $('day1');
+    if (!day1) {
+      box.replaceChildren(make('h2', { id: 'day1-title', textContent: 'Your first day' }),
+        make('p', { textContent: "Your manager will share your start time, where to meet and the dress code here before you start." }));
+    } else {
+      const rows = [['Start time', day1.time], ['Where', day1.place], ['Who meets you', day1.meetBy], ['Dress code', day1.dressCode], ['Running late?', `Call ${day1.phone}`]];
+      box.replaceChildren(make('h2', { id: 'day1-title', textContent: 'Your first day' }),
+        make('dl', {}, ...rows.flatMap(([k, v]) => [make('dt', { textContent: k }), make('dd', { textContent: v })])),
+        make('p', { textContent: training?.completedAt ? "You've finished your pre-start onboarding training, so lunch with your team is on us." : 'Finish your pre-start onboarding training before Day 1 and lunch with your team is on us.' }));
+    }
+  }
+
   function showList() {
+    renderDay1();
+    $('day1').hidden = false;
     $('title').textContent = 'Your guides';
     $('subtitle').textContent = 'Everything you need to know before you start';
     $('back').href = '/joiner/';
@@ -86,6 +110,7 @@
     // Back goes to the assistant if that's where they came from, otherwise to the guide list.
     $('back').href = fromAssistant ? '/joiner/#assistant' : '/joiner/guides.html';
     $('list').hidden = true;
+    $('day1').hidden = true;
     $('body').replaceChildren(renderMarkdown(guide.markdown, { skipTitle: true }));
     $('body').hidden = false;
     $('updated').textContent = `Last updated ${fmtShort(guide.updatedAt)}${guide.updatedBy ? ` by ${guide.updatedBy.name}` : ''}`;

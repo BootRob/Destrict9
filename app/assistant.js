@@ -27,7 +27,7 @@ export const docCount = () => kb.docs.length;
 
 const systemPrompt = (docs) => `You are the onboarding assistant in a bank's new-joiner companion app. You answer questions from people who have accepted a job offer and haven't started yet, or are in their first 30 days. Questions are usually the kind a recruiter would otherwise answer: checks, start dates, pay, benefits, first day, equipment, training and policies.
 
-Answer only from the documents below. They are the joiner's official onboarding information.
+Answer only from the documents below, plus the <joiner> and <day1_details> blocks in each question. Those blocks are this joiner's own information from the app. When they're more specific than the documents (for example their exact Day 1 start time and meeting point), use them.
 - If the documents answer the question, answer it plainly and briefly (usually 1 to 4 short sentences, or a short list), in British English, warmly but without fuss. Put the answer first.
 - If the documents only partly answer it, say what they do cover and what they don't.
 - If the documents don't cover it, or the question depends on the joiner's personal situation (their specific offer, salary, check results, contract, or a decision someone needs to make), don't guess. Say you don't have that information, and hand off to the right person using the "Who to ask" document.
@@ -56,7 +56,7 @@ const OUTPUT_SCHEMA = {
 };
 
 /** The per-request part: who's asking, recent conversation, then the question. Kept out of the cached system prompt. */
-function buildPrompt(user, history, question) {
+function buildPrompt(user, history, question, context = {}) {
   const lines = [
     '<joiner>',
     `Name: ${user.name}`,
@@ -64,8 +64,13 @@ function buildPrompt(user, history, question) {
     `Location: ${user.location ?? 'unknown'}`,
     `Start date: ${user.start_date ?? 'not confirmed'}`,
     `Today: ${new Date().toISOString().slice(0, 10)}`,
+    `Pre-start onboarding training: ${context.training?.completedAt ? `completed on ${context.training.completedAt.slice(0, 10)}, so their Day 1 lunch is on us` : 'not completed yet'}`,
     '</joiner>',
   ];
+  const d = context.day1;
+  lines.push(d
+    ? ['<day1_details from="their hiring manager">', `Start time: ${d.time}`, `Where to meet: ${d.place}`, `Who meets them: ${d.meetBy}`, `Dress code: ${d.dressCode}`, `Number to call if late or unwell: ${d.phone}`, '</day1_details>'].join('\n')
+    : '<day1_details>Their manager has not shared Day 1 details yet. For their exact time and meeting point, hand off to the manager.</day1_details>');
   if (history.length) {
     lines.push('<earlier_conversation>');
     for (const t of history) lines.push(`Joiner: ${t.question}`, `Assistant: ${t.answer}`);
@@ -190,7 +195,7 @@ export function historyFor(userId) {
  * Answers a joiner's question. `user` is the users row (name, job_title, location, start_date).
  * Returns { answer, sources: [{ id, title }], handoff, provider }.
  */
-export async function ask(user, question) {
+export async function ask(user, question, context = {}) {
   if (busy.has(user.id)) throw Object.assign(new Error('Still answering your last question'), { status: 429 });
   busy.add(user.id);
   try {
@@ -198,8 +203,8 @@ export async function ask(user, question) {
     let raw;
     let provider = PROVIDER;
     try {
-      raw = PROVIDER === 'api' ? await askApi(buildPrompt(user, history, question))
-        : PROVIDER === 'cli' ? await askCli(buildPrompt(user, history, question))
+      raw = PROVIDER === 'api' ? await askApi(buildPrompt(user, history, question, context))
+        : PROVIDER === 'cli' ? await askCli(buildPrompt(user, history, question, context))
         : askOffline(question);
     } catch (err) {
       // Keep the demo working: if the model fails, fall back to quoting the documents.

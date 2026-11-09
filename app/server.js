@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import { db, verifyPassword, STAFF_ROLES, ROLE_LABELS } from './db.js';
 import * as assistant from './assistant.js';
 import * as guides from './guides.js';
+import * as checklist from './checklist.js';
 
 const PORT = Number(process.env.PORT) || 3000;
 const SESSION_MS = 7 * 24 * 3600_000;
@@ -174,7 +175,8 @@ app.post('/api/assistant', requireAuth, requireJoiner, async (req, res) => {
   const question = String(req.body?.question ?? '').trim();
   if (!question || question.length > MAX_MESSAGE) return res.status(400).json({ error: `Questions must be 1 to ${MAX_MESSAGE} characters` });
   try {
-    res.json(await assistant.ask(req.user, question));
+    const context = { day1: checklist.day1For(req.user.email), training: checklist.trainingFor(req.user.email) };
+    res.json(await assistant.ask(req.user, question, context));
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.status ? err.message : 'The assistant is unavailable right now' });
   }
@@ -208,6 +210,35 @@ app.put('/api/guides/:id', requireAuth, requireEditor, (req, res) => {
   try {
     res.json({ guide: guides.updateGuide(req.params.id, req.body?.markdown, req.body?.baseUpdatedAt, req.user) });
   } catch (err) { guideError(res, err); }
+});
+
+// ---------- manager Day 1 checklist ----------
+const requireManager = (req, res, next) => (req.user.role === 'manager' ? next() : res.status(403).json({ error: 'The Day 1 checklist is for hiring managers' }));
+const checklistRoute = (fn) => (req, res) => {
+  try {
+    res.json(fn(req));
+  } catch (err) {
+    if (!err.status) console.error('Checklist failed:', err);
+    res.status(err.status ?? 500).json({ error: err.status ? err.message : 'The checklist could not be updated' });
+  }
+};
+
+app.get('/api/checklist', requireAuth, requireManager, checklistRoute((req) => ({ joiners: checklist.listFor(req.user) })));
+app.get('/api/checklist/:joinerId', requireAuth, requireManager, checklistRoute((req) => checklist.checklistFor(req.user, Number(req.params.joinerId))));
+app.put('/api/checklist/:joinerId/items/:itemId', requireAuth, requireManager,
+  checklistRoute((req) => checklist.setItem(req.user, Number(req.params.joinerId), req.params.itemId, req.body?.status)));
+app.put('/api/checklist/:joinerId/day1', requireAuth, requireManager,
+  checklistRoute((req) => checklist.setDay1(req.user, Number(req.params.joinerId), req.body)));
+// Sends the recruit a chat message from their manager, through the normal messaging path.
+app.post('/api/checklist/:joinerId/training-reminder', requireAuth, requireManager, checklistRoute((req) => {
+  const { conversationId, text } = checklist.trainingReminder(req.user, Number(req.params.joinerId));
+  const message = toMessage(q.insertMessage.get(conversationId, req.user.id, text), req.user.name);
+  io.to(`conv:${conversationId}`).emit('message:new', message);
+  return checklist.checklistFor(req.user, Number(req.params.joinerId));
+}));
+// The recruit's own Day 1 details, once their manager has shared them.
+app.get('/api/day1', requireAuth, requireJoiner, (req, res) => {
+  res.json({ day1: checklist.day1For(req.user.email), training: checklist.trainingFor(req.user.email) });
 });
 
 app.get('/', (req, res) => res.redirect(homeFor(userForCookieHeader(req.headers.cookie))));
