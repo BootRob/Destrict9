@@ -7,7 +7,7 @@
 - If your checks haven't cleared 5 working days before your start date, your recruiter will agree a new start date with you. You'll never be asked to resign from your current job before your checks have cleared.
 
 ## Your notice period
-Your offer is unconditional, so it's safe to hand in your notice once your checks have cleared and your start date is confirmed in writing. If you'd like to resign earlier, talk to your recruiter first.
+Wait until you've accepted your **unconditional** offer and your start date is confirmed in writing before you hand in your notice. Your conditional offer still depends on your checks. If you need to resign earlier (for example because of a long notice period), talk to your recruiter first.
 
 ## If your circumstances change
 Tell your recruiter about anything that could affect your checks or your start, such as a new address, a name change, or a change to your right to work. It won't count against you.
