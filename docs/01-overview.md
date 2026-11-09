@@ -105,4 +105,4 @@ The brief gave twelve prompts as context. Here's where each one shows up:
 | Manager Day 1 checklist, Day 1 details | Pre-start training status is seeded; there's no course |
 | Laptop choice | Laptop pictures are our own illustrations, not manufacturer photos |
 
-Branding comes from the public lloydsbankinggroup.com site (see [03 Architecture](03-architecture.md#branding)). Every screen is labelled "Concept prototype · synthetic data only".
+Branding comes from the public lloydsbankinggroup.com site (see [03 Architecture](03-architecture.md#branding)).

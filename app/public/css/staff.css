@@ -74,3 +74,6 @@ dialog.modal::backdrop { background: rgba(2, 71, 49, .45); }
 .modal li { margin-bottom: var(--lbg-space-2); }
 .modal .actions { display: flex; justify-content: flex-end; gap: var(--lbg-space-3); }
 .modal .actions .lbg-btn { width: auto; }
+
+/* Floating chat button sits beside the sidebar, not over it */
+body.staff { --cw-left: calc(248px + 16px); }

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/journey.css">
+  <link rel="stylesheet" href="/css/joiner.css">
   <style>
     body { background: var(--lbg-grey-100); }
     .devices { display: grid; gap: var(--lbg-space-4); }
@@ -40,15 +41,14 @@
     .chosen p { margin: 0; font-size: var(--lbg-text-sm); color: var(--lbg-grey-700); }
   </style>
 </head>
-<body>
+<body class="joiner">
 <div class="jpage">
-  <div class="proto-strip">Concept prototype · synthetic data only</div>
-  <header class="lbg-surface--racing">
+  <header>
     <div class="jbar">
       <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
-      <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+      <img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
     </div>
-    <div class="jhead">
+    <div class="jhead lbg-surface--pattern">
       <p class="eyebrow">Your kit</p>
       <h1 id="title">Choose your laptop</h1>
       <p id="lead">Loading…</p>
@@ -158,5 +158,6 @@
     $('not-yet').querySelector('p').textContent = "It's too close to your start date to choose online. Your hiring manager will arrange a laptop for you.";
   }
 </script>
+<script type="module" src="/js/joiner-shell.js"></script>
 </body>
 </html>
