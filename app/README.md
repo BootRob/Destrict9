@@ -48,6 +48,18 @@ How editing works:
 
 Because edits in the app change files in the repo, commit the guide changes you want to keep, and discard demo edits with `git checkout app/knowledge`. **Real vs simulated:** the answers are really generated from the documents, but the documents are made up and aren't real bank policy. Assistant history is kept in memory per joiner, so it resets when the server restarts.
 
+## Manager Day 1 checklist
+
+Hiring managers get a **Day 1 checklist** in the staff sidebar (`/staff/checklist.html`). For each recruit it shows:
+
+- **Items with due dates** counted back in working days from the start date, flagged **overdue** if they slip: laptop and peripherals (showing the recruit's laptop choice when that data exists), access badge, accounts and system access, reception told, desk, induction and IT setup, team lunch, and a welcome message.
+- **Optional items** (workplace adjustments, shift or rota) that can be marked **Not needed**.
+- **Items that tick themselves.** "Welcome message sent" ticks once the manager has messaged the recruit. "Day 1 details shared" ticks once the Day 1 form is filled in.
+- **Day 1 details:** start time, where to meet, who meets them, dress code and a number to call. Sharing them shows a **Your first day** panel at the top of the recruit's guides page, and the assistant uses them to answer questions like "What time do I start?".
+- **Pre-start onboarding training:** whether the recruit has finished it (finishing earns their Day 1 lunch), with a **Send a reminder** button that posts a message in their chat.
+
+The state is kept in its own tables (`checklist_items`, `checklist_day1`, `prestart_training`), created by `checklist.js` and keyed by the recruit's email, so it doesn't depend on `db.js`'s schema version. Seed data: Alex is part-way through and has finished the training; Priya and Owen are just starting. There's no training course in the prototype, so training status comes only from the seed data.
+
 ## Try both sides at once
 
 1. Normal window: open http://localhost:3000 and log in as **Alex Kim** (joiner). You land on the mobile screen with Alex's three people. Use the browser's device mode (F12, then Ctrl+Shift+M) to see it at phone size.
@@ -130,6 +142,7 @@ Details:
   - Every API call and socket event checks that the caller is one of that conversation's two participants.
 - **`guides.js`**: reads and writes `knowledge/*.md` (with safe file names and atomic writes), validates guides, and records who edited them.
 - **`public/js/markdown.js`**: a small Markdown renderer that builds page elements directly rather than inserting HTML, so guide text can't inject markup.
+- **`checklist.js`**: the manager Day 1 checklist: items, due dates, Day 1 details and training status.
 - **`assistant.js`**: loads the guides (and reloads them after every save), builds the grounded prompt, calls the chosen provider, and returns structured JSON (`answer`, `sources`, `handoff`). Source IDs are checked against the real documents. Each joiner can have only one question in progress at a time.
 - **Login**: a random session token stored in an httpOnly, SameSite=Lax cookie (marked `Secure` when `NODE_ENV=production`).
 - **`public/`**:
@@ -165,6 +178,12 @@ Onboarding endpoints (the rest are below):
 | GET | `/api/guides/:id` | Everyone: one guide, including its `markdown` |
 | POST | `/api/guides` | Managers and recruiters: `{ markdown }` creates a guide |
 | PUT | `/api/guides/:id` | Managers and recruiters: `{ markdown, baseUpdatedAt }` updates a guide. Returns 409 if someone else saved since `baseUpdatedAt` |
+| GET | `/api/checklist` | Managers: their recruits with checklist progress |
+| GET | `/api/checklist/:joinerId` | Managers: one recruit's checklist, Day 1 details and training status |
+| PUT | `/api/checklist/:joinerId/items/:itemId` | Managers: `{ status }`, which is `todo`, `done` or (optional items only) `not_needed` |
+| PUT | `/api/checklist/:joinerId/day1` | Managers: `{ time, place, meetBy, dressCode, phone }` shares the Day 1 details |
+| POST | `/api/checklist/:joinerId/training-reminder` | Managers: sends the recruit a training reminder in their chat |
+| GET | `/api/day1` | Joiners: their Day 1 details (or `null`) and training status |
 | GET | `/api/assistant` | Joiners only: `{ provider, history }` |
 | POST | `/api/assistant` | Joiners only: `{ question }`, returns `{ answer, sources: [{ id, title }], handoff, provider }`. `handoff` is `none`, `recruiter` or `manager` |
 

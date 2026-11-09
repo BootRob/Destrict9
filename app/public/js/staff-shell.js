@@ -1,11 +1,12 @@
 // Shared layout for the staff web app: left sidebar with role-based navigation,
 // the signed-in user and log out. Each staff page has <nav id="staff-nav"> and calls
-// `const me = await mountShell('messages')` (or 'applicants', 'guides').
+// `const me = await mountShell('messages')` (or 'applicants', 'checklist', 'guides').
 import { api, logout, initials } from '/js/chat.js';
 
 const NAV = [
   { id: 'applicants', label: 'Applicants', href: '/staff/applicants.html', icon: '/brand/icons/job-type.svg', roles: ['recruiter'] },
   { id: 'messages', label: 'Messages', href: '/staff/', icon: '/brand/icons/quote.svg', roles: ['manager', 'recruiter'] },
+  { id: 'checklist', label: 'Day 1 checklist', href: '/staff/checklist.html', icon: '/brand/icons/list-style-tick-rounded-black.svg', roles: ['manager'] },
   { id: 'guides', label: 'Guides', href: '/staff/guides.html', icon: '/brand/icons/list-style-information-rounded-black.svg', roles: ['manager', 'recruiter'] },
 ];
 export const HUB_TITLES = { manager: 'Manager hub', recruiter: 'Recruiter hub' };

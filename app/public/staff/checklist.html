@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Day 1 checklist · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/staff.css">
+  <style>
+    .layout { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
+    aside { border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; background: var(--lbg-white); }
+    aside h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-2); margin: 0; }
+    aside .sub { padding: 0 var(--lbg-space-6) var(--lbg-space-4); margin: 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .list { list-style: none; margin: 0; padding: 0 var(--lbg-space-3) var(--lbg-space-4); overflow-y: auto; }
+    .recruit { display: flex; gap: var(--lbg-space-3); width: 100%; text-align: left; cursor: pointer; padding: var(--lbg-space-3); border: 0; border-radius: var(--lbg-radius-md); background: none; margin-bottom: 2px; }
+    .recruit:hover { background: var(--lbg-grey-100); }
+    .recruit[aria-current="true"] { background: var(--lbg-mint); }
+    .recruit .info { flex: 1; min-width: 0; }
+    .recruit strong { display: block; font-family: var(--lbg-font-strong); }
+    .recruit small { display: block; font-size: 12px; color: var(--lbg-grey-600); }
+    .meter { height: 6px; background: var(--lbg-grey-200); border-radius: var(--lbg-radius-pill); overflow: hidden; margin: var(--lbg-space-2) 0 var(--lbg-space-1); }
+    .meter span { display: block; height: 100%; background: var(--lbg-heritage-green); }
+    .flag { display: inline-block; font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; color: var(--lbg-error); }
+
+    main { min-height: 0; overflow-y: auto; background: var(--lbg-grey-100); }
+    .empty { height: 100%; display: grid; place-items: center; text-align: center; color: var(--lbg-grey-600); padding: var(--lbg-space-8); }
+    .sheet { max-width: 820px; margin: 0 auto; padding: var(--lbg-space-6); }
+    .head h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; }
+    .head p { margin: var(--lbg-space-1) 0 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .summary { display: flex; align-items: center; gap: var(--lbg-space-4); margin: var(--lbg-space-4) 0 var(--lbg-space-6); }
+    .summary .meter { flex: 1; height: 10px; margin: 0; }
+    .summary b { font-family: var(--lbg-font-strong); white-space: nowrap; }
+
+    .card { background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-4) var(--lbg-space-6); margin-bottom: var(--lbg-space-4); }
+    .card h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); margin: 0 0 var(--lbg-space-2); }
+    .item { display: flex; gap: var(--lbg-space-3); align-items: flex-start; padding: var(--lbg-space-3) 0; border-top: 1px solid var(--lbg-grey-200); }
+    .item:first-of-type { border-top: 0; }
+    .tick { flex: none; width: 28px; height: 28px; margin-top: 2px; border: 2px solid var(--lbg-black); border-radius: 6px; background: var(--lbg-white); cursor: pointer; display: grid; place-items: center; padding: 0; }
+    .tick img { width: 16px; display: none; }
+    .tick[aria-checked="true"] { background: var(--lbg-heritage-green); border-color: var(--lbg-heritage-green); }
+    .tick[aria-checked="true"] img { display: block; filter: brightness(0) invert(1); }
+    .tick:disabled { cursor: default; }
+    .item .body { flex: 1; min-width: 0; }
+    .item strong { display: block; font-family: var(--lbg-font-strong); }
+    .item.done strong, .item.not-needed strong { color: var(--lbg-grey-600); }
+    .item.done strong { text-decoration: line-through; }
+    .item .hint { font-size: var(--lbg-text-sm); color: var(--lbg-charcoal); margin: 2px 0 0; }
+    .item .meta { font-size: 12px; color: var(--lbg-grey-600); margin-top: var(--lbg-space-1); }
+    .item .meta.overdue { color: var(--lbg-error); font-family: var(--lbg-font-strong); font-weight: 700; }
+    .item .side { flex: none; }
+    .link-small { background: none; border: 0; cursor: pointer; font-size: var(--lbg-text-sm); text-decoration: underline; color: var(--lbg-black); padding: var(--lbg-space-2); min-height: 44px; }
+
+    .day1 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--lbg-space-4); margin-top: var(--lbg-space-3); }
+    .day1 .field.wide { grid-column: 1 / -1; }
+    .day1 .actions { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--lbg-space-3); }
+    .day1 .lbg-btn { width: auto; }
+    .ok { color: var(--lbg-heritage-green); font-family: var(--lbg-font-strong); font-size: var(--lbg-text-sm); }
+    .err { color: var(--lbg-error); font-size: var(--lbg-text-sm); margin: var(--lbg-space-2) 0 0; }
+    .training { display: flex; align-items: center; gap: var(--lbg-space-4); flex-wrap: wrap; }
+    .training p { margin: 0; flex: 1; min-width: 240px; font-size: var(--lbg-text-sm); }
+    .training .lbg-btn { width: auto; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: var(--lbg-radius-pill); font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; }
+    .pill.yes { background: var(--lbg-mint); color: var(--lbg-racing-green); }
+    .pill.no { background: var(--lbg-grey-200); color: var(--lbg-charcoal); }
+
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .layout.open aside { display: none; }
+      .layout:not(.open) main { display: none; }
+      .day1 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="staff">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <div class="staff-app">
+  <nav id="staff-nav" class="staff-nav"></nav>
+  <div class="staff-main">
+
+  <div class="layout" id="layout">
+    <aside>
+      <h2>Day 1 checklist</h2>
+      <p class="sub" id="sub">Everything to have ready before your recruits' first day.</p>
+      <ul class="list" id="list"></ul>
+    </aside>
+    <main id="main">
+      <div class="empty" id="empty"><p>Pick a recruit to see their checklist.</p></div>
+      <div class="sheet" id="sheet" hidden></div>
+    </main>
+  </div>
+  </div>
+  </div>
+
+<script type="module">
+  import { api, initials, fmtDate, fmtShort, daysUntil } from '/js/chat.js';
+  import { mountShell } from '/js/staff-shell.js';
+
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children); return n; };
+
+  const me = await mountShell('checklist');
+  if (me.role !== 'manager') {
+    $('sub').textContent = 'The Day 1 checklist is for hiring managers.';
+    $('empty').firstElementChild.textContent = 'Only hiring managers have a Day 1 checklist.';
+    throw new Error('not a manager');
+  }
+
+  const DAY1_FIELDS = [
+    { id: 'time', label: 'Start time', placeholder: '9:30am' },
+    { id: 'meetBy', label: 'Who meets them', placeholder: 'Sam Reid, your manager' },
+    { id: 'place', label: 'Where to meet', placeholder: 'Ground floor reception, Leeds office', wide: true },
+    { id: 'dressCode', label: 'Dress code', placeholder: 'Smart casual', wide: false },
+    { id: 'phone', label: 'Number to call if late or unwell', placeholder: '0113 496 0000' },
+  ];
+
+  let joiners = [];
+  let current = null;
+
+  const startsLabel = (startDate) => {
+    const d = daysUntil(startDate);
+    return d == null ? 'Start date to be agreed' : d > 0 ? `Starts ${fmtDate(startDate)} · in ${d} day${d === 1 ? '' : 's'}` : d === 0 ? 'Starts today' : `Started ${fmtDate(startDate)}`;
+  };
+  const meter = (done, total) => make('div', { className: 'meter' }, make('span', { style: `width:${total ? Math.round((done / total) * 100) : 0}%` }));
+
+  function renderList() {
+    $('sub').textContent = joiners.length
+      ? `${joiners.length} recruit${joiners.length === 1 ? '' : 's'} starting with you. Due dates count back from each start date.`
+      : 'You have no recruits yet. They appear here once they accept their unconditional offer.';
+    $('list').replaceChildren(...joiners.map(({ joiner: j, progress: p }) => {
+      const b = make('button', { type: 'button', className: 'recruit' },
+        make('span', { className: 'avatar avatar--racing', textContent: initials(j.name) }),
+        make('span', { className: 'info' },
+          make('strong', { textContent: j.name }),
+          make('small', { textContent: `${j.jobTitle} · ${startsLabel(j.startDate)}` }),
+          meter(p.done, p.total),
+          make('small', { textContent: `${p.done} of ${p.total} done` }),
+          p.overdue ? make('span', { className: 'flag', textContent: `${p.overdue} overdue` }) : ''));
+      b.setAttribute('aria-current', String(j.id === current?.joiner.id));
+      b.addEventListener('click', () => open(j.id));
+      return make('li', {}, b);
+    }));
+  }
+
+  async function loadList() {
+    ({ joiners } = await api('/api/checklist'));
+    renderList();
+  }
+
+  function itemMeta(i) {
+    if (i.status === 'done') return i.updatedBy ? `Done by ${i.updatedBy}${i.updatedAt ? `, ${fmtShort(i.updatedAt)}` : ''}` : 'Done';
+    if (i.status === 'not_needed') return `Marked not needed${i.updatedBy ? ` by ${i.updatedBy}` : ''}`;
+    if (!i.dueDate) return 'Due once a start date is agreed';
+    return i.overdue ? `Overdue: was due ${fmtDate(i.dueDate)}` : `Due ${fmtDate(i.dueDate)}`;
+  }
+
+  function renderItem(i) {
+    const tick = make('button', { type: 'button', className: 'tick', ariaLabel: i.title, disabled: !!i.auto || i.status === 'not_needed' },
+      make('img', { src: '/brand/icons/list-style-tick-rounded-white.svg', alt: '' }));
+    tick.setAttribute('role', 'checkbox');
+    tick.setAttribute('aria-checked', String(i.status === 'done'));
+    if (i.auto) tick.title = 'This ticks itself';
+    tick.addEventListener('click', () => setStatus(i.id, i.status === 'done' ? 'todo' : 'done'));
+
+    const side = make('div', { className: 'side' });
+    if (i.optional) {
+      const b = make('button', { type: 'button', className: 'link-small', textContent: i.status === 'not_needed' ? 'Needed after all' : 'Not needed' });
+      b.addEventListener('click', () => setStatus(i.id, i.status === 'not_needed' ? 'todo' : 'not_needed'));
+      side.append(b);
+    }
+    const stateClass = i.status === 'done' ? ' done' : i.status === 'not_needed' ? ' not-needed' : '';
+    return make('div', { className: `item${stateClass}` }, tick,
+      make('div', { className: 'body' },
+        make('strong', { textContent: i.title }),
+        make('p', { className: 'hint', textContent: i.hint }),
+        make('div', { className: `meta${i.overdue ? ' overdue' : ''}`, textContent: i.auto && i.status !== 'done' ? `${itemMeta(i)} · ticks itself` : itemMeta(i) })),
+      side);
+  }
+
+  function renderDay1Card(c) {
+    const form = make('form', { className: 'day1', noValidate: true });
+    for (const f of DAY1_FIELDS) {
+      const input = make('input', { id: `d1-${f.id}`, name: f.id, placeholder: f.placeholder, maxLength: 200, value: c.day1?.[f.id] ?? '' });
+      form.append(make('div', { className: `field${f.wide ? ' wide' : ''}` }, make('label', { htmlFor: input.id, textContent: f.label }), input));
+    }
+    const status = make('span', { className: 'ok', role: 'status' });
+    const error = make('p', { className: 'err', role: 'alert', hidden: true });
+    form.append(make('div', { className: 'actions' }, make('button', { type: 'submit', className: 'lbg-btn lbg-btn--primary', textContent: c.day1 ? 'Update and share' : 'Share with recruit' }), status), error);
+    if (c.day1) status.textContent = `Shared ${fmtShort(c.day1.updatedAt)}. ${c.joiner.name.split(' ')[0]} can see it in the app.`;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.hidden = true;
+      try {
+        const body = Object.fromEntries(DAY1_FIELDS.map((f) => [f.id, form.elements[f.id].value]));
+        show(await api(`/api/checklist/${c.joiner.id}/day1`, { method: 'PUT', body: JSON.stringify(body) }));
+        loadList();
+      } catch (err) { error.textContent = err.message; error.hidden = false; }
+    });
+    return make('section', { className: 'card' },
+      make('h2', { textContent: 'Day 1 details' }),
+      make('p', { className: 'hint', textContent: `What ${c.joiner.name.split(' ')[0]} needs to know for their first morning. When you share it, they see it in the app and the onboarding assistant can answer questions about it.` }),
+      form);
+  }
+
+  function renderTrainingCard(c) {
+    const first = c.joiner.name.split(' ')[0];
+    const t = c.training;
+    const row = make('div', { className: 'training' });
+    if (t.completedAt) {
+      row.append(make('span', { className: 'pill yes', textContent: 'Completed' }),
+        make('p', { textContent: `${first} finished the pre-start onboarding training on ${fmtDate(t.completedAt.slice(0, 10))}, so their Day 1 lunch is on us. Book it for the team.` }));
+    } else {
+      const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary', textContent: 'Send a reminder' });
+      const err = make('p', { className: 'err', role: 'alert', hidden: true });
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try { show(await api(`/api/checklist/${c.joiner.id}/training-reminder`, { method: 'POST' })); } catch (e) { err.textContent = e.message; err.hidden = false; btn.disabled = false; }
+      });
+      row.append(make('span', { className: 'pill no', textContent: 'Not done yet' }),
+        make('p', { textContent: `${first} hasn't finished the pre-start onboarding training. If they finish it before Day 1, their lunch is on us.${t.remindedAt ? ` You last sent a reminder ${fmtShort(t.remindedAt)}.` : ''}` }),
+        btn, err);
+    }
+    return make('section', { className: 'card' }, make('h2', { textContent: 'Pre-start onboarding training' }), row);
+  }
+
+  function show(c) {
+    current = c;
+    const groups = [...new Set(c.items.map((i) => i.group))];
+    const pct = c.progress.total ? Math.round((c.progress.done / c.progress.total) * 100) : 0;
+    $('sheet').replaceChildren(
+      make('div', { className: 'head' },
+        make('button', { type: 'button', className: 'link-small', textContent: '← All recruits', onclick: () => { current = null; $('layout').classList.remove('open'); $('sheet').hidden = true; $('empty').hidden = false; renderList(); } }),
+        make('h1', { textContent: c.joiner.name }),
+        make('p', { textContent: `${c.joiner.jobTitle} · ${c.joiner.location} · ${startsLabel(c.joiner.startDate)}` })),
+      make('div', { className: 'summary' }, meter(c.progress.done, c.progress.total),
+        make('b', { textContent: `${c.progress.done} of ${c.progress.total} done (${pct}%)` }),
+        c.progress.overdue ? make('span', { className: 'flag', textContent: `${c.progress.overdue} overdue` }) : ''),
+      ...groups.map((g) => make('section', { className: 'card' }, make('h2', { textContent: g }), ...c.items.filter((i) => i.group === g).map(renderItem))),
+      renderDay1Card(c),
+      renderTrainingCard(c));
+    $('empty').hidden = true;
+    $('sheet').hidden = false;
+    $('layout').classList.add('open');
+    const j = joiners.find((x) => x.joiner.id === c.joiner.id);
+    if (j) { j.progress = c.progress; renderList(); }
+    history.replaceState(null, '', `#${c.joiner.id}`);
+  }
+
+  async function open(id) { show(await api(`/api/checklist/${id}`)); }
+
+  async function setStatus(itemId, status) {
+    try { show(await api(`/api/checklist/${current.joiner.id}/items/${itemId}`, { method: 'PUT', body: JSON.stringify({ status }) })); }
+    catch (err) { alert(err.message); }
+  }
+
+  await loadList();
+  const fromHash = Number(location.hash.slice(1));
+  if (joiners.some((j) => j.joiner.id === fromHash)) open(fromHash);
+  else if (joiners.length === 1) open(joiners[0].joiner.id);
+</script>
+</body>
+</html>
