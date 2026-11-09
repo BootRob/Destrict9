@@ -9,17 +9,17 @@
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/journey.css">
+  <link rel="stylesheet" href="/css/joiner.css">
   <style>body { background: var(--lbg-grey-100); }</style>
 </head>
-<body>
+<body class="joiner">
 <div class="jpage">
-  <div class="proto-strip">Concept prototype · synthetic data only</div>
-  <header class="lbg-surface--racing">
+  <header>
     <div class="jbar">
       <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
-      <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+      <img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
     </div>
-    <div class="jhead">
+    <div class="jhead lbg-surface--pattern">
       <p class="eyebrow" id="eyebrow">Your offer</p>
       <h1 id="title">Loading…</h1>
       <p id="lead"></p>
@@ -146,5 +146,6 @@
 
   render();
 </script>
+<script type="module" src="/js/joiner-shell.js"></script>
 </body>
 </html>

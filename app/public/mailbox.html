@@ -40,7 +40,6 @@
     .email .cta { padding: 0 var(--lbg-space-6) var(--lbg-space-8); }
     .email .cta .lbg-btn { max-width: 320px; }
     .email .cta small { display: block; margin-top: var(--lbg-space-3); color: var(--lbg-grey-600); font-size: 12px; overflow-wrap: anywhere; }
-    .email footer { background: var(--lbg-grey-100); color: var(--lbg-grey-600); font-size: 12px; padding: var(--lbg-space-4) var(--lbg-space-6); }
     .empty { display: grid; place-items: center; height: 100%; color: var(--lbg-grey-600); text-align: center; }
   </style>
 </head>
@@ -85,8 +84,7 @@
       make('div', { className: 'content', textContent: e.body }),
       e.actionUrl ? make('div', { className: 'cta' },
         make('a', { className: 'lbg-btn lbg-btn--primary', href: e.actionUrl, target: '_blank', rel: 'noopener', textContent: e.actionLabel || 'Open' }),
-        make('small', { textContent: `Or paste this link into your browser: ${e.actionUrl}` })) : null,
-      make('footer', { textContent: 'Concept prototype. Synthetic data only. This email was not really sent.' })));
+        make('small', { textContent: `Or paste this link into your browser: ${e.actionUrl}` })) : null));
   }
 
   function render() {

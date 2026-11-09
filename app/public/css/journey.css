@@ -92,3 +92,18 @@ dialog.sheet .lbg-btn { max-width: none; }
 dialog.sheet .lbg-btn + .lbg-btn { margin-top: var(--lbg-space-2); }
 
 .next-step-img { display: block; width: 72%; margin: 0 auto var(--lbg-space-4); height: auto; }
+
+/* Clickable tracker steps and the detail panel under them */
+.tracker-step { all: unset; box-sizing: border-box; display: grid; justify-items: center; gap: var(--lbg-space-1); width: 100%; cursor: pointer; border-radius: var(--lbg-radius-md); padding: 2px 0; }
+.tracker-step:hover .dot { border-color: var(--lbg-heritage-green); }
+.tracker-step:focus-visible { outline: 2px solid var(--lbg-black); outline-offset: 2px; }
+.tracker li.selected .tracker-step { background: var(--lbg-mint); }
+.tracker li.selected .dot { border-color: var(--lbg-heritage-green); }
+.step-detail { border-radius: var(--lbg-radius-lg); padding: var(--lbg-space-6); margin-top: var(--lbg-space-4); background: var(--lbg-white); box-shadow: var(--lbg-shadow-card); }
+.step-detail .eyebrow { margin: 0 0 var(--lbg-space-1); font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--lbg-heritage-green); }
+.step-detail h3 { margin: 0 0 var(--lbg-space-2); }
+.step-detail > p { margin: 0 0 var(--lbg-space-4); }
+.step-detail .terms { margin-bottom: var(--lbg-space-4); }
+.step-detail .lbg-btn { max-width: none; }
+.step-detail--upcoming { background: var(--lbg-grey-100); box-shadow: none; }
+.step-back { display: block; margin-top: var(--lbg-space-2); }

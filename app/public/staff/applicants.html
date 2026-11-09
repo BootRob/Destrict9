@@ -49,7 +49,6 @@
   </style>
 </head>
 <body class="staff">
-  <div class="proto-strip">Concept prototype · synthetic data only</div>
   <div class="staff-app">
     <nav id="staff-nav" class="staff-nav"></nav>
     <div class="staff-main">
@@ -325,5 +324,6 @@
   });
   socket.on('connect', () => { if (applicants.length) load(); });
 </script>
+<script type="module" src="/js/chat-widget.js"></script>
 </body>
 </html>
