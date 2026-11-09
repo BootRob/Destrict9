@@ -8,6 +8,7 @@
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
   <style>
     body { background: var(--lbg-grey-100); }
     .phone { max-width: 430px; margin: 0 auto; height: 100dvh; background: var(--lbg-white); display: flex; flex-direction: column; }
@@ -88,6 +89,7 @@
   <div class="conn-banner" id="conn" hidden>Reconnecting…</div>
 
   <div class="people-view" id="people-view">
+    <section class="journey" id="journey" hidden></section>
     <button type="button" class="person assistant" id="open-assistant">
       <span class="avatar avatar--lg avatar--ai" aria-hidden="true">Ask</span>
       <span class="info">
@@ -125,13 +127,13 @@
 <script src="/socket.io/socket.io.js"></script>
 <script type="module">
   import { api, logout, initials, fmtShort, daysUntil, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
+  import { mountJourney } from '/js/journey-card.js';
 
-  const ROLE_ORDER = ['manager', 'recruiter', 'buddy'];
-  const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter', buddy: 'Buddy' };
+  const ROLE_ORDER = ['recruiter', 'manager'];
+  const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter' };
   const ROLE_BLURBS = {
-    manager: 'Your manager will be in touch soon.',
+    manager: "You'll be connected with your hiring manager once you accept your unconditional offer.",
     recruiter: 'Your recruiter will be in touch soon.',
-    buddy: "Your buddy will be assigned before your first day. They're the person to ask the small questions.",
   };
 
   const $ = (id) => document.getElementById(id);
@@ -161,7 +163,7 @@
             make('span', { className: 'preview', textContent: ROLE_BLURBS[role] }))));
       }
       const btn = make('button', { type: 'button', className: `person${c.unread ? ' has-unread' : ''}` },
-        make('span', { className: `avatar avatar--lg${role === 'buddy' ? '' : ' avatar--racing'}`, textContent: initials(c.other.name) }),
+        make('span', { className: `avatar avatar--lg${role === 'manager' ? '' : ' avatar--racing'}`, textContent: initials(c.other.name) }),
         make('span', { className: 'info' },
           make('span', { className: 'role', textContent: ROLE_LABELS[role] }),
           make('strong', { textContent: c.other.name }),
@@ -309,7 +311,14 @@
     renderPeople();
   }
 
+  // Journey progress (offer to Day 30) and the next step, kept live.
+  const journey = mountJourney($('journey'), {
+    onOpenChat: (kind) => { const c = conversations.find((x) => x.kind === kind); if (c) open(c.id); },
+  });
+
   const socket = io();
+  socket.on('journey:updated', () => { journey.refresh(); loadConversations(); });
+  socket.on('conversations:changed', loadConversations);
   socket.on('connect', async () => {
     $('conn').hidden = true;
     await loadConversations();

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#024731">
+  <title>Your offer · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
+  <style>body { background: var(--lbg-grey-100); }</style>
+</head>
+<body>
+<div class="jpage">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="lbg-surface--racing">
+    <div class="jbar">
+      <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
+      <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+    </div>
+    <div class="jhead">
+      <p class="eyebrow" id="eyebrow">Your offer</p>
+      <h1 id="title">Loading…</h1>
+      <p id="lead"></p>
+    </div>
+  </header>
+
+  <main class="jbody" id="body" hidden>
+    <section>
+      <h2>The role</h2>
+      <dl class="terms" id="terms"></dl>
+    </section>
+
+    <section id="conditions"></section>
+
+    <section id="decide">
+      <h2 id="decide-title"></h2>
+      <p class="form-error" id="error" role="alert" hidden><img src="/brand/icons/form-exclamation.svg" alt=""><span></span></p>
+      <div class="decision">
+        <button class="lbg-btn lbg-btn--primary" id="accept" type="button"></button>
+        <button class="lbg-btn lbg-btn--secondary" id="decline" type="button"></button>
+      </div>
+    </section>
+
+    <section id="answered" hidden>
+      <div class="callout-note"><p id="answered-text"></p></div>
+      <p><a class="lbg-btn lbg-btn--primary" href="/joiner/" style="max-width:none;margin-top:var(--lbg-space-4)">Back to your journey</a></p>
+    </section>
+  </main>
+</div>
+
+<dialog class="sheet" id="decline-sheet">
+  <form method="dialog">
+    <h2 id="decline-title">Decline this offer?</h2>
+    <p>This can't be undone in the app. If you'd like to talk first, message your recruiter instead.</p>
+    <label class="question" for="reason">Would you like to tell us why? (optional)</label>
+    <textarea id="reason" maxlength="500"></textarea>
+    <button class="lbg-btn lbg-btn--primary" value="confirm" type="submit">Yes, decline the offer</button>
+    <button class="lbg-btn lbg-btn--secondary" value="cancel" type="submit">Keep my offer</button>
+  </form>
+</dialog>
+
+<script type="module">
+  import { api, fmtDate } from '/js/chat.js';
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null)); return n; };
+  const fmtWhen = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  let { journey: j } = await api('/api/journey');
+  const which = () => (j.stage === 'unconditional_offer' ? 'unconditional' : j.stage === 'conditional_offer' ? 'conditional' : null);
+
+  function render() {
+    const o = j.offer;
+    const w = which();
+    const unconditionalStage = ['unconditional_offer', 'accepted'].includes(j.stage) || j.declinedOffer === 'unconditional';
+    $('eyebrow').textContent = unconditionalStage ? 'Unconditional offer' : 'Conditional offer';
+    $('title').textContent = unconditionalStage ? 'Your offer is confirmed' : `We'd love you to join us`;
+    $('lead').textContent = unconditionalStage
+      ? 'Your pre-employment screening is complete and clear.'
+      : `Congratulations! Here's your offer for the ${o.jobTitle} role.`;
+
+    $('terms').replaceChildren(...[
+      ['Role', o.jobTitle], ['Location', o.location], ['Salary', o.salary ? `${o.salary} a year` : 'To be confirmed'],
+      ['Contract', o.contract], ['Start date', o.startDate ? fmtDate(o.startDate) : 'To be agreed'],
+      ['Hiring manager', o.hiringManager], ['Recruiter', o.recruiter],
+    ].map(([k, v]) => make('div', {}, make('dt', { textContent: k }), make('dd', { textContent: v }))));
+
+    $('conditions').replaceChildren(
+      make('h2', { textContent: unconditionalStage ? 'What happens next' : 'Conditions of this offer' }),
+      make('div', { className: 'callout-note' }, ...(unconditionalStage
+        ? [make('p', { textContent: `When you accept, you'll be connected with ${o.hiringManager} in the app so you can get to know each other before your first day.` }),
+           make('p', { textContent: "Your offer is now unconditional, so it's safe to hand in your notice with your current employer if you haven't already." })]
+        : [make('p', { textContent: 'This offer is conditional on satisfactory pre-employment screening: identity, right to work, employment history, credit and a basic criminal record check.' }),
+           make('p', { textContent: "When you accept, we'll send you a link to complete your screening details. Please don't hand in your notice until your offer becomes unconditional." })])));
+
+    if (w) {
+      $('decide').hidden = false;
+      $('answered').hidden = true;
+      $('decide-title').textContent = w === 'unconditional' ? 'Accept your unconditional offer' : 'Accept your conditional offer';
+      $('accept').textContent = w === 'unconditional' ? 'Accept offer' : 'Accept and continue to screening';
+      $('accept').className = `lbg-btn ${w === 'unconditional' ? 'lbg-btn--accent' : 'lbg-btn--primary'}`;
+      $('decline').textContent = w === 'unconditional' ? 'Reject offer' : 'Decline offer';
+    } else {
+      $('decide').hidden = true;
+      $('answered').hidden = false;
+      $('answered-text').textContent =
+        j.stage === 'declined' ? 'You declined this offer. Your recruiter has been told.'
+        : j.stage === 'accepted' ? `You accepted your unconditional offer on ${fmtWhen(o.unconditionalAcceptedAt)}. Welcome aboard!`
+        : j.stage === 'withdrawn' ? "This offer couldn't be confirmed after screening. Your recruiter will talk it through with you."
+        : `You accepted your conditional offer on ${fmtWhen(o.conditionalAcceptedAt)}. Your unconditional offer will appear here once screening is complete.`;
+    }
+    $('body').hidden = false;
+  }
+
+  const fail = (msg) => { $('error').querySelector('span').textContent = msg; $('error').hidden = false; };
+
+  $('accept').addEventListener('click', async () => {
+    const w = which();
+    $('accept').disabled = true;
+    $('error').hidden = true;
+    try {
+      ({ journey: j } = await api(`/api/journey/${w}/accept`, { method: 'POST' }));
+      location.href = w === 'conditional' ? '/joiner/screening.html' : '/joiner/';
+    } catch (err) {
+      fail(err.message);
+      $('accept').disabled = false;
+    }
+  });
+
+  const sheet = $('decline-sheet');
+  $('decline').addEventListener('click', () => {
+    $('decline-title').textContent = which() === 'unconditional' ? 'Reject this offer?' : 'Decline this offer?';
+    sheet.returnValue = '';
+    sheet.showModal();
+  });
+  sheet.addEventListener('close', async () => {
+    if (sheet.returnValue !== 'confirm') return;
+    try {
+      ({ journey: j } = await api('/api/journey/decline', { method: 'POST', body: JSON.stringify({ offer: which(), reason: $('reason').value }) }));
+      render();
+    } catch (err) {
+      fail(err.message);
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#024731">
+  <title>Pre-employment screening · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
+  <style>body { background: var(--lbg-grey-100); }</style>
+</head>
+<body>
+<div class="jpage">
+  <div class="proto-strip">Concept prototype · synthetic data only</div>
+  <header class="lbg-surface--racing">
+    <div class="jbar">
+      <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
+      <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+    </div>
+    <div class="jhead">
+      <p class="eyebrow">Pre-employment screening</p>
+      <h1 id="title">Loading…</h1>
+      <p id="lead"></p>
+    </div>
+  </header>
+
+  <main class="jbody">
+    <!-- Not yet: offer not accepted -->
+    <section id="not-yet" hidden>
+      <div class="callout-note"><p>Screening opens once you've accepted your conditional offer.</p></div>
+      <p><a class="lbg-btn lbg-btn--primary" href="/joiner/offer.html" style="max-width:none;margin-top:var(--lbg-space-4)">View your offer</a></p>
+    </section>
+
+    <!-- Hand-off to the screening company -->
+    <div id="handoff-view" hidden>
+      <section>
+        <div class="callout-note">
+          <p><strong>Nothing to worry about.</strong> Everyone who joins a bank is screened. It's run by an independent company, and the most important thing is to answer every question honestly.</p>
+          <p>We don't collect your personal details in this app. You give them straight to ClearPath, our screening partner.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>How it works</h2>
+        <ol class="howto">
+          <li><b>Go to ClearPath.</b> Their secure site opens in a new tab.</li>
+          <li><b>Complete your details there.</b> It takes about 15 minutes.</li>
+          <li><b>Come back and tap "I've added my details".</b> We'll show you how your checks are going.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Have these ready</h2>
+        <ul class="ready">
+          <li>Your passport or photo driving licence</li>
+          <li>Your addresses for the last 5 years</li>
+          <li>Your employers (or studies) for the last 3 years, with dates</li>
+          <li>Your National Insurance number</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="provider"><span class="mark">CP</span><span><b>ClearPath Screening</b>Our independent screening partner</span></div>
+        <div class="decision">
+          <a class="lbg-btn lbg-btn--primary" id="go" target="_blank" rel="noopener">Go to ClearPath</a>
+          <button class="lbg-btn lbg-btn--secondary" id="done" type="button">I've added my details</button>
+        </div>
+        <p class="form-error" id="error" role="alert" hidden style="margin-top:var(--lbg-space-4)"><img src="/brand/icons/form-exclamation.svg" alt=""><span></span></p>
+      </section>
+    </div>
+
+    <!-- After confirming: honest progress -->
+    <div id="status-view" hidden>
+      <section>
+        <h2>What's being checked</h2>
+        <ul class="checks" id="checks"></ul>
+      </section>
+      <section>
+        <h2>What happens next</h2>
+        <div class="callout-note" id="next"></div>
+      </section>
+      <p><a class="lbg-btn lbg-btn--primary" href="/joiner/" style="max-width:none">Back to your journey</a></p>
+    </div>
+  </main>
+</div>
+
+<dialog class="sheet" id="confirm">
+  <form method="dialog">
+    <h2>Have you finished with ClearPath?</h2>
+    <p>Only confirm once you've submitted your details on ClearPath's site. Your checks start when they have everything.</p>
+    <button class="lbg-btn lbg-btn--primary" value="yes" type="submit">Yes, I've added my details</button>
+    <button class="lbg-btn lbg-btn--secondary" value="no" type="submit">Not yet</button>
+  </form>
+</dialog>
+
+<script type="module">
+  import { api } from '/js/chat.js';
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null)); return n; };
+  const fmtWhen = (iso) => new Date(iso).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  let { journey: j } = await api('/api/journey');
+
+  function renderStatus() {
+    const s = j.screening;
+    const done = s.result === 'clear';
+    $('title').textContent = done ? 'Screening complete' : 'Your checks are underway';
+    $('lead').textContent = done ? 'Everything came back clear.' : `You finished with ClearPath on ${fmtWhen(s.submittedAt)}.`;
+    $('checks').replaceChildren(...s.checks.map((c) => make('li', {},
+      done ? make('img', { src: '/brand/icons/list-style-tick-rounded-black.svg', alt: '' }) : make('span', { className: 'spinner', ariaHidden: 'true' }),
+      make('span', { className: 'label', textContent: c.label }),
+      make('span', { className: `state${done ? ' state--done' : ''}`, textContent: done ? 'Clear' : 'In progress' }))));
+    $('next').replaceChildren(...(done
+      ? [make('p', { textContent: 'Your offer is now unconditional. Accept it from your home screen to meet your hiring manager.' })]
+      : [make('p', { textContent: `Checks usually take ${s.typicalDuration}. No news is normal, and you don't need to do anything.` }),
+         make('p', { textContent: "If ClearPath needs anything else, they'll contact you directly. Your recruiter will message you here as soon as there's a result." })]));
+    $('status-view').hidden = false;
+  }
+
+  if (j.stage === 'conditional_offer') {
+    $('title').textContent = 'Not quite yet';
+    $('not-yet').hidden = false;
+  } else if (j.stage === 'screening') {
+    $('title').textContent = 'Complete your screening';
+    $('lead').textContent = `Checks usually take ${j.screening.typicalDuration} once ClearPath has your details.`;
+    $('go').href = j.screening.provider.url;
+    $('handoff-view').hidden = false;
+
+    const sheet = $('confirm');
+    $('done').addEventListener('click', () => { sheet.returnValue = ''; sheet.showModal(); });
+    sheet.addEventListener('close', async () => {
+      if (sheet.returnValue !== 'yes') return;
+      $('error').hidden = true;
+      $('done').disabled = true;
+      try {
+        ({ journey: j } = await api('/api/journey/screening', { method: 'POST' }));
+        $('handoff-view').hidden = true;
+        window.scrollTo(0, 0);
+        renderStatus();
+      } catch (err) {
+        $('error').querySelector('span').textContent = err.message;
+        $('error').hidden = false;
+        $('done').disabled = false;
+      }
+    });
+  } else if (j.screening.submittedAt) {
+    renderStatus();
+  } else {
+    $('title').textContent = 'Screening';
+    $('not-yet').hidden = false;
+  }
+</script>
+</body>
+</html>
