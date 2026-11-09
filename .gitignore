@@ -19,5 +19,6 @@ local.settings.json
 appsettings.Development.json
 .azure/
 
-# Claude Code local config
-.claude/
+# Claude Code local config (shared team skills are committed)
+.claude/*
+!.claude/skills/

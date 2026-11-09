@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Joiner companion · style mock</title>
+  <link rel="icon" href="brand/logos/favicon.ico">
+  <link rel="stylesheet" href="brand/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { background: var(--lbg-grey-100); }
+    .app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: var(--lbg-white); padding-bottom: 88px; position: relative; }
+
+    .proto { background: var(--lbg-charcoal); color: var(--lbg-white); font-size: var(--lbg-text-sm); line-height: var(--lbg-lh-sm); text-align: center; padding: var(--lbg-space-1) var(--lbg-space-4); }
+
+    .appbar { display: flex; align-items: center; justify-content: space-between; padding: var(--lbg-space-3) var(--lbg-space-4); background: var(--lbg-white); position: sticky; top: 0; z-index: 2; border-bottom: 1px solid var(--lbg-grey-200); }
+    .appbar img.logo { height: 32px; display: block; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--lbg-heritage-green); color: var(--lbg-white); display: grid; place-items: center; font-family: var(--lbg-font-strong); font-weight: 700; }
+
+    .hero { padding: var(--lbg-space-8) var(--lbg-space-4) var(--lbg-space-6); }
+    .hero .eyebrow { font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); text-transform: uppercase; letter-spacing: .06em; opacity: .85; margin: 0 0 var(--lbg-space-2); }
+    .hero h1 { margin-bottom: var(--lbg-space-2); }
+    .hero p { margin: 0 0 var(--lbg-space-6); }
+    .countdown { display: flex; gap: var(--lbg-space-3); margin-bottom: var(--lbg-space-6); }
+    .countdown div { background: rgba(255,255,255,.12); border-radius: var(--lbg-radius-md); padding: var(--lbg-space-3); flex: 1; text-align: center; }
+    .countdown strong { display: block; font-family: var(--lbg-font-heading); font-size: var(--lbg-text-h2); line-height: var(--lbg-lh-h2); }
+    .countdown span { font-size: var(--lbg-text-sm); }
+
+    section { padding: var(--lbg-space-6) var(--lbg-space-4) 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; }
+    .section-head a { font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); }
+
+    /* Journey stepper */
+    .steps { list-style: none; margin: 0; padding: 0; }
+    .steps li { display: grid; grid-template-columns: 28px 1fr; gap: var(--lbg-space-3); padding-bottom: var(--lbg-space-4); position: relative; }
+    .steps li:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 2px; background: var(--lbg-grey-300); }
+    .steps li.done:not(:last-child)::before { background: var(--lbg-everyday-green); }
+    .dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--lbg-grey-300); background: var(--lbg-white); display: grid; place-items: center; }
+    .done .dot { background: var(--lbg-everyday-green); border-color: var(--lbg-everyday-green); }
+    .done .dot img { width: 14px; filter: brightness(0); }
+    .current .dot { border-color: var(--lbg-heritage-green); box-shadow: 0 0 0 4px var(--lbg-mint); }
+    .current .dot::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--lbg-heritage-green); }
+    .steps strong { font-family: var(--lbg-font-strong); display: block; }
+    .steps small { color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .tag { display: inline-block; margin-left: var(--lbg-space-2); padding: 0 var(--lbg-space-2); border-radius: var(--lbg-radius-pill); background: var(--lbg-mint); color: var(--lbg-racing-green); font-size: 12px; line-height: 20px; font-family: var(--lbg-font-strong); font-weight: 700; vertical-align: middle; }
+
+    /* Task cards */
+    .task { display: flex; gap: var(--lbg-space-4); align-items: center; margin-bottom: var(--lbg-space-3); text-decoration: none; color: inherit; }
+    .task .icon { width: 44px; height: 44px; flex: none; border-radius: var(--lbg-radius-md); background: var(--lbg-grey-100); display: grid; place-items: center; }
+    .task .icon img { width: 22px; height: 22px; }
+    .task .body { flex: 1; }
+    .task .body strong { font-family: var(--lbg-font-strong); display: block; }
+    .task .body small { color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+    .task .chev { width: 12px; }
+
+    /* People */
+    .people { display: grid; grid-template-columns: 1fr 1fr; gap: var(--lbg-space-3); }
+    .person { text-align: center; padding: var(--lbg-space-4); }
+    .person .face { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto var(--lbg-space-3); display: grid; place-items: center; font-family: var(--lbg-font-heading); font-size: 1.5rem; color: var(--lbg-white); }
+    .person strong { font-family: var(--lbg-font-strong); display: block; }
+    .person small { display: block; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); margin-bottom: var(--lbg-space-3); }
+    .person .lbg-btn { min-height: 44px; font-size: var(--lbg-text-md); padding: 8px 12px; }
+
+    .callout { border-radius: var(--lbg-radius-lg); padding: var(--lbg-space-6); }
+    .callout h3 { margin-bottom: var(--lbg-space-2); }
+    .callout p { margin: 0 0 var(--lbg-space-4); }
+
+    .buttons-demo { display: grid; gap: var(--lbg-space-3); padding-bottom: var(--lbg-space-6); }
+    .buttons-demo .lbg-btn { max-width: none; }
+
+    /* Chat FAB + bottom nav */
+    .fab { position: fixed; right: max(16px, calc(50% - 215px + 16px)); bottom: 88px; width: 56px; height: 56px; border-radius: 50%; background: var(--lbg-racing-green); border: 0; box-shadow: 0 4px 12px rgba(0,0,0,.2); display: grid; place-items: center; cursor: pointer; }
+    .fab img { width: 26px; filter: brightness(0) invert(1); }
+    .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--lbg-white); border-top: 1px solid var(--lbg-grey-200); display: grid; grid-template-columns: repeat(4, 1fr); padding: var(--lbg-space-2) 0 calc(var(--lbg-space-2) + env(safe-area-inset-bottom)); }
+    .nav a { display: grid; justify-items: center; gap: 2px; min-height: 48px; font-size: 12px; color: var(--lbg-grey-600); text-decoration: none; font-family: var(--lbg-font-strong); font-weight: 700; }
+    .nav a img { width: 22px; height: 22px; opacity: .55; }
+    .nav a.active { color: var(--lbg-heritage-green); }
+    .nav a.active img { opacity: 1; }
+    .nav a.active::before { content: ""; width: 24px; height: 3px; border-radius: 2px; background: var(--lbg-heritage-green); margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="proto">Concept prototype · synthetic data only</div>
+
+  <header class="appbar">
+    <img class="logo" src="brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
+    <div class="avatar" aria-label="Your profile">AK</div>
+  </header>
+
+  <div class="hero lbg-surface--pattern">
+    <p class="eyebrow">Your joining journey</p>
+    <h1>Welcome, Alex</h1>
+    <p>Your checks are moving. Here's what's next before you start as a Software Engineer in Leeds.</p>
+    <div class="countdown" aria-label="Time until your first day">
+      <div><strong>18</strong><span>days to go</span></div>
+      <div><strong>3/6</strong><span>stages done</span></div>
+    </div>
+    <a class="lbg-btn lbg-btn--accent" href="#">Choose your laptop</a>
+  </div>
+
+  <section>
+    <div class="section-head"><h2>Where you are</h2></div>
+    <ol class="steps">
+      <li class="done"><span class="dot"><img src="brand/icons/checked.svg" alt=""></span><div><strong>Offer accepted</strong><small>12 Oct · Recruiter: Jordan Ellis</small></div></li>
+      <li class="done"><span class="dot"><img src="brand/icons/checked.svg" alt=""></span><div><strong>Background checks</strong><small>Cleared 4 Nov</small></div></li>
+      <li class="done"><span class="dot"><img src="brand/icons/checked.svg" alt=""></span><div><strong>Meet your people</strong><small>Manager and buddy assigned</small></div></li>
+      <li class="current"><span class="dot"></span><div><strong>Unlock &amp; choose <span class="tag">2 to do</span></strong><small>Kit, benefits and learning</small></div></li>
+      <li><span class="dot"></span><div><strong>Day 1 to Week 1</strong><small>Starts Mon 30 Nov</small></div></li>
+      <li><span class="dot"></span><div><strong>Day 30</strong><small>Connected and confident</small></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Next up</h2><a href="#">See all</a></div>
+    <a class="task lbg-card" href="#">
+      <span class="icon"><img src="brand/icons/job-type.svg" alt=""></span>
+      <span class="body"><strong>Pick your kit</strong><small>Laptop and accessories · 5 min</small></span>
+      <img class="chev" src="brand/icons/chevron-right.svg" alt="">
+    </a>
+    <a class="task lbg-card" href="#">
+      <span class="icon"><img src="brand/icons/list-style-tick-rounded-black.svg" alt=""></span>
+      <span class="body"><strong>Choose your benefits</strong><small>Due before your first day</small></span>
+      <img class="chev" src="brand/icons/chevron-right.svg" alt="">
+    </a>
+    <a class="task lbg-card" href="#">
+      <span class="icon"><img src="brand/icons/calendar.svg" alt=""></span>
+      <span class="body"><strong>Intro call with Sam</strong><small>Thu 19 Nov · 10:00 · Teams</small></span>
+      <img class="chev" src="brand/icons/chevron-right.svg" alt="">
+    </a>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Your people</h2></div>
+    <div class="people">
+      <div class="person lbg-card">
+        <div class="face" style="background: var(--lbg-heritage-green)">SR</div>
+        <strong>Sam Reid</strong><small>Line manager</small>
+        <a class="lbg-btn lbg-btn--secondary" href="#">Message</a>
+      </div>
+      <div class="person lbg-card">
+        <div class="face" style="background: var(--lbg-racing-green)">MO</div>
+        <strong>Maya Okafor</strong><small>Your buddy</small>
+        <a class="lbg-btn lbg-btn--secondary" href="#">Message</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout lbg-surface--racing">
+      <img src="brand/icons/location.svg" alt="" style="width:28px; filter: brightness(0) invert(1); margin-bottom: 8px">
+      <h3>Wellington Place, Leeds</h3>
+      <p>Getting there, parking, the canteen and the people you'll sit with.</p>
+      <a class="lbg-btn lbg-btn--on-dark" href="#">Explore your site</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><h2>Button styles</h2></div>
+    <div class="buttons-demo">
+      <a class="lbg-btn lbg-btn--primary" href="#">Primary action</a>
+      <a class="lbg-btn lbg-btn--secondary" href="#">Secondary action</a>
+      <button class="lbg-btn lbg-btn--primary" disabled>Disabled</button>
+    </div>
+  </section>
+
+  <button class="fab" aria-label="Ask a question"><img src="brand/icons/quote.svg" alt=""></button>
+
+  <nav class="nav" aria-label="Main">
+    <a class="active" href="#"><img src="brand/icons/list-style-tick-rounded-black.svg" alt="">Journey</a>
+    <a href="#"><img src="brand/icons/calendar.svg" alt="">Calendar</a>
+    <a href="#"><img src="brand/icons/location.svg" alt="">My site</a>
+    <a href="#"><img src="brand/icons/list-style-information-rounded-black.svg" alt="">Help</a>
+  </nav>
+</div>
+</body>
+</html>
