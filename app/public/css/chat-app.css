@@ -1,28 +1,5 @@
-/* Floating chat button (bottom left) and its panel. Loaded by js/chat-widget.js.
-   Pages can move it with --cw-left / --cw-bottom. */
-.cw-fab {
-  position: fixed; z-index: 50;
-  left: var(--cw-left, 16px); bottom: var(--cw-bottom, 16px);
-  width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer; padding: 0;
-  background: var(--lbg-racing-green); box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
-  display: grid; place-items: center;
-}
-.cw-fab img { width: 26px; filter: brightness(0) invert(1); }
-.cw-fab:hover { background: var(--lbg-heritage-green); }
-.cw-fab--open { background: var(--lbg-heritage-green); }
-.cw-badge {
-  position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 6px;
-  border-radius: var(--lbg-radius-pill); background: var(--lbg-accent-green); color: var(--lbg-black);
-  border: 2px solid var(--lbg-white); font-family: var(--lbg-font-strong); font-weight: 700; font-size: 12px; line-height: 18px;
-  display: inline-grid; place-items: center;
-}
-
-.cw-panel {
-  position: fixed; z-index: 51; display: flex; flex-direction: column; overflow: hidden;
-  left: var(--cw-left, 16px); bottom: calc(var(--cw-bottom, 16px) + 68px);
-  width: min(380px, calc(100vw - 32px)); height: min(580px, calc(100dvh - var(--cw-bottom, 16px) - 92px));
-  background: var(--lbg-white); border-radius: var(--lbg-radius-lg); box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
-}
+/* The in-app chat screen. Loaded by js/chat-app.js. */
+.cw-panel { display: flex; flex-direction: column; overflow: hidden; background: var(--lbg-white); }
 .cw-head { display: flex; align-items: center; gap: var(--lbg-space-3); padding: var(--lbg-space-3) var(--lbg-space-3) var(--lbg-space-3) var(--lbg-space-4); }
 .cw-head-text { flex: 1; min-width: 0; }
 .cw-head-text strong { display: block; font-family: var(--lbg-font-strong); font-size: var(--lbg-text-lg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -74,14 +51,3 @@
 .ai-handoff-note { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin-top: var(--lbg-space-2); padding: 0 var(--lbg-space-1); }
 .ai-suggestions { display: flex; flex-wrap: wrap; gap: var(--lbg-space-2); justify-content: center; margin-top: var(--lbg-space-2); }
 .ai-suggestions button { border: 1px solid var(--lbg-heritage-green); color: var(--lbg-heritage-green); background: var(--lbg-white); border-radius: var(--lbg-radius-pill); padding: var(--lbg-space-2) var(--lbg-space-3); min-height: 40px; font-size: var(--lbg-text-sm); cursor: pointer; }
-
-/* Small screens: the panel becomes a full-screen sheet */
-@media (max-width: 480px) {
-  .cw-panel { inset: 0; width: auto; height: auto; border-radius: 0; }
-  html.cw-lock { overflow: hidden; }
-  html.cw-lock .cw-fab { display: none; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .cw-panel { animation: cw-in .15s ease-out; }
-  @keyframes cw-in { from { opacity: 0; transform: translateY(8px); } }
-}

@@ -51,7 +51,7 @@
     <p class="updated" id="updated" hidden></p>
     <div class="ask" id="ask">
       <p>Can't find what you need?</p>
-      <a class="lbg-btn lbg-btn--secondary" href="/joiner/#assistant">Ask the onboarding assistant</a>
+      <a class="lbg-btn lbg-btn--secondary" href="/joiner/chat.html?assistant=1">Ask the onboarding assistant</a>
     </div>
   </div>
 </div>
@@ -108,7 +108,7 @@
     $('title').textContent = guide.title;
     $('subtitle').textContent = 'Onboarding guide';
     // Back goes to the assistant if that's where they came from, otherwise to the guide list.
-    $('back').href = fromAssistant ? '/joiner/#assistant' : '/joiner/guides.html';
+    $('back').href = fromAssistant ? '/joiner/chat.html?assistant=1' : '/joiner/guides.html';
     $('list').hidden = true;
     $('day1').hidden = true;
     $('body').replaceChildren(renderMarkdown(guide.markdown, { skipTitle: true }));

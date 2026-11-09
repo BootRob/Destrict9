@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#024731">
+  <title>Chats · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/joiner.css">
+  <link rel="stylesheet" href="/css/chat-app.css">
+</head>
+<body class="joiner">
+<div class="phone chatpage">
+  <header class="appbar">
+    <img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
+  </header>
+  <div id="chat"></div>
+</div>
+<script type="module">
+  import { mountChat } from '/js/chat-app.js';
+  mountChat(document.getElementById('chat'));
+</script>
+<script type="module" src="/js/joiner-shell.js"></script>
+</body>
+</html>

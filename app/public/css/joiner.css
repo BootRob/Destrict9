@@ -1,5 +1,5 @@
 /* Joiner app look, from mockups/lbg-style-demo: white sticky app bar, pattern hero, cards, bottom nav. */
-body.joiner { background: var(--lbg-grey-100); --cw-left: max(16px, calc(50% - 215px + 16px)); --cw-bottom: 88px; }
+body.joiner { background: var(--lbg-grey-100); }
 .joiner .phone, .joiner .jpage { max-width: 430px; margin: 0 auto; background: var(--lbg-white); position: relative; padding-bottom: 88px; }
 .joiner .phone { min-height: 100dvh; height: auto; }
 
@@ -36,4 +36,8 @@ body.joiner { background: var(--lbg-grey-100); --cw-left: max(16px, calc(50% - 2
 .jnav [aria-current="page"]::before { content: ""; width: 24px; height: 3px; border-radius: 2px; background: var(--lbg-heritage-green); margin-bottom: 2px; }
 .jnav .nav-count { position: absolute; top: 0; left: calc(50% + 6px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--lbg-radius-pill); background: var(--lbg-accent-green); color: var(--lbg-black); font-size: 11px; line-height: 18px; text-align: center; }
 
-@media (max-width: 430px) { body.joiner { --cw-left: 16px; } }
+
+/* Chat screen: fills the space between the app bar and the bottom nav */
+.joiner .phone.chatpage { height: 100dvh; display: flex; flex-direction: column; padding-bottom: 76px; }
+.chatpage .appbar { position: static; flex: none; }
+.chatpage #chat { flex: 1; min-height: 0; }

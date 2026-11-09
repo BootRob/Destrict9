@@ -84,8 +84,8 @@
   $('profile').title = 'Log out';
   $('profile').addEventListener('click', () => { if (confirm(`Log out ${me.name}?`)) logout(); });
 
-  const chat = (arg) => window.chatWidget ? window.chatWidget.open(arg) : document.addEventListener('chatwidget:ready', () => window.chatWidget.open(arg), { once: true });
-  $('open-assistant').addEventListener('click', () => chat({ assistant: true }));
+  const chat = (query) => { location.href = `/joiner/chat.html?${query}`; };
+  $('open-assistant').addEventListener('click', () => chat('assistant=1'));
 
   // The recruiter and hiring manager are both named on the offer. The manager's chat opens once the unconditional offer is accepted.
   let conversations = [];
@@ -106,7 +106,7 @@
         return make('div', { className: 'person lbg-card person--quiet' }, face, info);
       }
       const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary' }, 'Message', c.unread ? make('span', { className: 'unread', textContent: c.unread, ariaLabel: `${c.unread} unread` }) : '');
-      btn.addEventListener('click', () => chat({ id: c.id }));
+      btn.addEventListener('click', () => chat(`id=${c.id}`));
       return make('div', { className: 'person lbg-card' }, face, info, btn);
     }));
   }
@@ -115,7 +115,7 @@
     renderPeople();
   }
 
-  const journey = mountJourney($('journey'), { onOpenChat: (kind) => chat({ kind }) });
+  const journey = mountJourney($('journey'), { onOpenChat: (kind) => chat(`kind=${kind}`) });
   async function refreshAll() {
     const j = await journey.refresh();
     if (j) {
@@ -132,7 +132,7 @@
   await refreshAll();
 
   // Keep the page live without owning a chat connection: the chat widget has one, so reuse its events.
-  document.addEventListener('chatwidget:unread', loadPeople);
+  document.addEventListener('chat:unread', loadPeople);
   const socketScript = make('script', { src: '/socket.io/socket.io.js' });
   socketScript.onload = () => { const s = window.io(); s.on('journey:updated', refreshAll); s.on('conversations:changed', loadPeople); };
   document.head.append(socketScript);
