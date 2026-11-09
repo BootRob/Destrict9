@@ -5,13 +5,20 @@
 Every new colleague goes through pre-employment screening before they start. It's a regulatory requirement for banks, not a judgement about you.
 
 ## Your offer is conditional until checks clear
-Your first offer is a **conditional offer**: it depends on your checks. Once you accept it, you'll be asked to fill in the screening form in the app. When your checks clear, you'll get an **unconditional offer**. Checks stop an offer very rarely, and almost always because something wasn't disclosed, so the best thing you can do is answer every question honestly. There's nothing to study or prepare.
+Your first offer is a **conditional offer**: it depends on your checks. Once you accept it, the app asks you to complete your screening on ClearPath's secure website. When your checks clear, you'll get an **unconditional offer**. Checks stop an offer very rarely, and almost always because something wasn't disclosed, so the best thing you can do is answer every question honestly. There's nothing to study or prepare.
 
 ## Who runs the checks
-Checks are carried out by an external screening company, **ClearPath Screening** (fictional), using the screening form you fill in in the app. If they need anything else, such as a copy of a document, they'll email you from `@clearpath-screening.example`. If you're unsure whether an email is genuine, ask your recruiter before clicking anything.
+Checks are carried out by an external screening company, **ClearPath Screening** (fictional). The app's **Go to ClearPath** button opens their secure website, where you enter your details. **Your personal details go only to ClearPath, never into the app.** When you've finished, come back to the app and tap **I've added my details**, so we know your checks can start. If they need anything else, such as a copy of a document, they'll email you from `@clearpath-screening.example`. If you're unsure whether an email is genuine, ask your recruiter before clicking anything.
+
+## Have these ready
+Before you start on ClearPath's website, have these to hand:
+- Your passport or driving licence.
+- Your addresses for the last **5 years**.
+- Your employment or study history for the last **3 years**.
+- Your National Insurance number.
 
 ## What's checked
-- **Identity and right to work in the UK.** Passport, or another accepted document from the list in the screening form.
+- **Identity and right to work in the UK.** Your passport or driving licence, or another document from ClearPath's accepted list.
 - **Employment history** for the last 3 years, including any gaps longer than 3 months. A short explanation of a gap (travel, study, caring) is fine.
 - **Basic criminal record check** (DBS in England and Wales).
 - **Credit and financial check.** This looks for county court judgments and bankruptcy, not your credit score. It does not affect your credit rating.

@@ -7,7 +7,7 @@ Joining the Bank happens in six stages. You can be in more than one at once, and
 ## 1. Offer
 Getting to an unconditional offer takes three steps:
 1. **Conditional offer.** Your recruiter offers you the job, subject to pre-employment checks. You accept or decline it in the app.
-2. **Screening.** You fill in the screening form, and an external company runs your checks. This usually takes 2 to 4 weeks (see *Pre-employment checks*). The app shows that your checks are in progress, even when there's no news.
+2. **Screening.** You enter your details on the secure website of ClearPath Screening, the external company that runs your checks, then confirm in the app that you've done it. The app never asks for your personal details. This usually takes 2 to 4 weeks (see *Pre-employment checks*). The app shows that your checks are in progress, even when there's no news.
 3. **Unconditional offer.** When your checks clear, your recruiter records the result and sends you an unconditional offer to accept in the app.
 
 Your recruiter is your main contact until you've accepted your unconditional offer. If you answer the screening questions honestly, there's very rarely a reason for checks to stop an offer.
