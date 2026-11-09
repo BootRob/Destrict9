@@ -15,10 +15,9 @@ Once your checks start, the onboarding portal unlocks. In this stage you:
 - Tell us about any workplace adjustments you need (see *Wellbeing, adjustments and support*).
 
 ## 3. Meet your people
-You'll be introduced to three people:
+You'll be introduced to two people:
 - **Your recruiter** looks after your offer, checks and start date.
 - **Your hiring manager** looks after your role, team and first weeks.
-- **Your buddy** is a colleague in a similar role who helps with the everyday things. Buddies are usually assigned 2 to 3 weeks before your start date.
 
 ## 4. Manager ready
 About a week before you start, your manager confirms your first-week plan, orders your equipment and books your induction. Your recruiter hands you over to your manager once your checks clear.

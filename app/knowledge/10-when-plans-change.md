@@ -18,5 +18,5 @@ Holiday you'd already booked will be honoured. Let your recruiter or manager kno
 ## Changing your mind
 If you decide not to join, please tell your recruiter as soon as possible. Nothing you've shared with us is kept longer than legally required.
 
-## If your manager or buddy changes
-Occasionally your hiring manager or buddy changes before you start. You'll get a message in the app introducing your new contact, and your previous messages stay with your recruiter.
+## If your manager changes
+Occasionally your hiring manager changes before you start. You'll get a message in the app introducing your new contact, and your previous messages stay with your recruiter.

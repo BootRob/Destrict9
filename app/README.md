@@ -38,7 +38,6 @@ The documents in `knowledge/` are also **guides that people can read**:
 
 - **Joiners** open **Your guides** on their home screen (`/joiner/guides.html`). The sources under each assistant answer link to the guide they came from.
 - **Managers and recruiters** get a **Guides** tab in the staff hub (`/staff/guides.html`). There they can read guides, edit them in Markdown with a live preview of what joiners see, and add new ones. Each save writes the `.md` file and the assistant uses it from the next question.
-- **Buddies** can read guides but can't edit them.
 
 How editing works:
 - Each guide shows who last edited it and when. This is kept in `knowledge/.meta.json`.
@@ -113,7 +112,7 @@ The password for every account is `demo1234`. These are demo credentials for syn
 | POST | `/api/guides` | Managers and recruiters: `{ markdown }` creates a guide |
 | PUT | `/api/guides/:id` | Managers and recruiters: `{ markdown, baseUpdatedAt }` updates a guide. Returns 409 if someone else saved since `baseUpdatedAt` |
 | GET | `/api/assistant` | Joiners only: `{ provider, history }` |
-| POST | `/api/assistant` | Joiners only: `{ question }`, returns `{ answer, sources: [{ id, title }], handoff, provider }`. `handoff` is `none`, `recruiter`, `manager` or `buddy` |
+| POST | `/api/assistant` | Joiners only: `{ question }`, returns `{ answer, sources: [{ id, title }], handoff, provider }`. `handoff` is `none`, `recruiter` or `manager` |
 
 | Socket event | Direction | Payload |
 |---|---|---|

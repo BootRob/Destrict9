@@ -3,7 +3,7 @@
 > Synthetic document for the LaunchPad prototype. Not real policy.
 
 ## Where and when
-- Arrive at **9:30am** on your first day. Your manager or buddy will meet you in reception.
+- Arrive at **9:30am** on your first day. Your manager will meet you in reception.
 - Your welcome email gives the office address and the name of the person meeting you.
 - Offices in this prototype: **Leeds** and **Cardiff**. Both have step-free access, showers, bike storage and a staff restaurant.
 
@@ -24,7 +24,6 @@ Most teams dress smart-casual. If you're meeting customers, your manager will te
 ## The rest of Week 1
 - Mandatory training starts (see *Learning and mandatory training*).
 - 1:1 with your manager to agree your 30-day plan.
-- Coffee with your buddy at least once.
 - Team meetings, so you can see how work happens.
 
 ## If you're running late or unwell on Day 1

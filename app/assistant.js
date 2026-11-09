@@ -13,7 +13,7 @@ const MODEL = process.env.ASSISTANT_MODEL || 'claude-opus-5-5';
 const EFFORT = process.env.ASSISTANT_EFFORT || 'low'; // chat: keep it quick
 const TIMEOUT_MS = 90_000;
 const HISTORY_TURNS = 6; // previous question/answer pairs sent for context
-export const HANDOFFS = ['none', 'recruiter', 'manager', 'buddy'];
+export const HANDOFFS = ['none', 'recruiter', 'manager'];
 
 // ---------- knowledge base ----------
 // Rebuilt whenever a guide is saved. Between saves the system prompt is byte-identical (prompt caching).
@@ -38,7 +38,7 @@ Answer only from the documents below. They are the joiner's official onboarding 
 Return:
 - answer: your reply to the joiner.
 - sources: the id attribute of each document you used. Empty if none.
-- handoff: who the joiner should message next, if anyone: "recruiter", "manager" or "buddy". Use "none" if your answer is complete. Use a handoff whenever you couldn't fully answer, or the joiner needs a person to act or decide. Questions for HR Service or the IT Service Desk get "none", with the answer telling them where to go.
+- handoff: who the joiner should message next, if anyone: "recruiter" or "manager". Use "none" if your answer is complete. Use a handoff whenever you couldn't fully answer, or the joiner needs a person to act or decide. Questions for HR Service or the IT Service Desk get "none", with the answer telling them where to go.
 
 <documents>
 ${docs.map((d) => `<document id="${d.id}">\n${d.text}\n</document>`).join('\n')}
