@@ -12,7 +12,7 @@ Workday records the joining process, but nobody guides the joiner through it. We
 | # | Phase | What the app does | Status |
 |---|---|---|---|
 | 1 | **Offer** *(Saddling up)* | The recruiter onboards a successful candidate, who gets a conditional offer by email and activates their account. They accept or decline the offer, send their screening details to the screening company, and see a calm "no news is normal" view while the checks run. | Works end to end |
-| 2 | **Getting ready** *(Joining the stable)* | Accepting the unconditional offer unlocks a chat with their hiring manager, a laptop choice (MacBook or HP, recommended by role), their Day 1 details and the pre-start training. Their manager works through a Day 1 checklist. | Works end to end |
+| 2 | **Getting ready** *(Joining the stable)* | Accepting the unconditional offer unlocks a chat with their hiring manager, a laptop choice (MacBook or HP, recommended by role), a selfie for their building pass (shown on their pass card), their Day 1 details and the pre-start training. Their manager works through a Day 1 checklist. | Works end to end |
 | 3 | **First 30 days** *(Finding your stride)* | A week-by-week plan, LBG systems and jargon, mandatory training, and the 30-day check-in. | Works end to end |
 | 4 | **30 to 60 days** *(Setting your course)* | Agreeing goals and a development plan. | Preview: content, no tracking yet |
 | 5 | **60 to 90 days and beyond** *(Full horsepower)* | Growing a Lloyds career: mentoring, networks, internal moves. | Preview: content, no tracking yet |

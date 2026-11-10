@@ -112,6 +112,13 @@ Available once the unconditional offer is accepted:
 - **Choosing:** the recruit picks one and confirms. They see "It'll be set up and waiting for you on day 1. Collect it from reception."
 - **Changing:** allowed until 7 days before the start date. After that, the hiring manager arranges it.
 
+### 6b. Pass photo (`/joiner/photo.html`)
+Once the unconditional offer is accepted, the next step after the laptop is **Add your pass photo**.
+- The page shows passport-photo guidance, and **Take a selfie** opens the front camera.
+- The photo is cropped and shrunk on the phone (a 360x450 JPEG, about 30 KB) before it's uploaded, and it can be retaken.
+- The pass card on the home and welcome screens then shows it **in a green frame with the recruit's full name underneath**, like a real Lloyds access card.
+- **Real vs simulated:** the photo is really taken and stored, in a `pass_photos` table, and only the recruit can fetch it. Printing the pass is simulated.
+
 ### 7. Messaging
 - **Recruiter chat:** open from onboarding. A welcome message is waiting.
 - **Hiring manager chat:** opens when the unconditional offer is accepted.
