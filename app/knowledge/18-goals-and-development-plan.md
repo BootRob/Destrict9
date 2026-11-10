@@ -4,7 +4,7 @@
 
 ## Agreeing your first objectives
 At your **30-day check-in**, you and your manager agree your first objectives for the year (see *Learning and mandatory training*).
-- Most people have **3 to 5 objectives**. Fewer, clearer goals are better than a long list.
+- Aim for **three clear objectives**. Fewer, clearer goals are better than a long list.
 - Your manager will explain how your objectives connect to the team's priorities and to our purpose.
 - Performance is discussed on **what** you deliver and **how** you do it, in line with our values (see *Our values*).
 - Objectives are recorded in the HR portal, so you can both see them and update them.
