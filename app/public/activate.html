@@ -26,7 +26,7 @@
     <p class="eyebrow">Your joiner companion</p>
     <h1 id="title">Welcome aboard</h1>
     <p class="lead" id="lead">Checking your link…</p>
-    <div class="pass" id="pass" aria-label="Your joiner pass" hidden>
+    <div class="pass" id="pass" aria-label="Your joiner card" hidden>
       <img class="horse" src="/brand/logos/horse-white.svg" alt="">
       <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip">Saddling up</span></div>
       <div class="pass-who">
@@ -84,7 +84,7 @@
   } else {
     const i = data.invite;
     $('title').textContent = `Congratulations, ${i.name.split(' ')[0]}!`;
-    $('lead').textContent = 'Your pass is ready. Set a password to open your joiner companion: it guides you from now to your first 90 days.';
+    $('lead').textContent = 'Your account is ready. Set a password to open your joiner companion: it guides you from now to your first 90 days.';
     // Their pass, with their name on it: the same card they'll see on the home screen.
     $('pass-name').textContent = i.name;
     $('pass-role').textContent = [i.jobTitle, i.location].filter(Boolean).join(' · ');

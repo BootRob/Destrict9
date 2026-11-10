@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ece8e0">
-  <title>Your pass photo · Joiner companion</title>
+  <title>Your photo · Joiner companion</title>
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
@@ -25,7 +25,7 @@
     </div>
     <div class="jhead lbg-surface--pattern">
       <p class="eyebrow">Your building pass</p>
-      <h1 id="title">Add your pass photo</h1>
+      <h1 id="title">Add your photo</h1>
       <p id="lead">Reception prints your building pass with this photo, ready for you on Day 1.</p>
     </div>
   </header>
@@ -40,7 +40,7 @@
     <p class="bpass-note">How your printed building pass will look.</p>
 
     <section id="not-yet" hidden>
-      <p>You can add your pass photo once you've accepted your unconditional offer.</p>
+      <p>You can add your photo once you've accepted your unconditional offer.</p>
       <a class="lbg-btn lbg-btn--primary" href="/joiner/">Back to your journey</a>
     </section>
 
@@ -81,10 +81,10 @@
     $('take').hidden = false;
     show(passPhotoUrl(j));
     if (j.photo.has) {
-      $('title').textContent = 'Your pass photo';
+      $('title').textContent = 'Your photo';
       $('take-label').textContent = 'Retake your photo';
       $('back').hidden = false;
-      $('lead').textContent = "You can retake it any time. If your pass has already been printed, reception will print a new one.";
+      $('lead').textContent = "You can retake it any time. If your building pass has already been printed, reception will print a new one.";
     }
   }
 
@@ -127,10 +127,10 @@
       await api('/api/journey/photo', { method: 'POST', body: JSON.stringify({ image: pending }) });
       pending = null;
       $('save').hidden = true;
-      $('title').textContent = 'Your pass photo';
+      $('title').textContent = 'Your photo';
       $('take-label').textContent = 'Retake your photo';
       $('back').hidden = false;
-      $('status').textContent = "Saved. Reception will have your pass ready on Day 1.";
+      $('status').textContent = "Saved. Reception will have your building pass ready on Day 1.";
     } catch (err) {
       $('status').textContent = err.message || "Couldn't save your photo. Please try again.";
     } finally {
