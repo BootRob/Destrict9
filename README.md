@@ -45,8 +45,8 @@ Log in with any demo account. The password for all of them is `demo1234`:
 | `jordan.ellis@example.com` | Recruiter. Start here: open **Applicants** and onboard a candidate. |
 | `priya.shah@example.com` | Recruit in phase 1 (Offer), waiting for her screening result. |
 | `alex.kim@example.com` | Recruit in phase 2 (Getting ready), offer accepted. Best on a phone, or in browser device mode (F12, then Ctrl+Shift+M). |
-| `ruby.ahmed@example.com` | Recruit on Day 12 (phase 3, First 30 days). |
-| `tom.bennett@example.com` | Recruit on Day 45 (phase 4, 30 to 60 days). |
+| `ruby.ahmed@example.com` | Recruit on Day 16 (phase 3, First 30 days). |
+| `tom.bennett@example.com` | Recruit on Day 44 (phase 4, 30 to 60 days). |
 | `sam.reid@example.com` | Hiring manager, with the Day 1 checklist. |
 
 To see both sides at once, log in as the recruit in one window and as a staff member in a private window. To see the whole journey from the start, onboard a successful candidate such as Ben Carter as Jordan, then open the **demo mailbox** (`/mailbox.html`) to read the offer email and activate the account.
@@ -76,7 +76,7 @@ About 110 end-to-end checks cover login and roles, chat privacy and live deliver
 | Live chat over WebSockets, stored in SQLite | ClearPath, the screening company. `/clearpath.html` is a labelled stand-in, and the app never collects screening details. |
 | The journey state machine: every step checks the current stage, so steps can't be skipped or repeated | Pre-start training. Its status comes from seed data. |
 | The grounded assistant and the guide editor | Everyone and everything in the data: names, offers, salaries and policies are made up. The 19 guides are fictional. |
-| Phases 1 to 3, end to end. The phase and tracker follow the start date | Phases 4 and 5 are content-rich previews: guides, what to do and videos, but no goal tracking or reviews. Ruby (Day 12) and Tom (Day 45) are seeded relative to today. |
+| Phases 1 to 3, end to end. The phase and tracker follow the start date | Phases 4 and 5 are content-rich previews: guides, what to do and videos, but no goal tracking or reviews. Ruby (Day 16) and Tom (Day 44) are seeded relative to today. |
 | The videos are official Lloyds Banking Group uploads, embedded from `youtube-nocookie.com` and loaded only when tapped | |
 
 ## Stack

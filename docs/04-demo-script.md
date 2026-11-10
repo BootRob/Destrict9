@@ -20,8 +20,8 @@ Use this when time is short. Each step is a different recruit, so nothing has to
 |---|---|---|---|
 | 1 | **Priya**, phase 1 | Log in. The welcome screen: the pass card, "Offer · Saddling up", and "No news is normal". Then her screening view | "Five phases from offer to Day 90. Priya is in phase one, waiting on her checks, and the app tells her what's normal." |
 | 2 | **Alex**, phase 2 | The pass card and the phase tracker. **Choose your laptop**, **Message Sam**. Tap phase 2 and play the **Wellington Place** video | "Once the offer is unconditional, Alex meets his manager, picks his kit and sees where he'll work." |
-| 3 | **Ruby**, phase 3 (Day 12) | Her phase screen: what to do now, the guides for the first 30 days. Ask the assistant "What mandatory training do I need to do, and by when?" and point at the sources | "Day 12. The assistant answers first, from our guides, and shows where the answer came from." |
-| 4 | **Tom**, phase 4 (Day 45) | Phase 4: agreeing objectives, the development plan. Point at the **Preview** label | "Goals and a development plan. Phases 4 and 5 are previews, and we say so." |
+| 3 | **Ruby**, phase 3 (Day 16) | Her phase screen: what to do now, the guides for the first 30 days. Ask the assistant "What mandatory training do I need to do, and by when?" and point at the sources | "Day 16. The assistant answers first, from our guides, and shows where the answer came from." |
+| 4 | **Tom**, phase 4 (Day 44) | Phase 4: agreeing objectives, the development plan. Point at the **Preview** label | "Goals and a development plan. Phases 4 and 5 are previews, and we say so." |
 | 5 | Ending | Tap **5. 60 to 90 days and beyond**: "Full horsepower", the Epic Journey video | "And from there, your Lloyds career." |
 | 6 | Staff, about 20 seconds | **Sam**, the Day 1 checklist | "Managers get a checklist with due dates counted back from the start date." |
 
@@ -44,7 +44,7 @@ Use this when time is short. Each step is a different recruit, so nothing has to
 | 7:30 | **Message Sam**. Then log in as **Sam** in window A and reply live | "Prompt 7, *meet before you meet*." |
 | 8:15 | **Sam, Day 1 checklist**: due dates, laptop choice shown, fill in the Day 1 details | "Prompt 8, *what's left?* Saving the details shows Ben a *Your first day* panel." |
 | 9:00 | **Phone, assistant**: "What time do I start?" and then "Can I park?" | "It answers from our guides and today's Day 1 details, cites its sources, and hands off to a person when it should." |
-| 9:20 | **Ruby** (Day 12): her phase screen, then tap phase 5 | "After Day 1 it keeps going: the first 30 days, goals, then growing your career. Phases 4 and 5 are previews." |
+| 9:20 | **Ruby** (Day 16): her phase screen, then tap phase 5 | "After Day 1 it keeps going: the first 30 days, goals, then growing your career. Phases 4 and 5 are previews." |
 | 9:40 | Close | "Real: login, messaging, the journey rules, the assistant. Simulated: email, the screening company, the seed data. Everything is synthetic." |
 
 ## Backup routes

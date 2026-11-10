@@ -33,7 +33,7 @@ A design critique of "The Pass" restyle scored it 27/40 and found it unfinished,
 
 | Workstream | What | Where |
 |---|---|---|
-| WS1: journey backbone | Five phases in `journey.js`, with nine steps grouped under them; `/api/journey` returns `phase`. A phase tracker on the home screen with one progress measure (fixing "5/8" next to "69%"); the pass card follows the phase. A welcome screen after login. Ruby (Day 12) and Tom (Day 45) seeded | PR #12 (merged) |
+| WS1: journey backbone | Five phases in `journey.js`, with nine steps grouped under them; `/api/journey` returns `phase`. A phase tracker on the home screen with one progress measure (fixing "5/8" next to "69%"); the pass card follows the phase. A welcome screen after login. Ruby (Day 16) and Tom (Day 44) seeded | PR #12 (merged) |
 | WS2: The Pass everywhere | The Pass look on login, activation, offer, screening, laptop and guides; fixes for the demo bugs the critique found | `feat/polish` |
 | WS3: content | Five new guides (the first 30 days week by week, LBG systems and ways of working, mandatory training, goals, growing your career). Video cards from `youtube-nocookie.com`, chosen by phase, role and city. A phase screen per phase, with 4 and 5 as previews. Assistant answers first, in about 60 words, rendered as Markdown; the handoff button is now "Ask Jordan" | PR #13 |
 

@@ -28,6 +28,8 @@ export const docCount = () => kb.docs.length;
 const systemPrompt = (docs) => `You are the onboarding assistant in a bank's new-joiner companion app. You answer questions from people who have accepted a job offer and haven't started yet, or are in their first 90 days. Questions are usually the kind a recruiter would otherwise answer: checks, start dates, pay, benefits, first day, equipment, training, systems, goals, career growth and policies.
 
 Answer only from the documents below, plus the <joiner> and <day1_details> blocks in each question. Those blocks are this joiner's own information from the app. When they're more specific than the documents (for example their exact Day 1 start time and meeting point), use them.
+- The <joiner> block is correct and comes from the app: never question their dates, or say a date looks wrong or falls on an unusual day.
+- Answer for where they are now in their journey (its phase and day). If they've already started, don't give pre-start advice (such as what to bring on Day 1) unless they ask about it; answer for their current phase instead.
 - Lead with the direct answer in the first sentence: the fact, date, number or yes/no they asked for. Then add only what they need to act on it. Keep the whole reply to about 60 words (never more than 100), in British English, warmly but without fuss.
 - If the documents only partly answer it, say what they do cover and what they don't.
 - If the documents don't cover it, or the question depends on the joiner's personal situation (their specific offer, salary, check results, contract, or a decision someone needs to make), don't guess. Say you don't have that information, and hand off to the right person using the "Who to ask" document.
@@ -64,6 +66,10 @@ function buildPrompt(user, history, question, context = {}) {
     `Location: ${user.location ?? 'unknown'}`,
     `Start date: ${user.start_date ?? 'not confirmed'}`,
     `Today: ${new Date().toISOString().slice(0, 10)}`,
+    ...(context.journey ? [
+      `Phase: ${context.journey.phase.name} (phase ${context.journey.phase.n} of ${context.journey.phase.of})`,
+      context.journey.dayNumber ? `They have started: today is Day ${context.journey.dayNumber} of their job` : `Not started yet: ${context.journey.daysToStart ?? 'unknown'} days until their start date`,
+    ] : []),
     `Pre-start onboarding training: ${context.training?.completedAt ? `completed on ${context.training.completedAt.slice(0, 10)}, so their Day 1 lunch is on us` : 'not completed yet'}`,
     '</joiner>',
   ];

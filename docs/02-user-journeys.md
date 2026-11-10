@@ -13,8 +13,8 @@ Every screen, by role. The demo accounts all use the password `demo1234`.
 | alex.kim@example.com | Recruit | Unconditional offer accepted, starts 30 Nov, laptop not chosen yet, part-way through the manager's checklist |
 | priya.shah@example.com | Recruit | Finished with ClearPath, waiting for the screening result |
 | owen.davies@example.com | Recruit | Offer accepted, HP laptop chosen |
-| ruby.ahmed@example.com | Recruit | Day 12, Software Engineer in Leeds: phase 3, First 30 days. Manager Sam |
-| tom.bennett@example.com | Recruit | Day 45, Customer Service Advisor in Cardiff: phase 4, 30 to 60 days. Manager Hannah |
+| ruby.ahmed@example.com | Recruit | Day 16, Software Engineer in Leeds: phase 3, First 30 days. Manager Sam |
+| tom.bennett@example.com | Recruit | Day 44, Customer Service Advisor in Cardiff: phase 4, 30 to 60 days. Manager Hannah |
 
 Candidates who haven't been onboarded (Ben, Chloe, Daniel and others) have no account until the recruiter onboards them.
 
