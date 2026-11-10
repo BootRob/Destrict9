@@ -51,3 +51,12 @@
 .ai-handoff-note { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin-top: var(--lbg-space-2); padding: 0 var(--lbg-space-1); }
 .ai-suggestions { display: flex; flex-wrap: wrap; gap: var(--lbg-space-2); justify-content: center; margin-top: var(--lbg-space-2); }
 .ai-suggestions button { border: 1px solid var(--lbg-heritage-green); color: var(--lbg-heritage-green); background: var(--lbg-white); border-radius: var(--lbg-radius-pill); padding: var(--lbg-space-2) var(--lbg-space-3); min-height: 40px; font-size: var(--lbg-text-sm); cursor: pointer; }
+
+/* Assistant answers rendered from Markdown */
+.bubble--md { white-space: normal; }
+.bubble--md > :first-child { margin-top: 0; }
+.bubble--md > :last-child { margin-bottom: 0; }
+.bubble--md p, .bubble--md ul, .bubble--md ol { margin: 0 0 var(--lbg-space-2); }
+.bubble--md ul, .bubble--md ol { padding-left: 1.25em; }
+.bubble--md li + li { margin-top: 2px; }
+.bubble--md h2, .bubble--md h3, .bubble--md h4, .bubble--md h5 { font-size: inherit; margin: 0 0 var(--lbg-space-1); }
