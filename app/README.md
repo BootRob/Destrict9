@@ -83,6 +83,8 @@ Each private window has its own cookies, so the two logins don't clash. For a th
 | alex.kim@example.com | Joiner | Offer accepted, laptop not chosen yet. Recruiter Jordan, manager Sam |
 | priya.shah@example.com | Joiner | Waiting for her screening result. Recruiter Jordan only, so far |
 | owen.davies@example.com | Joiner | Offer accepted, HP laptop chosen. Recruiter Jordan, manager Hannah |
+| ruby.ahmed@example.com | Joiner | Started 11 days ago (Day 12, phase 3). Recruiter Jordan, manager Sam |
+| tom.bennett@example.com | Joiner | Started 44 days ago (Day 45, phase 4). Recruiter Jordan, manager Hannah |
 | sam.reid@example.com | Hiring manager | Alex, Priya |
 | hannah.price@example.com | Hiring manager | Owen |
 | jordan.ellis@example.com | Recruiter | Alex, Priya, Owen, plus 8 applicants (start here for onboarding) |

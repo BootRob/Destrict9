@@ -66,22 +66,60 @@ function addDays(date, days) {
 const today = () => new Date().toISOString().slice(0, 10);
 
 /**
- * The whole journey for the progress bar, from offer to Day 30.
- * The first five steps follow the recruitment stages; Day 1, Week 1 and Day 30 follow
- * the calendar from the start date once the unconditional offer is accepted.
- * state: done | current | upcoming | stopped. `on` is a date (YYYY-MM-DD) for calendar steps.
+ * The recruit's five phases, from offer to "accelerating their career".
+ * Phases 1 and 2 follow the recruitment stages; phases 3 to 5 follow the calendar from the start date.
+ */
+export const PHASES = [
+  { id: 'offer',         name: 'Offer',              line: 'Saddling up' },
+  { id: 'getting_ready', name: 'Getting ready',      line: 'Joining the stable' },
+  { id: 'first_30',      name: 'First 30 days',      line: 'Finding your stride' },
+  { id: 'days_30_60',    name: '30 to 60 days',      line: 'Setting your course' },
+  { id: 'days_60_90',    name: '60 to 90 days',      line: 'Full horsepower' },
+];
+
+const daysBetween = (from, to) => Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);
+
+/** Which phase the recruit is in today, and when it started (YYYY-MM-DD, or null). */
+function phaseFor(a) {
+  const start = a.start_date;
+  const stage = a.journey_stage;
+  const t = today();
+  let id, startsOn = null;
+  if (['conditional_offer', 'screening', 'screening_submitted', 'withdrawn'].includes(stage)
+    || (stage === 'declined' && a.declined_offer !== 'unconditional')) {
+    id = 'offer';
+    startsOn = a.onboarded_at?.slice(0, 10) ?? null;
+  } else if (stage !== 'accepted' || !start || t < start) {
+    id = 'getting_ready';
+    startsOn = a.unconditional_sent_at?.slice(0, 10) ?? null;
+  } else {
+    const day = daysBetween(start, t);
+    id = day < 30 ? 'first_30' : day < 60 ? 'days_30_60' : 'days_60_90';
+    startsOn = addDays(start, day < 30 ? 0 : day < 60 ? 30 : 60);
+  }
+  const n = PHASES.findIndex((p) => p.id === id) + 1;
+  return { ...PHASES[n - 1], n, of: PHASES.length, startsOn };
+}
+
+/**
+ * The whole journey for the tracker, grouped into the five phases.
+ * state: done | current | upcoming | stopped. `on` is the date a calendar step begins (YYYY-MM-DD).
+ * After the unconditional offer is accepted, "Get ready for Day 1" stays current until the start date,
+ * then the calendar steps take over: Day 1 (first week), weeks 2 to 4, Day 30 (goals), Day 60 (career).
  */
 function stepsFor(a) {
   const start = a.start_date;
+  const on = (days) => (start ? addDays(start, days) : null);
   const defs = [
-    { id: 'conditional_offer', label: 'Conditional offer', at: a.conditional_responded_at },
-    { id: 'screening', label: 'Screening details', at: a.screening_submitted_at },
-    { id: 'screening_submitted', label: 'Screening checks', at: a.screening_result_at },
-    { id: 'unconditional_offer', label: 'Unconditional offer', at: a.unconditional_responded_at },
-    { id: 'accepted', label: 'Meet your manager', at: a.unconditional_responded_at },
-    { id: 'day1', label: 'Day 1', on: start },
-    { id: 'week1', label: 'Week 1', on: start && addDays(start, 7) },
-    { id: 'day30', label: 'Day 30', on: start && addDays(start, 30) },
+    { id: 'conditional_offer',   phase: 'offer',         label: 'Conditional offer',   at: a.conditional_responded_at },
+    { id: 'screening',           phase: 'offer',         label: 'Screening details',   at: a.screening_submitted_at },
+    { id: 'screening_submitted', phase: 'offer',         label: 'Screening checks',    at: a.screening_result_at },
+    { id: 'unconditional_offer', phase: 'getting_ready', label: 'Unconditional offer', at: a.unconditional_responded_at },
+    { id: 'accepted',            phase: 'getting_ready', label: 'Get ready for Day 1' },
+    { id: 'day1',                phase: 'first_30',      label: 'Day 1 and your first week', on: on(0) },
+    { id: 'settling_in',         phase: 'first_30',      label: 'Weeks 2 to 4',        on: on(7) },
+    { id: 'day30',               phase: 'days_30_60',    label: 'Set your goals',      on: on(30) },
+    { id: 'day60',               phase: 'days_60_90',    label: 'Grow your career',    on: on(60) },
   ];
 
   // Where the journey stopped, if it did.
@@ -90,23 +128,53 @@ function stepsFor(a) {
     : a.journey_stage === 'withdrawn' ? 'screening_submitted' : null;
 
   // Index of the current step.
+  const idx = (id) => defs.findIndex((d) => d.id === id);
   let ci;
-  if (stoppedAt) ci = defs.findIndex((d) => d.id === stoppedAt);
-  else if (a.journey_stage !== 'accepted') ci = defs.findIndex((d) => d.id === a.journey_stage);
-  else if (!start) ci = 5;
+  if (stoppedAt) ci = idx(stoppedAt);
+  else if (a.journey_stage !== 'accepted') ci = idx(a.journey_stage);
+  else if (!start || today() < start) ci = idx('accepted');
   else {
-    // After acceptance: Day 1 is "current" until it arrives, then Week 1, then Day 30.
-    const t = today();
-    ci = t < start ? 5 : t < addDays(start, 7) ? 6 : t < addDays(start, 30) ? 7 : defs.length;
+    const day = daysBetween(start, today());
+    ci = day < 7 ? idx('day1') : day < 30 ? idx('settling_in') : day < 60 ? idx('day30') : day < 90 ? idx('day60') : defs.length;
   }
 
   return defs.map((d, i) => ({
     id: d.id,
+    phase: d.phase,
     label: d.label,
     state: i < ci ? 'done' : i === ci ? (stoppedAt ? 'stopped' : 'current') : 'upcoming',
     at: i < ci && d.at ? d.at : null,
     on: d.on ?? null,
   }));
+}
+
+/** One short, phase-specific tip for the welcome screen after login. */
+function tipFor(a, phase) {
+  const recruiter = a.recruiter_name ? firstName(a.recruiter_name) : 'Your recruiter';
+  const manager = a.manager_name ? firstName(a.manager_name) : 'your manager';
+  switch (a.journey_stage) {
+    case 'conditional_offer': return `Take your time with your offer. ${recruiter} is one message away if anything's unclear.`;
+    case 'screening': return 'Have your passport or driving licence to hand: ClearPath asks for it first.';
+    case 'screening_submitted': return `No news is normal. Checks usually take ${TYPICAL_SCREENING}, and you don't need to do anything.`;
+    case 'unconditional_offer': return "Your offer is unconditional now. Once you accept, it's safe to hand in your notice.";
+    case 'declined': case 'withdrawn': return `${recruiter} is still here if you'd like to talk anything through.`;
+    default: break;
+  }
+  switch (phase.id) {
+    case 'getting_ready': return a.device_choice
+      ? `Say hello to ${manager} before Day 1. A short message goes a long way.`
+      : `Choose your laptop soon, so it's ready and waiting on Day 1.`;
+    case 'first_30': return "Your first 30 days are for learning, not delivering. Ask all the questions.";
+    case 'days_30_60': return `Now's the time to agree three clear goals with ${manager}.`;
+    default: return 'Find a mentor and look at where your Lloyds career could go next.';
+  }
+}
+
+/** Days until the start date (before it), or which day of the job it is (from Day 1). */
+function calendarFor(a) {
+  if (!a.start_date) return { daysToStart: null, dayNumber: null };
+  const diff = daysBetween(today(), a.start_date);
+  return diff > 0 ? { daysToStart: diff, dayNumber: null } : { daysToStart: 0, dayNumber: 1 - diff };
 }
 
 /** Whether (and until when) the recruit can choose or change their laptop. */
@@ -135,8 +203,12 @@ export function chooseDevice(user, device) {
 /** Everything the recruit's journey screens need. */
 export function journeyFor(user) {
   const a = applicantForJoiner(user);
+  const phase = phaseFor(a);
   return {
     stage: a.journey_stage,
+    phase: { ...phase, tip: tipFor(a, phase) },
+    phases: PHASES,
+    ...calendarFor(a),
     steps: stepsFor(a),
     offer: {
       jobTitle: a.job_title, location: a.location, salary: a.salary, contract: a.contract,

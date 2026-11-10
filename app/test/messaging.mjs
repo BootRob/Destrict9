@@ -22,10 +22,10 @@ ok(priyaMe.circle.manager === null && priyaMe.circle.recruiter.name === 'Jordan 
 ok(!('buddy' in priyaMe.circle), 'no buddy role in the circle');
 
 const jordanConvs = (await json('/api/conversations', U.jordan.cookie)).conversations;
-ok(jordanConvs.map((c) => c.joiner.name).sort().join() === 'Alex Kim,Owen Davies,Priya Shah', 'recruiter chats with all three recruits');
+ok(jordanConvs.map((c) => c.joiner.name).sort().join() === 'Alex Kim,Owen Davies,Priya Shah,Ruby Ahmed,Tom Bennett', 'recruiter chats with all five recruits');
 const samConvs = (await json('/api/conversations', U.sam.cookie)).conversations;
-ok(samConvs.map((c) => c.joiner.name).join() === 'Alex Kim', 'Sam only sees Alex (Priya has not accepted yet)');
-ok(samConvs[0].unread === 1, "Alex's question is unread for Sam");
+ok(samConvs.map((c) => c.joiner.name).sort().join() === 'Alex Kim,Ruby Ahmed', 'Sam sees Alex and Ruby (Priya has not accepted yet)');
+ok(samConvs.find((c) => c.joiner.name === 'Alex Kim').unread === 1, "Alex's question is unread for Sam");
 ok(samConvs[0].circle.recruiter.name === 'Jordan Ellis', "staff see the recruit's circle");
 
 const mgrId = kinds.manager.id, recId = kinds.recruiter.id;
