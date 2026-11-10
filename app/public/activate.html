@@ -3,46 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#024731">
+  <meta name="theme-color" content="#ece8e0">
   <title>Activate your account · Joiner companion</title>
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
   <style>
-    body { background: var(--lbg-grey-100); }
-    .wrap { max-width: 430px; margin: 0 auto; min-height: 100dvh; background: var(--lbg-white); display: flex; flex-direction: column; }
-    .hero { padding: var(--lbg-space-8) var(--lbg-space-6) var(--lbg-space-6); }
-    .hero img { height: 40px; display: block; margin-bottom: var(--lbg-space-8); }
-    .hero .eyebrow { font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); text-transform: uppercase; letter-spacing: .06em; margin: 0 0 var(--lbg-space-2); opacity: .9; }
-    .hero h1 { margin-bottom: var(--lbg-space-2); }
-    .hero p { margin: 0; opacity: .9; }
-    main { padding: var(--lbg-space-6); flex: 1; }
-    .facts { display: grid; gap: var(--lbg-space-2); margin: 0 0 var(--lbg-space-6); padding: var(--lbg-space-4); background: var(--lbg-grey-100); border-radius: var(--lbg-radius-lg); }
-    .fact { display: flex; gap: var(--lbg-space-3); align-items: center; font-size: var(--lbg-text-sm); }
-    .fact img { width: 20px; height: 20px; }
-    .fact b { font-family: var(--lbg-font-strong); }
-    form .lbg-btn { max-width: none; }
     .help { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: calc(-1 * var(--lbg-space-2)) 0 var(--lbg-space-4); }
-    .problem h2 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); }
+    .problem { padding: var(--lbg-space-6); border-radius: 22px; background: var(--lbg-white); box-shadow: var(--lbg-shadow-card); }
+    .problem h2 { font-size: 22px; line-height: 1.2; margin: 0 0 var(--lbg-space-2); }
+    .problem p { margin: 0; color: var(--lbg-grey-600); }
     .problem .lbg-btn { max-width: none; margin-top: var(--lbg-space-6); }
   </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
 </head>
-<body>
-<div class="wrap">
-  <div class="hero lbg-surface--pattern">
-    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+<body class="joiner">
+<div class="entry">
+  <div class="entry-top"><img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group"></div>
+  <div class="entry-hero">
     <p class="eyebrow">Your joiner companion</p>
     <h1 id="title">Welcome aboard</h1>
-    <p id="lead">Checking your link…</p>
+    <p class="lead" id="lead">Checking your link…</p>
+    <div class="pass" id="pass" aria-label="Your joiner pass" hidden>
+      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
+      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip">Saddling up</span></div>
+      <div class="pass-who">
+        <div><div class="nm" id="pass-name"></div><div class="rl" id="pass-role"></div></div>
+        <div class="no" id="pass-day" hidden>Day one<b id="pass-date"></b></div>
+      </div>
+    </div>
   </div>
 
   <main>
     <div id="setup" hidden>
-      <div class="facts">
-        <div class="fact"><img src="/brand/icons/job-type.svg" alt=""><span id="f-role"></span></div>
-        <div class="fact"><img src="/brand/icons/location.svg" alt=""><span id="f-location"></span></div>
-        <div class="fact" id="f-start-row"><img src="/brand/icons/calendar.svg" alt=""><span>Proposed start <b id="f-start"></b></span></div>
-      </div>
       <form id="form" novalidate>
         <div class="field">
           <label for="email">Your login email</label>
@@ -71,7 +66,6 @@
 </div>
 
 <script type="module">
-  import { fmtDate } from '/js/chat.js';
   const $ = (id) => document.getElementById(id);
   const token = new URLSearchParams(location.search).get('token') ?? '';
 
@@ -90,10 +84,15 @@
   } else {
     const i = data.invite;
     $('title').textContent = `Congratulations, ${i.name.split(' ')[0]}!`;
-    $('lead').textContent = 'Set a password to open your joiner companion. It will guide you from now to your first 30 days.';
-    $('f-role').textContent = i.jobTitle;
-    $('f-location').textContent = i.location;
-    if (i.startDate) $('f-start').textContent = fmtDate(i.startDate); else $('f-start-row').hidden = true;
+    $('lead').textContent = 'Your pass is ready. Set a password to open your joiner companion: it guides you from now to your first 90 days.';
+    // Their pass, with their name on it: the same card they'll see on the home screen.
+    $('pass-name').textContent = i.name;
+    $('pass-role').textContent = [i.jobTitle, i.location].filter(Boolean).join(' · ');
+    if (i.startDate) {
+      $('pass-date').textContent = new Date(`${i.startDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      $('pass-day').hidden = false;
+    }
+    $('pass').hidden = false;
     $('email').value = i.email;
     $('help').textContent = `At least ${i.minPassword} characters.`;
     $('setup').hidden = false;
