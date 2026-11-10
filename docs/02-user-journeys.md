@@ -117,7 +117,7 @@ Available once the unconditional offer is accepted:
 
 ### 6b. Pass photo (`/joiner/photo.html`)
 Once the unconditional offer is accepted, the next step after the laptop is **Add your pass photo**.
-- The page shows passport-photo guidance, and **Take a selfie** opens the front camera.
+- The page shows an **example of the printed building pass**, laid out like a real Lloyds pass: plain white and portrait, the photo in a green box on the top 60%, the full name under it, and the bottom 20% left blank. It updates as soon as a selfie is taken. Below it is passport-photo guidance, and **Take a selfie** opens the front camera.
 - The photo is cropped and shrunk on the phone (a 360x450 JPEG, about 30 KB) before it's uploaded, and it can be retaken.
 - The pass card on the home and welcome screens then shows it **in a green frame with the recruit's full name underneath**, like a real Lloyds access card.
 - **Real vs simulated:** the photo is really taken and stored, in a `pass_photos` table, and only the recruit can fetch it. Printing the pass is simulated.
