@@ -31,15 +31,13 @@
   </header>
 
   <main class="jbody">
-    <div class="pass" id="pass" aria-label="Your building pass">
-      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
-      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip">Building pass</span></div>
-      <figure class="pass-photo-slot" id="placeholder"><span class="pass-photo--empty">Your photo</span><figcaption id="ph-name"></figcaption></figure>
-      <div class="pass-who">
-        <div><div class="nm" id="name"></div><div class="rl" id="role"></div></div>
-        <div class="no" id="day" hidden>Day one<b id="date"></b></div>
-      </div>
-    </div>
+    <!-- An example of the printed building pass: plain white, the photo in a green box on the top 60%,
+         the full name under it, and the bottom 20% left blank. -->
+    <figure class="bpass" aria-label="Example of your building pass">
+      <div class="bpass-photo"><img id="bp-img" alt="" hidden><span id="bp-empty">Your photo</span></div>
+      <figcaption class="bpass-name" id="bp-name"></figcaption>
+    </figure>
+    <p class="bpass-note">How your printed building pass will look.</p>
 
     <section id="not-yet" hidden>
       <p>You can add your pass photo once you've accepted your unconditional offer.</p>
@@ -69,22 +67,13 @@
 
 <script type="module">
   import { api } from '/js/chat.js';
-  import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
-  import { mountPassSections } from '/js/pass-sections.js';
+  import { passPhotoUrl } from '/js/pass-photo.js';
 
   const $ = (id) => document.getElementById(id);
   const [{ user: me }, { journey: j }] = await Promise.all([api('/api/me'), api('/api/journey')]);
 
-  $('role').textContent = [me.jobTitle, me.location].filter(Boolean).join(' · ');
-  $('name').textContent = me.name;
-  $('ph-name').textContent = me.name;
-  if (me.startDate) {
-    $('date').textContent = new Date(`${me.startDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    $('day').hidden = false;
-  }
-  const pass = $('pass');
-  mountPassSections(pass).update(j, me);
-  const show = (src) => { $('placeholder').hidden = Boolean(src); showPassPhoto(pass, { src, name: me.name }); if (!src) pass.classList.add('has-photo'); };
+  $('bp-name').textContent = me.name;
+  const show = (src) => { $('bp-img').hidden = !src; $('bp-empty').hidden = Boolean(src); if (src) $('bp-img').src = src; };
 
   if (!j.photo?.available) {
     $('not-yet').hidden = false;

@@ -69,6 +69,7 @@ From top to bottom:
 - **Your journey:**
   - The **pass card**:
     - It **fills in as the recruit progresses**. It's a Lloyds-green card split into five sections, one per phase, and the sections not yet reached are greyscale. Phase 1 is one section in colour, and phase 5 is the full card. When the phase changes live, the grey edge slides along.
+    - Its "card number" is the recruit's **start date and time as a 16-digit card number**, in groups of four like a bank card: `0000 DDMM YYYY HHMM`, for example `0000 3011 2026 0930`. It uses the manager's Day 1 time, or 9:30am if they haven't shared it. The bottom-right corner shows **Days to go**, or **Today is day** once they've started.
     - Its "card number" is the recruit's **start date and time as 12 digits**, in groups of four like a bank card: `DDMM YYYY HHMM`, for example `3011 2026 0930`. It uses the manager's Day 1 time, or 9:30am if they haven't shared it. The bottom-right corner shows **Days to go**, or **Today is day** once they've started.
     - The chip shows the phase.
   - A **five-part phase tracker** with one progress measure, for example "Phase 2 of 5". Tapping a phase opens its phase screen.
@@ -117,7 +118,7 @@ Available once the unconditional offer is accepted:
 
 ### 6b. Pass photo (`/joiner/photo.html`)
 Once the unconditional offer is accepted, the next step after the laptop is **Add your pass photo**.
-- The page shows passport-photo guidance, and **Take a selfie** opens the front camera.
+- The page shows an **example of the printed building pass**, laid out like a real Lloyds pass: plain white and portrait, the photo in a green box on the top 60%, the full name under it, and the bottom 20% left blank. It updates as soon as a selfie is taken. Below it is passport-photo guidance, and **Take a selfie** opens the front camera.
 - The photo is cropped and shrunk on the phone (a 360x450 JPEG, about 30 KB) before it's uploaded, and it can be retaken.
 - The pass card on the home and welcome screens then shows it **in a green frame with the recruit's full name underneath**, like a real Lloyds access card.
 - **Real vs simulated:** the photo is really taken and stored, in a `pass_photos` table, and only the recruit can fetch it. Printing the pass is simulated.
