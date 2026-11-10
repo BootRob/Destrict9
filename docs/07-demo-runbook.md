@@ -39,7 +39,7 @@ Every password is `demo1234`. On the login page, tap a demo account to fill in t
 
 | # | Phone (A) | Laptop (B) | Say |
 |---|---|---|---|
-| 1 | Log in as **Priya Shah**. The **welcome screen** shows the pass card, "Phase 1 of 5 · Offer", "Saddling up, Priya" and the tip "No news is normal". Tap **Continue**. | | "Joining a bank means weeks of waiting. The app takes you from offer to Day 90 in five phases, and Priya's in phase one." |
+| 1 | Log in as **Priya Shah**. The **welcome screen** shows the pass card, "Phase 1 of 5 · Offer", "Saddling up, Priya" and the tip "No news is normal". If there's time, tap **Watch: the Epic Journey** and play a few seconds of the advert. Then tap **Continue**. | | "Joining a bank means weeks of waiting. The app takes you from offer to Day 90 in five phases, and Priya's in phase one." |
 | 2 | Home: the phase tracker shows **Phase 1 of 5**. Tap **See what's being checked**: the calm screening timeline, "usually done by" a date. | | "Prompt 2, *honest progress*: what's being checked, how long it usually takes, and that no news is normal." |
 | 3 | Go back to **Home** and keep it in view. | **Jordan:** Priya shows **Result needed**. **Record result**, then **Clear**. | "In real life the screening company sends this. Watch the phone." |
 | 4 | **Live:** the phone changes to "Your unconditional offer is ready". Tap **View and accept**, then **Accept**. Back on Home, **a second section of her pass card has filled with colour**. | **Jordan's** table changes to *Accepted*, live. | "Now it's safe to resign, and accepting opens a chat with her hiring manager." |

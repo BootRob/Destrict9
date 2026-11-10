@@ -32,6 +32,12 @@
       <h1 id="line">Welcome</h1>
     </div>
     <p class="tip" id="tip" hidden><b>Tip</b><span id="tip-text"></span></p>
+    <div class="film" id="film" hidden>
+      <button type="button" class="film-row" id="film-play" aria-label="Play the Lloyds Bank Epic Journey advert, 1 minute">
+        <span class="film-thumb"><img src="https://i.ytimg.com/vi/lr3ybKC44XQ/hqdefault.jpg" alt="" loading="lazy" decoding="async"><i aria-hidden="true"></i></span>
+        <span class="film-text"><b>Watch: the Epic Journey</b><small>Lloyds Bank · 1:00 · the journey you're starting</small></span>
+      </button>
+    </div>
   </div>
   <button class="go" id="go" type="button">Continue</button>
 </main>
@@ -64,6 +70,18 @@
       : `Phase ${j.phase.n} of ${j.phase.of} · ${j.phase.name}`;
     $('line').textContent = `${j.phase.line}, ${me.name.split(' ')[0]}`;
     if (j.phase.tip) { $('tip-text').textContent = j.phase.tip; $('tip').hidden = false; }
+    // Before Day 1, the welcome screen offers the Epic Journey advert. Nothing loads from YouTube until it's tapped.
+    if (['offer', 'getting_ready'].includes(j.phase.id)) {
+      $('film').hidden = false;
+      $('film-play').addEventListener('click', () => {
+        const frame = Object.assign(document.createElement('div'), { className: 'film-frame' });
+        frame.append(Object.assign(document.createElement('iframe'), {
+          src: 'https://www.youtube-nocookie.com/embed/lr3ybKC44XQ?autoplay=1&rel=0&modestbranding=1&playsinline=1',
+          title: 'Lloyds Bank: Epic Journey', allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen', allowFullscreen: true,
+        }));
+        $('film').replaceChildren(frame);
+      }, { once: true });
+    }
 
     // Stays until the recruit taps Continue, so there's time to read the tip.
     $('go').focus();
