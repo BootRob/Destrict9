@@ -135,7 +135,8 @@ function card(j, onOpenChat) {
         make('h3', { textContent: o.startDate ? `See you on ${fmtDate(o.startDate)}` : "You're joining us" }),
         make('p', { textContent: `You're now connected with ${o.hiringManager}, your hiring manager. Say hello and ask anything about the role or your first week.` }),
         j.managerConversationId ? chatBtn('manager', `Message ${o.hiringManager.split(' ')[0]}`) : null,
-        j.device?.choice ? link('/joiner/device.html', 'Your laptop', 'secondary') : null);
+        j.device?.choice ? link('/joiner/device.html', 'Your laptop', 'secondary') : null,
+        j.photo?.has ? make('a', { className: 'link-btn next-step-link', href: '/joiner/photo.html', textContent: 'Retake your pass photo' }) : null);
     case 'declined':
       return make('div', { className: 'next-step next-step--quiet' },
         make('h3', { textContent: 'You declined the offer' }),
@@ -193,7 +194,9 @@ function stepDetail(step, j) {
         : step.state === 'done' ? `You got ready with ${o.hiringManager}: laptop chosen, Day 1 details shared and pre-start training done.`
         : `You're connected with ${o.hiringManager}, your hiring manager. Choose your laptop, read your Day 1 details and do your pre-start training.`;
       t.rows = [row('Hiring manager', o.hiringManager), row('Start date', o.startDate && fmtDate(o.startDate)), row('Laptop', j.device?.choice ? DEVICE_NAMES[j.device.choice] : j.device?.available ? 'Not chosen yet' : null), row('Pass photo', j.photo?.available ? (j.photo.has ? 'Added' : 'Not added yet') : null)];
-      t.link = j.device?.available && !j.dayNumber ? ['/joiner/device.html', j.device.choice ? 'Your laptop' : 'Choose your laptop'] : null;
+      t.link = j.device?.available && !j.dayNumber
+        ? (j.device.choice && j.photo?.available ? ['/joiner/photo.html', j.photo.has ? 'Retake your pass photo' : 'Add your pass photo'] : ['/joiner/device.html', j.device.choice ? 'Your laptop' : 'Choose your laptop'])
+        : null;
       break;
     case 'day1':
       t.text = 'Day 1 and your first week: meeting the team, getting set up and starting your mandatory training.';

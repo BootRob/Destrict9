@@ -145,7 +145,7 @@
       // The pass shows the phase; the facts show the countdown (or which day it is) and the phase number.
       if (j.dayNumber) $('job').textContent = `Day ${j.dayNumber} as a ${me.jobTitle} in ${me.location}. ${j.phase.line}.`;
       $('pass').dataset.phase = j.phase.id;
-      showPassPhoto($('pass'), { src: passPhotoUrl(j), name: me.name });
+      showPassPhoto($('pass'), { src: passPhotoUrl(j), name: me.name, editHref: j.photo?.available ? '/joiner/photo.html' : null });
       passSections.update(j, me);
       $('pass-chip').textContent = j.phase.name;
       $('pass-day-label').textContent = j.dayNumber ? 'Started' : 'Day one';
