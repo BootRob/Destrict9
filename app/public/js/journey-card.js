@@ -119,7 +119,8 @@ function card(j, onOpenChat) {
           make('p', { textContent: `MacBook Pro or HP EliteBook: pick the one that suits you and it'll be ready on day 1. You're also now connected with ${o.hiringManager}, your hiring manager.` }),
           make('img', { src: j.device.options[0].image, alt: '', className: 'next-step-img' }),
           link('/joiner/device.html', 'Choose your laptop', 'accent'),
-          j.managerConversationId ? chatBtn('manager', `Message ${o.hiringManager.split(' ')[0]}`, 'on-dark') : null);
+          // One primary action per card: the manager chat is a quieter text link under it.
+          j.managerConversationId ? make('button', { type: 'button', className: 'link-btn next-step-link', textContent: `Or message ${o.hiringManager.split(' ')[0]}, your hiring manager`, onclick: () => onOpenChat?.('manager') }) : null);
       }
       return make('div', { className: 'next-step' },
         make('p', { className: 'eyebrow', textContent: "You're all set" }),
