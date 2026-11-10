@@ -135,3 +135,4 @@ html[data-theme="dark"] .pass .pass-photo img { border-color: var(--pass-lime); 
 .pass .dtg[hidden] { display: none; }
 .pass.sect .pass-who { right: 100px; }
 .pass.sect:not(.has-photo) .num12 { top: 94px; }
+.pass .num12 { font-size: 21px; letter-spacing: .08em; } .pass.has-photo .num12 { left: 100px; font-size: 17px; letter-spacing: .05em; word-spacing: .15em; }

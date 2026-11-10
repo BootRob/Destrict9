@@ -69,7 +69,7 @@ From top to bottom:
 - **Your journey:**
   - The **pass card**:
     - It **fills in as the recruit progresses**. It's a Lloyds-green card split into five sections, one per phase, and the sections not yet reached are greyscale. Phase 1 is one section in colour, and phase 5 is the full card. When the phase changes live, the grey edge slides along.
-    - Its "card number" is the recruit's **start date and time as 12 digits**, in groups of four like a bank card: `DDMM YYYY HHMM`, for example `3011 2026 0930`. It uses the manager's Day 1 time, or 9:30am if they haven't shared it. The bottom-right corner shows **Days to go**, or **Today is day** once they've started.
+    - Its "card number" is the recruit's **start date and time as a 16-digit card number**, in groups of four like a bank card: `0000 DDMM YYYY HHMM`, for example `0000 3011 2026 0930`. It uses the manager's Day 1 time, or 9:30am if they haven't shared it. The bottom-right corner shows **Days to go**, or **Today is day** once they've started.
     - The chip shows the phase.
   - A **five-part phase tracker** with one progress measure, for example "Phase 2 of 5". Tapping a phase opens its phase screen.
   - Nine steps grouped under the phases: conditional offer, screening details and screening checks (Offer); unconditional offer and getting ready for Day 1 (Getting ready); Day 1 and the first week, and weeks 2 to 4 (First 30 days); set your goals (30 to 60 days); grow your career (60 to 90 days). Calendar steps show their dates.

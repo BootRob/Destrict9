@@ -1,6 +1,6 @@
 // The pass card fills in as the recruit progresses: it is split into five sections, one per phase, and
 // the sections not yet reached are shown in greyscale (left to right). Its "card number" is the
-// recruit's start date and time as 12 digits, DDMM YYYY HHMM (for example 3011 2026 0930), using the
+// recruit's start date and time as a 16-digit card number, 0000 DDMM YYYY HHMM (for example 0000 3011 2026 0930), using the
 // manager's Day 1 time if they've shared it, or 9:30am. The bottom-right corner shows the days to go
 // (or, once they've started, which day of the job it is).
 //   const sections = mountPassSections(document.getElementById('pass'));
@@ -46,7 +46,7 @@ export function mountPassSections(pass) {
     cornerValue.textContent = String(started ? j.dayNumber : j?.daysToStart ?? '');
     if (!me?.startDate) { num.textContent = ''; return; }
     const [yyyy, mm, dd] = me.startDate.split('-');
-    num.textContent = `${dd}${mm} ${yyyy} ${(await startTime()).replace(':', '')}`;
+    num.textContent = `0000 ${dd}${mm} ${yyyy} ${(await startTime()).replace(':', '')}`; // 16 digits, like a card number
   }
   return { update };
 }
