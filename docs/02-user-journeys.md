@@ -67,7 +67,10 @@ Shown once after each login and after activation. The pass card animates in with
 From top to bottom:
 - **Header:** "Hi Ben", role and location, and a days-to-go countdown.
 - **Your journey:**
-  - The **pass card**: its chip shows the phase, and its look changes with it.
+  - The **pass card**:
+    - It **fills in as the recruit progresses**. It's a Lloyds-green card split into five sections, one per phase, and the sections not yet reached are greyscale. Phase 1 is one section in colour, and phase 5 is the full card. When the phase changes live, the grey edge slides along.
+    - Its "card number" is a **12-digit live countdown** to Day 1, in groups of four like a bank card: the days padded with zeros, then hours, minutes and seconds. It uses the manager's Day 1 time, or 9:30am if they haven't shared it. Once the recruit has started, it counts up from Day 1.
+    - The chip shows the phase.
   - A **five-part phase tracker** with one progress measure, for example "Phase 2 of 5". Tapping a phase opens its phase screen.
   - Nine steps grouped under the phases: conditional offer, screening details and screening checks (Offer); unconditional offer and getting ready for Day 1 (Getting ready); Day 1 and the first week, and weeks 2 to 4 (First 30 days); set your goals (30 to 60 days); grow your career (60 to 90 days). Calendar steps show their dates.
   - A **next-step card** that changes with the stage (see the table below).

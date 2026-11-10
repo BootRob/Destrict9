@@ -70,6 +70,7 @@
 <script type="module">
   import { api } from '/js/chat.js';
   import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
+  import { mountPassSections } from '/js/pass-sections.js';
 
   const $ = (id) => document.getElementById(id);
   const [{ user: me }, { journey: j }] = await Promise.all([api('/api/me'), api('/api/journey')]);
@@ -82,6 +83,7 @@
     $('day').hidden = false;
   }
   const pass = $('pass');
+  mountPassSections(pass).update(j, me);
   const show = (src) => { $('placeholder').hidden = Boolean(src); showPassPhoto(pass, { src, name: me.name }); if (!src) pass.classList.add('has-photo'); };
 
   if (!j.photo?.available) {
