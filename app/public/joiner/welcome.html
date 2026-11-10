@@ -38,6 +38,7 @@
 
 <script type="module">
   import { api } from '/js/chat.js';
+  import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
 
   const HOME = '/joiner/';
   const $ = (id) => document.getElementById(id);
@@ -54,6 +55,7 @@
       $('day').hidden = false;
     }
     $('pass').dataset.phase = j.phase.id;
+    showPassPhoto($('pass'), { src: passPhotoUrl(j), name: me.name });
     $('chip').textContent = j.phase.name;
     $('eyebrow').textContent = j.dayNumber
       ? `Day ${j.dayNumber} · Phase ${j.phase.n} of ${j.phase.of}`

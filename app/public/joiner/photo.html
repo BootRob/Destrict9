@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ece8e0">
+  <title>Your pass photo · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
+  <link rel="stylesheet" href="/css/joiner.css">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
+  <link rel="stylesheet" href="/css/phases.css">
+</head>
+<!-- The recruit takes a selfie for their building pass. It is resized on the phone and shown on their pass card. -->
+<body class="joiner photo-page">
+<div class="jpage">
+  <header>
+    <div class="jbar">
+      <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
+      <img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
+    </div>
+    <div class="jhead lbg-surface--pattern">
+      <p class="eyebrow">Your building pass</p>
+      <h1 id="title">Add your pass photo</h1>
+      <p id="lead">Reception prints your building pass with this photo, ready for you on Day 1.</p>
+    </div>
+  </header>
+
+  <main class="jbody">
+    <div class="pass" id="pass" aria-label="Your building pass">
+      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
+      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip">Building pass</span></div>
+      <figure class="pass-photo-slot" id="placeholder"><span class="pass-photo--empty">Your photo</span><figcaption id="ph-name"></figcaption></figure>
+      <div class="pass-who">
+        <div><div class="nm" id="name"></div><div class="rl" id="role"></div></div>
+        <div class="no" id="day" hidden>Day one<b id="date"></b></div>
+      </div>
+    </div>
+
+    <section id="not-yet" hidden>
+      <p>You can add your pass photo once you've accepted your unconditional offer.</p>
+      <a class="lbg-btn lbg-btn--primary" href="/joiner/">Back to your journey</a>
+    </section>
+
+    <section id="take" hidden>
+      <h2>Like a passport photo</h2>
+      <ul class="photo-tips">
+        <li>Face the camera, with your whole face in view.</li>
+        <li>A plain, light background works best.</li>
+        <li>No sunglasses or hats. Religious head coverings are fine.</li>
+        <li>Just you in the photo.</li>
+      </ul>
+      <div class="photo-actions">
+        <label class="lbg-btn lbg-btn--accent" id="take-btn">
+          <span id="take-label">Take a selfie</span>
+          <input type="file" id="file" accept="image/*" capture="user">
+        </label>
+        <button type="button" class="lbg-btn lbg-btn--primary" id="save" hidden>Use this photo</button>
+        <a class="lbg-btn lbg-btn--secondary" href="/joiner/" id="back" hidden>Back to your journey</a>
+      </div>
+      <p class="photo-status" id="status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+  import { api } from '/js/chat.js';
+  import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
+
+  const $ = (id) => document.getElementById(id);
+  const [{ user: me }, { journey: j }] = await Promise.all([api('/api/me'), api('/api/journey')]);
+
+  $('role').textContent = [me.jobTitle, me.location].filter(Boolean).join(' · ');
+  $('name').textContent = me.name;
+  $('ph-name').textContent = me.name;
+  if (me.startDate) {
+    $('date').textContent = new Date(`${me.startDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    $('day').hidden = false;
+  }
+  const pass = $('pass');
+  const show = (src) => { $('placeholder').hidden = Boolean(src); showPassPhoto(pass, { src, name: me.name }); if (!src) pass.classList.add('has-photo'); };
+
+  if (!j.photo?.available) {
+    $('not-yet').hidden = false;
+  } else {
+    $('take').hidden = false;
+    show(passPhotoUrl(j));
+    if (j.photo.has) {
+      $('title').textContent = 'Your pass photo';
+      $('take-label').textContent = 'Retake your photo';
+      $('back').hidden = false;
+    }
+  }
+
+  // Centre-crop to a 4:5 portrait and shrink it on the phone, so the upload is small (about 30 KB).
+  async function toJpeg(file) {
+    const img = await createImageBitmap(file);
+    const W = 360, H = 450;
+    const scale = Math.max(W / img.width, H / img.height);
+    const sw = W / scale, sh = H / scale;
+    const canvas = Object.assign(document.createElement('canvas'), { width: W, height: H });
+    canvas.getContext('2d').drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, W, H);
+    for (const q of [0.82, 0.7, 0.55, 0.4]) {
+      const url = canvas.toDataURL('image/jpeg', q);
+      if (url.length <= 58_000) return url;
+    }
+    throw new Error('too big');
+  }
+
+  let pending = null;
+  $('file').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    $('status').textContent = '';
+    try {
+      pending = await toJpeg(file);
+      show(pending);
+      $('save').hidden = false;
+      $('take-label').textContent = 'Retake';
+      $('status').textContent = 'Happy with it? Tap Use this photo.';
+    } catch {
+      $('status').textContent = "That photo couldn't be used. Please try again.";
+    }
+    e.target.value = ''; // so the same photo can be chosen again
+  });
+
+  $('save').addEventListener('click', async () => {
+    if (!pending) return;
+    $('save').disabled = true;
+    try {
+      await api('/api/journey/photo', { method: 'POST', body: JSON.stringify({ image: pending }) });
+      pending = null;
+      $('save').hidden = true;
+      $('title').textContent = 'Your pass photo';
+      $('take-label').textContent = 'Retake your photo';
+      $('back').hidden = false;
+      $('status').textContent = "Saved. Reception will have your pass ready on Day 1.";
+    } catch (err) {
+      $('status').textContent = err.message || "Couldn't save your photo. Please try again.";
+    } finally {
+      $('save').disabled = false;
+    }
+  });
+</script>
+<script type="module" src="/js/joiner-shell.js"></script>
+</body>
+</html>

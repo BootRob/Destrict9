@@ -330,6 +330,14 @@ app.post('/api/journey/conditional/accept', requireAuth, requireJoinerRole, jour
 app.post('/api/journey/decline', requireAuth, requireJoinerRole, journeyAction((req) => journey.declineOffer(req.user, req.body?.offer, req.body?.reason)));
 app.post('/api/journey/screening', requireAuth, requireJoinerRole, journeyAction((req) => journey.submitScreening(req.user, publicOrigin(req))));
 app.post('/api/journey/device', requireAuth, requireJoinerRole, journeyAction((req) => journey.chooseDevice(req.user, req.body?.device)));
+app.post('/api/journey/photo', requireAuth, requireJoinerRole, journeyAction((req) => journey.setPassPhoto(req.user, req.body?.image)));
+app.get('/api/journey/photo', requireAuth, requireJoinerRole, (req, res) => {
+  try {
+    const p = journey.passPhotoFor(req.user);
+    if (!p) return res.status(404).json({ error: 'No pass photo yet' });
+    res.set({ 'Content-Type': p.mime, 'Cache-Control': 'private, max-age=31536000, immutable' }).send(p.bytes); // the URL carries ?v=updatedAt
+  } catch (err) { onboardingError(res, err); }
+});
 app.post('/api/journey/unconditional/accept', requireAuth, requireJoinerRole, journeyAction((req) => {
   const { applicant, managerConversation: { id, staffId } } = journey.acceptUnconditional(req.user);
   // Manager and recruit join the new chat room straight away and refresh their lists.

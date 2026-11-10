@@ -122,6 +122,14 @@ function card(j, onOpenChat) {
           // One primary action per card: the manager chat is a quieter text link under it.
           j.managerConversationId ? make('button', { type: 'button', className: 'link-btn next-step-link', textContent: `Or message ${o.hiringManager.split(' ')[0]}, your hiring manager`, onclick: () => onOpenChat?.('manager') }) : null);
       }
+      if (j.photo?.available && !j.photo.has) {
+        return make('div', { className: 'next-step lbg-surface--racing' },
+          make('p', { className: 'eyebrow', textContent: 'Your next step' }),
+          make('h3', { textContent: 'Add your pass photo' }),
+          make('p', { textContent: 'Take a quick selfie for your building pass. Reception prints it, so it is ready when you arrive on Day 1.' }),
+          link('/joiner/photo.html', 'Take your pass photo', 'accent'),
+          j.managerConversationId ? make('button', { type: 'button', className: 'link-btn next-step-link', textContent: `Or message ${o.hiringManager.split(' ')[0]}, your hiring manager`, onclick: () => onOpenChat?.('manager') }) : null);
+      }
       return make('div', { className: 'next-step' },
         make('p', { className: 'eyebrow', textContent: "You're all set" }),
         make('h3', { textContent: o.startDate ? `See you on ${fmtDate(o.startDate)}` : "You're joining us" }),
@@ -184,7 +192,7 @@ function stepDetail(step, j) {
       t.text = step.state === 'upcoming' ? `You're connected with ${o.hiringManager}, your hiring manager, once you accept your unconditional offer.`
         : step.state === 'done' ? `You got ready with ${o.hiringManager}: laptop chosen, Day 1 details shared and pre-start training done.`
         : `You're connected with ${o.hiringManager}, your hiring manager. Choose your laptop, read your Day 1 details and do your pre-start training.`;
-      t.rows = [row('Hiring manager', o.hiringManager), row('Start date', o.startDate && fmtDate(o.startDate)), row('Laptop', j.device?.choice ? DEVICE_NAMES[j.device.choice] : j.device?.available ? 'Not chosen yet' : null)];
+      t.rows = [row('Hiring manager', o.hiringManager), row('Start date', o.startDate && fmtDate(o.startDate)), row('Laptop', j.device?.choice ? DEVICE_NAMES[j.device.choice] : j.device?.available ? 'Not chosen yet' : null), row('Pass photo', j.photo?.available ? (j.photo.has ? 'Added' : 'Not added yet') : null)];
       t.link = j.device?.available && !j.dayNumber ? ['/joiner/device.html', j.device.choice ? 'Your laptop' : 'Choose your laptop'] : null;
       break;
     case 'day1':
