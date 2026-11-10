@@ -98,7 +98,7 @@
     $('body').hidden = true; $('updated').hidden = true; $('list').hidden = false;
     $('list').replaceChildren(...guides.map((g) => {
       const b = make('button', { type: 'button', className: 'item' },
-        make('span', { className: 'info' }, make('strong', { textContent: g.title }), make('small', { textContent: `Updated ${fmtShort(g.updatedAt)}` })),
+        make('span', { className: 'info' }, make('strong', { textContent: g.title }), make('small', { textContent: g.updatedBy ? `${g.minutes} min read · updated ${fmtShort(g.updatedAt)} by ${g.updatedBy.name}` : `${g.minutes} min read` })),
         make('img', { src: '/brand/icons/chevron-right.svg', alt: '' }));
       b.addEventListener('click', () => { location.hash = g.id; });
       return make('li', {}, b);
@@ -116,8 +116,9 @@
     $('day1').hidden = true;
     $('body').replaceChildren(renderMarkdown(guide.markdown, { skipTitle: true }));
     $('body').hidden = false;
-    $('updated').textContent = `Last updated ${fmtShort(guide.updatedAt)}${guide.updatedBy ? ` by ${guide.updatedBy.name}` : ''}`;
-    $('updated').hidden = false;
+    // Only edits made in the app have a real date: the file times are just when the code was deployed.
+    $('updated').textContent = guide.updatedBy ? `Last updated ${fmtShort(guide.updatedAt)} by ${guide.updatedBy.name}` : '';
+    $('updated').hidden = !guide.updatedBy;
     document.title = `${guide.title} · Joiner companion`;
     scrollTo(0, 0);
   }

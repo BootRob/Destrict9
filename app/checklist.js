@@ -71,9 +71,10 @@ const q = {
 };
 
 // Demo data, added once: Alex is part-way through, and is the only joiner who has done the training.
+// The laptop stays to do: Alex hasn't chosen one yet (it's part of the demo), and the item's hint says so.
 if (q.countAny.get().n === 0) {
   const ago = (d) => new Date(Date.now() - d * 86_400_000).toISOString();
-  for (const [item, days] of [['laptop', 3], ['badge', 3], ['access', 2]]) q.setItem.run('alex.kim@example.com', item, 'done', ago(days), 'Sam Reid');
+  for (const [item, days] of [['badge', 3], ['access', 2]]) q.setItem.run('alex.kim@example.com', item, 'done', ago(days), 'Sam Reid');
   q.setItem.run('alex.kim@example.com', 'rota', 'not_needed', ago(2), 'Sam Reid');
   db.prepare('INSERT INTO prestart_training (joiner_email, completed_at) VALUES (?, ?)').run('alex.kim@example.com', ago(1));
 }

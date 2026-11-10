@@ -92,10 +92,14 @@
     $('conditions').replaceChildren(
       make('h2', { textContent: unconditionalStage ? 'What happens next' : 'Conditions of this offer' }),
       make('div', { className: 'callout-note' }, ...(unconditionalStage
-        ? [make('p', { textContent: `When you accept, you'll be connected with ${o.hiringManager} in the app so you can get to know each other before your first day.` }),
+        ? [make('p', { textContent: j.stage === 'accepted'
+            ? `You're connected with ${o.hiringManager} in the app, so you can get to know each other before your first day.`
+            : `When you accept, you'll be connected with ${o.hiringManager} in the app so you can get to know each other before your first day.` }),
            make('p', { textContent: "Your offer is now unconditional, so it's safe to hand in your notice with your current employer if you haven't already." })]
         : [make('p', { textContent: 'This offer is conditional on satisfactory pre-employment screening: identity, right to work, employment history, credit and a basic criminal record check.' }),
-           make('p', { textContent: "When you accept, we'll send you a link to complete your screening details. Please don't hand in your notice until your offer becomes unconditional." })])));
+           make('p', { textContent: j.stage === 'conditional_offer'
+            ? "When you accept, we'll send you a link to complete your screening details. Please don't hand in your notice until your offer becomes unconditional."
+            : "Please don't hand in your notice until your offer becomes unconditional." })])));
 
     if (w) {
       $('decide').hidden = false;
