@@ -10,16 +10,29 @@ For the **private qualifying walkthrough** (10 minutes on a phone, then 5 minute
 4. **Laptop window B (private):** the demo mailbox, `/mailbox.html`.
 5. Each browser window or private window keeps its own login. On localhost, cookies are shared across ports, so keep separate users in separate windows.
 
+## The 3-minute demo: five phases
+
+Use this when time is short. Each step is a different recruit, so nothing has to happen live. Log out between steps, or use a private window per recruit.
+
+| Step | Who | Show | Say |
+|---|---|---|---|
+| 1 | **Priya**, phase 1 | Log in. The welcome screen: the pass card, "Offer · Saddling up", and "No news is normal". Then her screening view | "Five phases from offer to Day 90. Priya is in phase one, waiting on her checks, and the app tells her what's normal." |
+| 2 | **Alex**, phase 2 | The pass card and the phase tracker. **Choose your laptop**, **Message Sam**. Tap phase 2 and play the **Wellington Place** video | "Once the offer is unconditional, Alex meets his manager, picks his kit and sees where he'll work." |
+| 3 | **Ruby**, phase 3 (Day 12) | Her phase screen: what to do now, the guides for the first 30 days. Ask the assistant "What mandatory training do I need to do, and by when?" and point at the sources | "Day 12. The assistant answers first, from our guides, and shows where the answer came from." |
+| 4 | **Tom**, phase 4 (Day 45) | Phase 4: agreeing objectives, the development plan. Point at the **Preview** label | "Goals and a development plan. Phases 4 and 5 are previews, and we say so." |
+| 5 | Ending | Tap **5. 60 to 90 days and beyond**: "Full horsepower", the Epic Journey video | "And from there, your Lloyds career." |
+| 6 | Staff, about 20 seconds | **Sam**, the Day 1 checklist | "Managers get a checklist with due dates counted back from the start date." |
+
 ## The story (10 minutes)
 
 | Time | Show | Say |
 |---|---|---|
-| 0:00 | The title | "Joining a bank means weeks of waiting between offer and Day 1, and Workday doesn't guide you through it. We built a companion that takes you from offer to Day 30." |
+| 0:00 | The title | "Joining a bank means weeks of waiting between offer and Day 1, and Workday doesn't guide you through it. We built a companion that takes you from offer to Day 90, in five phases." |
 | 0:45 | **Jordan, Applicants**: the tiles, the table, and Grace's "unsuccessful" note | "The journey starts with the recruiter. Some candidates were successful, some weren't." |
 | 1:30 | **Onboard** Ben, then read the confirmation box | "One click sends Ben his conditional offer. His account exists but is switched off until he activates it." |
 | 2:00 | **Mailbox**: Ben's offer email, then **View my offer** | "Email is simulated in the prototype. In production this goes through an email service." |
 | 2:30 | **Phone**: "Congratulations, Ben!", set a password | "The link is one-time and expires. We store only a hash of it." |
-| 3:00 | **Phone, home**: the progress bar "Step 1 of 8" and the offer card | "Prompt 3, *where am I?*: eight steps from offer to Day 30." |
+| 3:00 | **Phone**: the welcome screen, then home: the phase tracker "Phase 1 of 5" and the offer card | "Prompt 3, *where am I?*: five phases from offer to Day 90, and one thing to do next." |
 | 3:30 | **Offer**: terms, conditions, **Accept and continue to screening**. Point at **Jordan's screen updating live** | "Notice the advice not to resign yet. And Jordan sees it instantly." |
 | 4:15 | **Screening**: reassurance, "Have these ready", **Go to ClearPath** | "We don't collect personal details at all. They go straight to the screening company." |
 | 4:45 | Back, then **I've added my details**, then the checks with spinners | "Prompt 2, *honest progress*: what's being checked, the usual timeframe, no news is normal." |
@@ -29,6 +42,7 @@ For the **private qualifying walkthrough** (10 minutes on a phone, then 5 minute
 | 7:30 | **Message Sam**. Then log in as **Sam** in window A and reply live | "Prompt 7, *meet before you meet*." |
 | 8:15 | **Sam, Day 1 checklist**: due dates, laptop choice shown, fill in the Day 1 details | "Prompt 8, *what's left?* Saving the details shows Ben a *Your first day* panel." |
 | 9:00 | **Phone, assistant**: "What time do I start?" and then "Can I park?" | "It answers from our guides and today's Day 1 details, cites its sources, and hands off to a person when it should." |
+| 9:20 | **Ruby** (Day 12): her phase screen, then tap phase 5 | "After Day 1 it keeps going: the first 30 days, goals, then growing your career. Phases 4 and 5 are previews." |
 | 9:40 | Close | "Real: login, messaging, the journey rules, the assistant. Simulated: email, the screening company, the seed data. Everything is synthetic." |
 
 ## Backup routes

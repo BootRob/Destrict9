@@ -27,6 +27,29 @@ What we built on Day 1 (Monday 9 November 2026), in order, with the decisions be
 | 16 | **Manager Day 1 checklist**, Day 1 details, pre-start training status; guide updates | PR #5 (merged; Session A's test suites re-run against it, all passing) |
 | 17 | This documentation | `docs/` |
 
+## Day 2 (Tuesday 10 November 2026)
+
+A design critique of "The Pass" restyle scored it 27/40 and found it unfinished, with some bugs visible in the demo. A grilling session at 08:00 agreed a morning plan: build **the recruit's journey in five phases**, from offer to Day 90, with the horse theme kept to the pass card, the welcome screen and one line per phase. Three Claude Code sessions worked in parallel, each in its own worktree, branch and port, with a feature freeze at 11:45.
+
+| Workstream | What | Where |
+|---|---|---|
+| WS1: journey backbone | Five phases in `journey.js`, with nine steps grouped under them; `/api/journey` returns `phase`. A phase tracker on the home screen with one progress measure (fixing "5/8" next to "69%"); the pass card follows the phase. A welcome screen after login. Ruby (Day 12) and Tom (Day 45) seeded | PR #12 (merged) |
+| WS2: The Pass everywhere | The Pass look on login, activation, offer, screening, laptop and guides; fixes for the demo bugs the critique found | `feat/polish` |
+| WS3: content | Five new guides (the first 30 days week by week, LBG systems and ways of working, mandatory training, goals, growing your career). Video cards from `youtube-nocookie.com`, chosen by phase, role and city. A phase screen per phase, with 4 and 5 as previews. Assistant answers first, in about 60 words, rendered as Markdown; the handoff button is now "Ask Jordan" | PR #13 |
+
+Day 2 decisions:
+
+| Decision | Why |
+|---|---|
+| **Five phases** (Offer, Getting ready, First 30 days, 30 to 60 days, 60 to 90 days and beyond), each with a plain name and a horse line as subtitle | Best-in-class onboarding has clear 30/60/90 plans; plain names keep it usable, the horse line keeps it memorable |
+| **Phases 1 to 3 work end to end; 4 and 5 are content-rich previews**, and we say so | Honest scope for the time left |
+| **Videos load only when tapped**, from `youtube-nocookie.com` | No YouTube player or cookies until the recruit chooses to watch, and a lighter page on a phone |
+| **Assistant answers first, in about 60 words** | Answers were correct but long on a phone |
+| **Opus stays the assistant's default.** Haiku was timed: 5.0 s against 5.9 s on average over 5 questions through the CLI, where CLI start-up dominates | Too small a difference to swap. Haiku once handed off to the recruiter when it didn't need to |
+| **New guide details to confirm:** a buddy in Week 1, 25- and 50-minute meetings, probation extension of up to 3 months, about 12 months in role before an internal move, 2 volunteering days | Written for the prototype; the assistant will quote them |
+
+The laptop ran out of memory at 08:33 with three sessions running headless browsers that kept their profiles in `/tmp`, which is in RAM. The fix was to keep scratch files on disk and run one headless browser at a time.
+
 ## Decisions and why
 
 ### Product
@@ -68,7 +91,6 @@ What we built on Day 1 (Monday 9 November 2026), in order, with the decisions be
 
 ## Known issues and caveats
 
-- **End-to-end test suites aren't in the repo yet.** They live in a temporary folder.
 - **No browser click-through tests.** Screens were checked by hand. The checklist and guide editor have been tested at the API level and partly by hand.
 - **Training status is seed data.** There's no actual course.
 - **No demo recruit is overdue on the checklist,** because all start dates are weeks away.
