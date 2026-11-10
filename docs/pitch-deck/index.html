@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>destrict9: from offer to Day 90</title>
+<style>
+@font-face { font-family: "Hanken Grotesk"; font-weight: 400 700; font-display: swap; src: url("assets/fonts/hanken-grotesk-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1E9F, U+20A0-20AB, U+20AD-20C4, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Hanken Grotesk"; font-weight: 400 700; font-display: swap; src: url("assets/fonts/hanken-grotesk-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --stone: #ece8e0;
+  --stone-2: #f3f0ea;
+  --stone-line: #d9d4c8;
+  --ink: #0a0d0c;
+  --muted: #65635c;
+  --racing: #024731;
+  --heritage: #006a4d;
+  --lime: #0be248;
+  --mint: #c7ffc6;
+  --white: #fff;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #000; overflow: hidden; }
+body { font-family: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+
+/* ---- the 1920x1080 stage, scaled to fit any screen ---- */
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--stone); }
+
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .55s var(--ease), transform .7s var(--ease), visibility 0s .7s; transform: translateX(80px); }
+.slide.prev { transform: translateX(-80px); }
+.slide.active { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition-delay: 0s; }
+.slide.stone { background: var(--stone); }
+.slide.dark { background: radial-gradient(90% 120% at 100% 0%, #11a574 0%, #006a4d 30%, #024731 62%, #03271b 100%); color: #fff; }
+.slide.black { background: radial-gradient(110% 100% at 100% 0%, #1d2a25 0%, #0a0d0c 58%), #0a0d0c; color: #fff; }
+
+/* ---- reveal choreography: anything with .r animates in when its slide becomes active ---- */
+.r { opacity: 0; }
+.slide.active .r { animation: rise .8s var(--ease) both; animation-delay: var(--d, 0s); }
+.slide.active .r.pop { animation-name: pop; animation-duration: .6s; }
+.slide.active .r.slide-l { animation-name: slideL; }
+.slide.active .r.slide-r { animation-name: slideR; }
+.slide.active .r.fade { animation-name: fade; animation-duration: 1s; }
+@keyframes rise { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: none; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.6); } 70% { transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+@keyframes slideL { from { opacity: 0; transform: translateX(-90px); } to { opacity: 1; transform: none; } }
+@keyframes slideR { from { opacity: 0; transform: translateX(90px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-14px) rotate(var(--rot, 0deg)); } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(11,226,72,.55); } 50% { box-shadow: 0 0 0 22px rgba(11,226,72,0); } }
+
+/* ---- chrome ---- */
+.chrome-logo { position: absolute; left: 90px; top: 58px; height: 54px; z-index: 5; }
+.actors { position: absolute; right: 90px; top: 54px; display: flex; gap: 14px; z-index: 5; }
+.actor { display: flex; align-items: center; gap: 12px; padding: 8px 22px 8px 8px; border-radius: 999px; background: var(--white); box-shadow: 0 1px 0 var(--stone-line), 0 14px 30px -18px rgba(0,0,0,.3); font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+.actor i { font-style: normal; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--racing); color: #fff; font-size: 18px; font-weight: 700; }
+.actor small { display: block; font-size: 15px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-top: -2px; }
+.actor.sam i { background: var(--heritage); }
+.actor.ben i { background: var(--ink); }
+.dark .actor, .black .actor { background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); color: #fff; }
+.dark .actor small, .black .actor small { color: rgba(255,255,255,.7); }
+
+.ribbon { position: absolute; left: 90px; right: 90px; bottom: 22px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; z-index: 5; }
+.ribbon span { position: relative; padding-top: 11px; font-size: 15px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(10,13,12,.38); }
+.ribbon span::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 3px; background: rgba(10,13,12,.12); }
+.ribbon span.done { color: rgba(10,13,12,.6); }
+.ribbon span.done::before { background: var(--heritage); }
+.ribbon span.now { color: var(--ink); }
+.ribbon span.now::before { background: linear-gradient(90deg, var(--heritage), var(--lime)); transform-origin: 0 0; }
+.slide.active .ribbon span.now::before { animation: grow 1.1s var(--ease) .3s both; }
+.dark .ribbon span, .black .ribbon span { color: rgba(255,255,255,.4); }
+.dark .ribbon span::before, .black .ribbon span::before { background: rgba(255,255,255,.16); }
+.dark .ribbon span.done, .black .ribbon span.done { color: rgba(255,255,255,.7); }
+.dark .ribbon span.now, .black .ribbon span.now { color: #fff; }
+.dark .ribbon span.done::before, .black .ribbon span.done::before { background: var(--lime); }
+.dark .ribbon span.now::before, .black .ribbon span.now::before { background: linear-gradient(90deg, var(--heritage), var(--lime)); }
+.count { position: absolute; right: 90px; top: 152px; font-size: 18px; font-weight: 600; letter-spacing: .1em; color: var(--muted); z-index: 5; font-variant-numeric: tabular-nums; }
+.dark .count, .black .count { color: rgba(255,255,255,.6); }
+#bar { position: absolute; left: 0; bottom: 0; height: 6px; background: var(--lime); width: 0; transition: width .6s var(--ease); z-index: 9; }
+
+/* ---- type ---- */
+.eyebrow { font-size: 24px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--heritage); }
+.dark .eyebrow, .black .eyebrow { color: var(--lime); }
+h1, h2 { font-weight: 600; letter-spacing: -.035em; line-height: 1.02; }
+h1 { font-size: 150px; }
+h2 { font-size: 72px; }
+.lead { font-size: 36px; line-height: 1.32; color: var(--muted); font-weight: 400; max-width: 900px; }
+.dark .lead, .black .lead { color: rgba(255,255,255,.82); }
+.head { position: absolute; left: 90px; top: 138px; z-index: 3; }
+.head h2 { margin-top: 8px; max-width: 1560px; white-space: nowrap; }
+.head.big h2 { font-size: 92px; white-space: normal; margin-top: 14px; }
+
+/* ---- frames ---- */
+.phone { position: absolute; width: var(--w, 340px); aspect-ratio: 780 / 1688; border-radius: 52px; background: #0a0d0c; padding: 10px; box-shadow: 0 0 0 2px #2a302d, 0 60px 90px -30px rgba(0,0,0,.55), 0 30px 40px -20px rgba(0,0,0,.35); }
+.phone img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 42px; }
+.phone::after { content: ""; position: absolute; top: 20px; left: 50%; width: 22%; height: 22px; margin-left: -11%; border-radius: 99px; background: #0a0d0c; }
+.win { position: absolute; width: var(--w, 1000px); border-radius: 20px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 60px 90px -36px rgba(0,0,0,.5), 0 24px 36px -22px rgba(0,0,0,.3); }
+.win .bar { height: 36px; background: #e3ded4; display: flex; align-items: center; gap: 9px; padding: 0 16px; }
+.win .bar b { width: 13px; height: 13px; border-radius: 50%; background: #c9c3b5; }
+.win .bar em { font-style: normal; margin-left: 14px; font-size: 14px; color: var(--muted); font-weight: 500; }
+.win img { display: block; width: 100%; }
+.win .crop { position: relative; overflow: hidden; }
+.win .crop img { position: absolute; max-width: none; }
+
+.cap { position: absolute; width: var(--w, 340px); text-align: center; font-size: 25px; line-height: 1.28; font-weight: 500; color: #2b2d2c; }
+.cap b { display: block; font-size: 17px; letter-spacing: .14em; text-transform: uppercase; color: var(--heritage); font-weight: 700; margin-bottom: 6px; }
+.black .cap, .dark .cap { color: rgba(255,255,255,.88); }
+.black .cap b, .dark .cap b { color: var(--lime); }
+
+/* a pill that points at something on screen */
+.tag { position: absolute; z-index: 6; display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px 14px 16px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 25px; font-weight: 600; letter-spacing: -.01em; box-shadow: 0 22px 36px -16px rgba(0,0,0,.55); white-space: nowrap; }
+.tag::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--lime); animation: glow 2s infinite; }
+.tag.lime { background: var(--lime); color: var(--ink); }
+.tag.lime::before { background: var(--ink); animation: none; }
+.live { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); background: var(--lime); padding: 10px 20px 10px 16px; border-radius: 999px; z-index: 6; position: absolute; }
+.live::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--ink); animation: blink 1.2s infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+
+.arrow { position: absolute; z-index: 4; width: 120px; height: 24px; }
+.arrow svg { width: 100%; height: 100%; overflow: visible; }
+.arrow path { stroke: var(--heritage); stroke-width: 6; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 160; stroke-dashoffset: 160; }
+.slide.active .arrow path { animation: draw .9s var(--ease) var(--d, 0s) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---- cards / lists ---- */
+.card { position: absolute; background: #fff; border-radius: 28px; padding: 44px 44px 48px; box-shadow: 0 1px 0 var(--stone-line), 0 30px 50px -30px rgba(0,0,0,.3); }
+.dark .card, .black .card { background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); backdrop-filter: blur(4px); }
+.card .n { font-size: 20px; font-weight: 700; letter-spacing: .16em; color: var(--lime); margin-bottom: 26px; }
+.card h3 { font-size: 46px; font-weight: 600; letter-spacing: -.03em; line-height: 1.08; margin-bottom: 20px; }
+.card p { font-size: 31px; line-height: 1.38; color: rgba(255,255,255,.8); }
+.points { position: absolute; list-style: none; display: grid; gap: 26px; }
+.points li { position: relative; padding-left: 76px; min-height: 54px; font-size: 31px; line-height: 1.3; font-weight: 500; letter-spacing: -.01em; }
+.points.plain li { padding-left: 22px; min-height: 0; border-left: 5px solid var(--heritage); font-size: 26px; }
+.points.plain li::before { display: none; }
+.points li::before { content: ""; position: absolute; left: 0; top: 0; width: 54px; height: 54px; border-radius: 50%; background: var(--heritage) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230be248' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/54% no-repeat; }
+.points li small { display: block; font-weight: 400; font-size: 25px; color: var(--muted); margin-top: 4px; }
+.black .points li small, .dark .points li small { color: rgba(255,255,255,.7); }
+
+/* ---- slide-specific ---- */
+/* title */
+.s-title .logo-big { position: absolute; left: 110px; top: 90px; height: 84px; }
+.s-title h1 { position: absolute; left: 110px; top: 330px; }
+.s-title .lead { position: absolute; left: 110px; top: 690px; width: 740px; font-size: 33px; }
+.s-title .pill { position: absolute; left: 110px; top: 850px; display: inline-flex; gap: 14px; align-items: center; font-size: 26px; font-weight: 600; padding: 16px 30px; border-radius: 999px; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22); }
+.s-title .pill i { width: 14px; height: 14px; border-radius: 50%; background: var(--lime); }
+.s-title .glow { position: absolute; right: -200px; top: -200px; width: 1100px; height: 1100px; border-radius: 50%; background: radial-gradient(circle, rgba(17,182,122,.5), transparent 65%); }
+.s-title .horse { display: none; }
+.s-title .phone { right: 170px; top: 90px; --w: 420px; --rot: 5deg; transform: rotate(5deg); animation: float 6s ease-in-out infinite; }
+.s-title .phone2 { right: 640px; top: 400px; --w: 320px; --rot: -7deg; transform: rotate(-7deg); animation: float 7s ease-in-out -2s infinite; opacity: .96; }
+
+/* problem */
+.s-problem h2 { color: #fff; }
+.s-problem .card { top: 520px; width: 520px; height: 380px; }
+.s-problem .c1 { left: 90px; } .s-problem .c2 { left: 700px; } .s-problem .c3 { left: 1310px; }
+
+/* answer */
+.tracker { position: absolute; left: 90px; top: 340px; width: 1300px; height: 300px; }
+.tracker .line { position: absolute; left: 40px; width: 1000px; top: 36px; height: 8px; border-radius: 4px; background: var(--stone-line); }
+.tracker .line::after { content: ""; position: absolute; inset: 0; border-radius: 4px; background: linear-gradient(90deg, var(--heritage), var(--lime)); transform-origin: 0 0; transform: scaleX(0); }
+.slide.active .tracker .line::after { animation: grow 2.2s var(--ease) .5s forwards; }
+.tracker .ph { position: absolute; top: 0; width: 240px; text-align: left; }
+.tracker .dot { width: 80px; height: 80px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 5px var(--stone-line); display: grid; place-items: center; font-size: 34px; font-weight: 700; margin-bottom: 26px; }
+.tracker .ph.live-ph .dot { background: var(--ink); color: var(--lime); box-shadow: 0 0 0 5px var(--lime); }
+.tracker .ph.prev .dot { background: var(--heritage); color: #fff; box-shadow: none; }
+.tracker .ph b { display: block; font-size: 30px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
+.tracker .ph em { display: block; font-style: italic; font-size: 24px; color: var(--muted); margin-top: 8px; }
+.tracker .ph u { display: inline-block; text-decoration: none; margin-top: 12px; font-size: 16px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-radius: 99px; background: var(--mint); color: var(--heritage); }
+.roles { position: absolute; left: 90px; top: 800px; display: flex; gap: 18px; }
+.roles span { display: inline-flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 600; padding: 12px 26px 12px 14px; border-radius: 999px; background: #fff; box-shadow: 0 1px 0 var(--stone-line); }
+.roles span::before { content: ""; width: 16px; height: 16px; border-radius: 50%; background: var(--heritage); }
+
+/* closing */
+.s-close h2 { color: #fff; }
+.s-close .col { position: absolute; top: 360px; width: 540px; }
+.s-close .col h3 { font-size: 24px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--lime); margin-bottom: 26px; padding-bottom: 20px; border-bottom: 2px solid rgba(255,255,255,.2); }
+.s-close .col.sim h3, .s-close .col.next h3 { color: #fff; }
+.s-close .col ul { list-style: none; display: grid; gap: 20px; }
+.s-close .col li { font-size: 33px; line-height: 1.28; font-weight: 500; padding-left: 40px; position: relative; color: rgba(255,255,255,.92); }
+.s-close .col li::before { content: ""; position: absolute; left: 0; top: 14px; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); }
+.s-close .col.sim li::before { background: transparent; box-shadow: inset 0 0 0 4px rgba(255,255,255,.55); }
+.s-close .col.next li::before { background: transparent; box-shadow: inset 0 0 0 4px var(--lime); border-radius: 4px; transform: rotate(45deg) scale(.8); }
+.s-close .thanks { position: absolute; left: 90px; bottom: 120px; font-size: 38px; font-weight: 600; letter-spacing: -.02em; }
+.s-close .thanks small { font-size: 26px; font-weight: 400; opacity: .75; margin-left: 20px; }
+
+/* ---- presenter overlays ---- */
+#notes { position: fixed; left: 0; right: 0; bottom: 0; padding: 22px 36px 26px; background: rgba(5,8,7,.94); color: #fff; font-size: 20px; line-height: 1.45; transform: translateY(100%); transition: transform .35s var(--ease); z-index: 50; border-top: 3px solid var(--lime); }
+#notes.on { transform: none; }
+#notes small { display: block; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--lime); margin-bottom: 6px; font-weight: 700; }
+#timer { position: fixed; right: 18px; top: 14px; z-index: 60; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 22px; padding: 8px 16px; border-radius: 99px; background: rgba(5,8,7,.88); color: #fff; display: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+#timer.on { display: block; }
+#timer.warn { background: #bb0000; }
+#help { position: fixed; left: 18px; top: 14px; z-index: 60; font-size: 14px; color: rgba(255,255,255,.75); background: rgba(5,8,7,.8); padding: 8px 14px; border-radius: 99px; opacity: 1; transition: opacity 1s 5s; pointer-events: none; }
+#help.gone { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.prev { transition: opacity .2s; transform: none; }
+  .slide.active .r { animation: fade .3s both; animation-delay: 0s; }
+  .s-title .phone, .s-title .phone2 { animation: none; }
+  .slide.active .tracker .line::after, .slide.active .ribbon span.now::before { animation: none; transform: none; }
+  .slide.active .arrow path { animation: none; stroke-dashoffset: 0; }
+}
+@media print { html, body { overflow: visible; background: #fff; } #stage { position: static; transform: none !important; } .slide { position: relative; opacity: 1; visibility: visible; transform: none; height: 1080px; page-break-after: always; } .r { opacity: 1; animation: none !important; } }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1. TITLE -->
+<section class="slide black s-title" data-phase="0"
+  data-t="0:20" data-notes="Hi, we're destrict9. In seven minutes you'll see one joiner, Ben, go from offer to Day 1 and beyond, and you'll see the two people looking after him, Jordan his recruiter and Sam his manager, using the same app at the same time. Everything you'll see is a real screen from the running app, with synthetic data.">
+  <div class="glow"></div>
+  <img class="horse r fade" src="assets/horse-white.svg" alt="">
+  <img class="logo-big r" src="assets/lbg-logo-white.svg" alt="Lloyds Banking Group">
+  <h1 class="r" style="--d:.15s">From offer<br>to Day 90.</h1>
+  <p class="lead r" style="--d:.35s">A joining companion that guides the recruit, and gives their recruiter and manager something useful to do.</p>
+  <div class="pill r" style="--d:.55s"><i></i> LaunchPad '26 · Team destrict9</div>
+  <div class="phone phone2 r pop" style="--d:.5s"><img src="assets/shots/08-ben-home.png" alt="Ben's home screen"></div>
+  <div class="phone r pop" style="--d:.7s"><img src="assets/shots/07-ben-welcome.png" alt="Ben's welcome screen with his pass card"></div>
+</section>
+
+<!-- 2. PROBLEM -->
+<section class="slide black s-problem" data-phase="0"
+  data-t="0:30" data-notes="The brief: bank joiners wait weeks between offer and Day 1 while vetting runs. Workday records the process, but it doesn't guide anyone through it. Joiners don't know what's normal. Managers can't reach them. Recruiters chase by email. And support stops at Day 1. Three things we heard, and three things we fixed.">
+  <img class="chrome-logo r" src="assets/lbg-logo-white.svg" alt="">
+  <div class="head big">
+    <div class="eyebrow r">The problem</div>
+    <h2 class="r" style="--d:.1s">Between “yes” and Day 1,<br>nobody is steering.</h2>
+  </div>
+  <div class="card c1 r" style="--d:.4s"><div class="n">01</div><h3>Weeks of silence</h3><p>Screening takes weeks. Joiners can’t tell what’s normal, so they worry, or drift away.</p></div>
+  <div class="card c2 r" style="--d:.55s"><div class="n">02</div><h3>A record, not a guide</h3><p>Workday logs the process. It doesn’t say what’s next, or what applies to this role and this city.</p></div>
+  <div class="card c3 r" style="--d:.7s"><div class="n">03</div><h3>Everyone chases</h3><p>Recruiters and managers chase by email, and the support stops on Day 1.</p></div>
+</section>
+
+<!-- 3. ANSWER -->
+<section class="slide stone" data-phase="0"
+  data-t="0:25" data-notes="Our answer is one journey in five phases, from offer to Day 90, and three people using it: the recruit on their phone, the recruiter and the hiring manager on a desktop hub. Phases 1 to 3 work end to end, and phases 4 and 5 are previews and we say so. Now let's meet Ben.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="head">
+    <div class="eyebrow r">Our answer</div>
+    <h2 class="r" style="--d:.1s">One journey. Five phases. Three people.</h2>
+  </div>
+  <div class="tracker">
+    <div class="line r fade" style="--d:.2s"></div>
+    <div class="ph r" style="left:0; --d:.5s"><div class="dot">1</div><b>Offer</b><em>Saddling up</em></div>
+    <div class="ph r" style="left:260px; --d:.7s"><div class="dot">2</div><b>Getting ready</b><em>Joining the stable</em></div>
+    <div class="ph r" style="left:520px; --d:.9s"><div class="dot">3</div><b>First 30 days</b><em>Finding your stride</em></div>
+    <div class="ph r" style="left:780px; --d:1.1s"><div class="dot">4</div><b>30 to 60 days</b><em>Setting your course</em><u>Preview</u></div>
+    <div class="ph r" style="left:1040px; --d:1.3s"><div class="dot">5</div><b>60 to 90 days</b><em>Full horsepower</em><u>Preview</u></div>
+  </div>
+  <div class="roles r" style="--d:1.5s"><span>Recruit · on a phone</span><span>Recruiter · desktop hub</span><span>Hiring manager · desktop hub</span></div>
+  <div class="phone r pop" style="left:1480px; top:290px; --w:330px; --d:.6s"><img src="assets/shots/26-ben-home-photo.png" alt="Ben's home screen with pass card and phase tracker"></div>
+</section>
+
+<!-- 4. RECRUITER ONBOARDS -->
+<section class="slide stone" data-phase="1"
+  data-t="0:35" data-notes="Phase 1. Jordan is a recruiter. This is her applicants list, with the tiles up top and a table underneath. Ben Carter has accepted a verbal offer, so he's marked Successful. One click on Onboard, and a confirmation says exactly what will happen: Ben gets his conditional offer by email, a chat opens between them, and his account exists but stays switched off until he activates it.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor"><i>JE</i><span>Jordan Ellis<small>Recruiter</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 1 · Offer</div><h2 class="r" style="--d:.1s">Jordan onboards Ben in one click.</h2></div>
+  <div class="win r slide-l" style="left:90px; top:290px; --w:1000px; --d:.45s"><div class="bar"><b></b><b></b><b></b><em>Recruiter hub · Applicants</em></div><img src="assets/shots/01-jordan-applicants.png" alt="Jordan's applicants list"></div>
+  <div class="win r pop" style="left:600px; top:560px; --w:660px; --d:1.1s"><div class="bar"><b></b><b></b><b></b><em>Onboard Ben Carter?</em></div><img src="assets/shots/02-jordan-onboard-confirm.png" alt="Confirmation dialog"></div>
+  <ul class="points" style="left:1340px; top:310px; width:490px; gap:34px">
+    <li class="r" style="--d:.8s">Ready to onboard<small>Ben: “Successful”, verbal offer accepted</small></li>
+    <li class="r" style="--d:1.4s">One click, one offer<small>Sends the conditional offer and opens a private chat</small></li>
+    <li class="r" style="--d:2s">Account switched off<small>until Ben activates it himself</small></li>
+  </ul>
+</section>
+
+<!-- 5. BEN ARRIVES -->
+<section class="slide stone" data-phase="1"
+  data-t="0:30" data-notes="Ben gets an email. In production that's an email service, here it's a demo mailbox page, and we say so. The link works once and expires; we only store a hash of it. He sets a password, and lands on his welcome screen with his pass card: phase 1 of 5, Offer, with the line 'Saddling up' and a tip.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 1 · Offer</div><h2 class="r" style="--d:.1s">Ben gets an email, then a pass.</h2></div>
+  <div class="win r slide-l" style="left:90px; top:380px; --w:760px; --d:.4s"><div class="bar"><b></b><b></b><b></b><em>Demo mailbox</em></div><img src="assets/shots/04-mailbox.png" alt="Demo mailbox with Ben's offer email"></div>
+  <div class="cap r" style="left:90px; top:955px; --w:760px; --d:.9s; font-size:22px"><b>A stand-in for email</b></div>
+  <div class="arrow" style="left:880px; top:600px; --d:1s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
+  <div class="phone r pop" style="left:1030px; top:290px; --w:300px; --d:1.1s"><img src="assets/shots/06-ben-activate-filled.png" alt="Activation screen"></div>
+  <div class="cap r" style="left:1030px; top:955px; --w:300px; --d:1.3s; font-size:22px"><b>One-time link</b></div>
+  <div class="arrow" style="left:1370px; top:600px; width:90px; --d:1.45s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
+  <div class="phone r pop" style="left:1500px; top:290px; --w:300px; --d:1.5s"><img src="assets/shots/07-ben-welcome.png" alt="Welcome screen with pass card"></div>
+  <div class="cap r" style="left:1500px; top:955px; --w:300px; --d:1.7s; font-size:22px"><b>His pass card</b></div>
+</section>
+
+<!-- 6. OFFER + SCREENING -->
+<section class="slide stone" data-phase="1"
+  data-t="0:40" data-notes="Ben reads his conditional offer, terms and conditions, with advice not to resign yet. Accepting moves him to screening. We don't collect any personal details ourselves: they go straight to the screening company, ClearPath. When he confirms, he sees honest progress: what's being checked, the usual timeframe, and that no news is normal. And watch Jordan's table, on the right. It changed to 'Result needed' by itself, live.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div><div class="actor"><i>JE</i><span>Jordan Ellis<small>Recruiter</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 1 · Offer</div><h2 class="r" style="--d:.1s">Honest progress while the checks run.</h2></div>
+  <div class="phone r pop" style="left:90px; top:290px; --w:300px; --d:.4s"><img src="assets/shots/10-ben-offer.png" alt="Conditional offer"></div>
+  <div class="cap r" style="left:90px; top:955px; --w:300px; --d:.9s; font-size:22px"><b>Read, then accept</b></div>
+  <div class="phone r pop" style="left:440px; top:290px; --w:300px; --d:.7s"><img src="assets/shots/15-ben-screening-timeline.png" alt="Screening timeline"></div>
+  <div class="cap r" style="left:440px; top:955px; --w:300px; --d:1.2s; font-size:22px"><b>No news is normal</b></div>
+  <div class="arrow" style="left:775px; top:590px; width:90px; --d:1.2s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
+  <div class="win r slide-r" style="left:900px; top:330px; --w:930px; --d:1.4s"><div class="bar"><b></b><b></b><b></b><em>Jordan · Applicants</em></div><img src="assets/shots/16b-jordan-result-needed.png" alt="Jordan's table showing Result needed for Ben"></div>
+  <div class="live r pop" style="left:1690px; top:272px; --d:2s">Live</div>
+  <div class="tag r pop" style="left:940px; top:880px; --d:2.3s">Jordan’s table updates itself: “Result needed”</div>
+</section>
+
+<!-- 7. RESULT UNLOCKS -->
+<section class="slide stone" data-phase="2"
+  data-t="0:35" data-notes="Here's the live moment. In real life the screening company sends this result. Jordan records it: Clear. And on Ben's phone, with no refresh, the card changes to 'Your unconditional offer is ready'. Now it's safe to resign, and accepting opens a chat with his hiring manager. Note the internal note that Jordan can add never reaches Ben.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor"><i>JE</i><span>Jordan Ellis<small>Recruiter</small></span></div><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Jordan records the result. Ben’s phone changes.</h2></div>
+  <div class="win r slide-l" style="left:90px; top:300px; --w:960px; --d:.4s"><div class="bar"><b></b><b></b><b></b><em>Jordan · Record screening result</em></div><img src="assets/shots/17-jordan-record-result.png" alt="Record result dialog with Clear selected"></div>
+  <div class="tag lime r pop" style="left:130px; top:860px; --d:1.2s">Internal note never reaches Ben</div>
+  <div class="arrow" style="left:1080px; top:600px; --d:1.5s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
+  <div class="phone r pop" style="left:1230px; top:290px; --w:330px; --d:1.7s"><img src="assets/shots/19-ben-unconditional-ready.png" alt="Ben's phone: unconditional offer ready"></div>
+  <div class="live r pop" style="left:1590px; top:300px; --d:2.2s">Live</div>
+  <div class="cap r" style="left:1590px; top:400px; --w:240px; --d:2.2s; text-align:left; font-size:26px; font-weight:600">No refresh.<br>Now it’s safe to resign.</div>
+</section>
+
+<!-- 8. GETTING READY -->
+<section class="slide stone" data-phase="2"
+  data-t="0:35" data-notes="Ben accepts, and phase 2 unlocks early choices. He picks a laptop, with a recommendation for his role, changeable until a week before he starts. He adds a pass photo, so reception can print his building pass before Day 1, and it shows on his pass card. And the choice flows to Sam, his manager, who sees it in his checklist. We'll come back to that.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Early choices, so Day 1 has no queue.</h2></div>
+  <div class="phone r pop" style="left:90px; top:290px; --w:300px; --d:.4s"><img src="assets/shots/23-ben-laptop-selected.png" alt="Choose your laptop"></div>
+  <div class="cap r" style="left:90px; top:955px; --w:300px; --d:.9s; font-size:22px"><b>Choose a laptop</b></div>
+  <div class="phone r pop" style="left:440px; top:290px; --w:300px; --d:.8s"><img src="assets/shots/26-ben-home-photo.png" alt="Pass card with photo"></div>
+  <div class="cap r" style="left:440px; top:955px; --w:300px; --d:1.3s; font-size:22px"><b>Add a pass photo</b></div>
+  <ul class="points" style="left:850px; top:300px; width:980px; gap:30px">
+    <li class="r" style="--d:1s">Recommended for his role<small>HP EliteBook for a Cyber Security Analyst. He can change it until a week before he starts.</small></li>
+    <li class="r" style="--d:1.5s">A selfie for his building pass<small>Reception prints it ahead of Day 1, and it shows on his pass card.</small></li>
+  </ul>
+  <div class="win r pop" style="left:850px; top:700px; --w:960px; --d:2.1s"><div class="bar"><b></b><b></b><b></b><em>Sam’s Day 1 checklist</em></div><div class="crop" style="height:230px"><img src="assets/shots/36-sam-checklist-ben.png" style="left:-670px; top:-212px; width:1630px" alt="Sam's checklist showing Ben chose the HP EliteBook"></div></div>
+  <div class="tag lime r pop" style="left:1380px; top:652px; --d:2.6s">…and it flows to Sam</div>
+</section>
+
+<!-- 9. MANAGER CHAT -->
+<section class="slide stone" data-phase="2"
+  data-t="0:35" data-notes="Accepting also opens a private chat with his hiring manager, so Ben meets Sam before he meets Sam. Ben asks what to read before he starts. On the left is Ben's phone, on the right is Sam's hub. Sam sees the unread badge, a typing indicator while Ben types, and replies. It's all live over websockets, and each chat is private between the joiner and that person.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div><div class="actor sam"><i>SR</i><span>Sam Reid<small>Hiring manager</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Meet your manager before you meet.</h2></div>
+  <div class="phone r pop" style="left:90px; top:290px; --w:320px; --d:.4s"><img src="assets/shots/34-ben-reply-arrived.png" alt="Ben's chat with Sam"></div>
+  <div class="win r slide-r" style="left:480px; top:290px; --w:1050px; --d:.7s"><div class="bar"><b></b><b></b><b></b><em>Manager hub · Messages</em></div><img src="assets/shots/33-sam-replied.png" alt="Sam's inbox with Ben's chat"></div>
+  <div class="live r pop" style="left:1390px; top:232px; --d:1.4s">Live</div>
+  <ul class="points plain" style="left:1570px; top:330px; width:260px; gap:30px">
+    <li class="r" style="--d:1.2s">Unlocked by accepting the offer</li>
+    <li class="r" style="--d:1.7s">Private to Ben and Sam</li>
+    <li class="r" style="--d:2.2s">Unread badge, typing indicator, “Seen”</li>
+  </ul>
+</section>
+
+<!-- 10. CHAIN REACTION -->
+<section class="slide stone" data-phase="2"
+  data-t="0:40" data-notes="This is the chain reaction. Sam's Day 1 checklist has due dates counted back from the start date, and Ben's laptop choice is already in it. Some items tick themselves: the welcome message ticked the moment Sam replied. Sam fills in the Day 1 details: start time, where to meet, who meets him, dress code, a number to call. He hits Share, and on Ben's phone, a 'Your first day' panel appears at the top of his guides. One person's action unlocks the next person's view.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor sam"><i>SR</i><span>Sam Reid<small>Hiring manager</small></span></div><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">One action unlocks the next person’s view.</h2></div>
+  <div class="win r slide-l" style="left:90px; top:290px; --w:960px; --d:.4s"><div class="bar"><b></b><b></b><b></b><em>Manager hub · Day 1 checklist</em></div><img src="assets/shots/37-sam-day1-form.png" alt="Sam fills in Day 1 details"></div>
+  <div class="tag r pop" style="left:130px; top:880px; --d:1.2s">Due dates count back from the start date</div>
+  <div class="arrow" style="left:1075px; top:600px; --d:1.7s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
+  <div class="phone r pop" style="left:1230px; top:290px; --w:330px; --d:1.9s"><img src="assets/shots/39-ben-guides-firstday.png" alt="Ben's guides with Your first day panel"></div>
+  <div class="live r pop" style="left:1590px; top:300px; --d:2.4s">Live</div>
+  <div class="cap r" style="left:1590px; top:400px; --w:240px; --d:2.4s; text-align:left; font-size:26px; font-weight:600">“Your first day” appears on Ben’s phone.</div>
+</section>
+
+<!-- 11. ASSISTANT -->
+<section class="slide stone" data-phase="2"
+  data-t="0:20" data-notes="And Ben can ask anything, any time. The assistant answers only from our onboarding guides, cites which ones it used, and it knows Sam's Day 1 details, so 'What time do I start, and where do I go?' gets a real answer, and when it can't answer, it hands over to the right person. The guides are fictional, not real bank policy.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">9pm on a Sunday? Just ask.</h2></div>
+  <div class="phone r pop" style="left:90px; top:290px; --w:300px; --d:.4s"><img src="assets/shots/40-ben-assistant-empty.png" alt="Assistant with suggested questions"></div>
+  <div class="cap r" style="left:90px; top:955px; --w:300px; --d:.9s; font-size:22px"><b>Suggested questions</b></div>
+  <div class="phone r pop" style="left:440px; top:290px; --w:300px; --d:.8s"><img src="assets/shots/42-ben-assistant-answer.png" alt="Assistant answer with sources"></div>
+  <div class="cap r" style="left:440px; top:955px; --w:300px; --d:1.3s; font-size:22px"><b>Answer, with sources</b></div>
+  <ul class="points" style="left:850px; top:300px; width:980px; gap:34px">
+    <li class="r" style="--d:1.1s">Answers only from our guides<small>Fictional documents, not real bank policy.</small></li>
+    <li class="r" style="--d:1.6s">Shows its sources<small>Every answer links back to the guide it came from.</small></li>
+    <li class="r" style="--d:2.1s">Knows Sam’s Day 1 details<small>“9:30am, ground floor reception, Sam meets you.”</small></li>
+    <li class="r" style="--d:2.6s">Hands over to a person<small>When it can’t answer, or the question is about Ben’s own case.</small></li>
+  </ul>
+</section>
+
+<!-- 12. AFTER DAY 1 -->
+<section class="slide stone" data-phase="3"
+  data-t="0:20" data-notes="After Day 1 it keeps going. Ruby is on Day 16: phase 3, what to do now, the guides, and mandatory training. Tom is 6 weeks in: phase 4, setting goals and a development plan. Phase 5 is growing your Lloyds career. Phases 4 and 5 are previews and we say so on the screen.">
+  <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
+  <div class="actors r" style="--d:.3s"><div class="actor"><i>RA</i><span>Ruby · Day 16<small>Recruit</small></span></div><div class="actor"><i>TB</i><span>Tom · Day 44<small>Recruit</small></span></div></div>
+  <div class="head"><div class="eyebrow r">Phases 3 to 5</div><h2 class="r" style="--d:.1s">After Day 1, it keeps going.</h2></div>
+  <ul class="points" style="left:90px; top:320px; width:520px; gap:30px">
+    <li class="r" style="--d:1.3s;font-size:28px">What to do now<small style="font-size:23px">Mandatory training, guides, the 30-day check-in.</small></li>
+    <li class="r" style="--d:1.8s;font-size:28px">Goals and a plan<small style="font-size:23px">Phases 4 and 5 are previews, labelled as such.</small></li>
+  </ul>
+  <div class="phone r pop" style="left:680px; top:290px; --w:300px; --d:.4s"><img src="assets/shots/44-ruby-phase3.png" alt="Phase 3: First 30 days"></div>
+  <div class="cap r" style="left:680px; top:955px; --w:300px; --d:.9s; font-size:22px"><b>3 · Finding your stride</b></div>
+  <div class="phone r pop" style="left:1070px; top:290px; --w:300px; --d:.7s"><img src="assets/shots/45-tom-phase4.png" alt="Phase 4: 30 to 60 days"></div>
+  <div class="cap r" style="left:1070px; top:955px; --w:300px; --d:1.2s; font-size:22px"><b>4 · Setting your course</b></div>
+  <div class="phone r pop" style="left:1460px; top:290px; --w:300px; --d:1s"><img src="assets/shots/46-tom-phase5.png" alt="Phase 5: 60 to 90 days and beyond"></div>
+  <div class="cap r" style="left:1460px; top:955px; --w:300px; --d:1.5s; font-size:22px"><b>5 · Full horsepower</b></div>
+</section>
+
+<!-- 13. CLOSE -->
+<section class="slide dark s-close" data-phase="5"
+  data-t="0:25" data-notes="To close: what's real and what's simulated, because we think that matters. Real: login and roles, live messaging, the journey rules enforced on the server, the assistant grounded in guides, and the manager's checklist. Simulated: email, the screening company, printing the pass, and the seed data. Everything is synthetic. Built with Claude Code, with around 110 end-to-end checks. Next: the phase 4 and 5 for real, and a Day 30 measure of connected and confident. Thank you.">
+  <img class="chrome-logo r" src="assets/lbg-logo-white.svg" alt="">
+  <div class="head">
+    <div class="eyebrow r">Honest scope</div>
+    <h2 class="r" style="--d:.1s">Real, simulated, and what’s next.</h2>
+  </div>
+  <div class="col real r" style="left:90px; --d:.5s"><h3>Real</h3><ul>
+    <li>Login, roles and live messaging</li>
+    <li>The stage machine behind every step</li>
+    <li>The assistant, grounded in guides</li>
+    <li>Manager checklist and Day 1 details</li></ul></div>
+  <div class="col sim r" style="left:690px; --d:.8s"><h3>Simulated</h3><ul>
+    <li>Email (the demo mailbox)</li>
+    <li>ClearPath, the screening company</li>
+    <li>Phases 4 and 5: previews</li>
+    <li>All data synthetic</li></ul></div>
+  <div class="col next r" style="left:1290px; --d:1.1s"><h3>Next</h3><ul>
+    <li>Phases 4 and 5 for real</li>
+    <li>Real email and company sign-in</li>
+    <li>Measure “connected and confident” at Day 30</li></ul></div>
+  <div class="thanks r" style="--d:1.6s">Thank you.<small>destrict9 · built with Claude Code · about 110 end-to-end checks</small></div>
+</section>
+
+<div id="bar"></div>
+</div>
+
+<div id="timer">0:00 / 7:00</div>
+<div id="help">← → navigate · N notes · T timer · F fullscreen</div>
+<div id="notes"><small id="notes-h"></small><span id="notes-t"></span></div>
+
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const slides = [...document.querySelectorAll('.slide')];
+  const PHASES = ['Offer', 'Getting ready', 'First 30 days', '30 to 60', '60 to 90 +'];
+  let cur = 0;
+
+  // phase ribbon + counter on every slide except the first
+  slides.forEach((s, i) => {
+    if (i === 0) return;
+    const p = Number(s.dataset.phase || 0);
+    const rb = document.createElement('div'); rb.className = 'ribbon';
+    // dataset.phase: 0 = overview (nothing lit), 1..4 = that phase now, 5 = all five lit
+    PHASES.forEach((n, k) => { const sp = document.createElement('span'); sp.textContent = `${k + 1} ${n}`; if (p === 5) sp.className = 'done'; else if (p && k + 1 < p) sp.className = 'done'; else if (p && k + 1 === p) sp.className = 'now'; rb.append(sp); });
+    s.append(rb);
+    const c = document.createElement('div'); c.className = 'count'; c.textContent = `${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`; s.append(c);
+  });
+
+  const fit = () => { const k = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = `translate(${-960 * k}px, ${-540 * k}px) scale(${k})`; };
+  addEventListener('resize', fit); fit();
+
+  const notes = document.getElementById('notes'), nt = document.getElementById('notes-t'), nh = document.getElementById('notes-h');
+  const show = (n) => {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, i) => { s.classList.toggle('active', i === n); s.classList.toggle('prev', i < n); });
+    cur = n;
+    document.getElementById('bar').style.width = `${((n + 1) / slides.length) * 100}%`;
+    nt.textContent = slides[n].dataset.notes || '';
+    nh.textContent = `Slide ${n + 1} of ${slides.length} · aim for ${slides[n].dataset.t || ''}`;
+    history.replaceState(null, '', `#${n + 1}`);
+  };
+
+  // timer: 7:00 budget, starts on first advance
+  const timer = document.getElementById('timer'); let t0 = null, tick = null;
+  const startTimer = () => { if (t0) return; t0 = Date.now(); tick = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); timer.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} / 7:00`; timer.classList.toggle('warn', s >= 420); }, 500); };
+  const next = () => { if (cur === 0) startTimer(); show(cur + 1); };
+  const prev = () => show(cur - 1);
+
+  addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(slides.length - 1);
+    else if (k === 'n' || k === 'N') notes.classList.toggle('on');
+    else if (k === 't' || k === 'T') { timer.classList.toggle('on'); if (timer.classList.contains('on')) startTimer(); }
+    else if (k === 'r' || k === 'R') { clearInterval(tick); t0 = null; timer.textContent = '0:00 / 7:00'; timer.classList.remove('warn'); }
+    else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+  });
+  addEventListener('click', (e) => { if (e.target.closest('#notes, #timer')) return; (e.clientX < innerWidth * 0.2 ? prev : next)(); });
+  let tx = 0; addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) (dx < 0 ? next : prev)(); }, { passive: true });
+  setTimeout(() => document.getElementById('help').classList.add('gone'), 100);
+
+  show((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>
