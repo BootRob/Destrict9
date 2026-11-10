@@ -134,3 +134,4 @@ html[data-theme="dark"] .pass .pass-photo img { border-color: var(--pass-lime); 
 .pass .dtg b { font-size: 26px; line-height: 1; letter-spacing: -.01em; color: #fff; font-variant-numeric: tabular-nums; }
 .pass .dtg[hidden] { display: none; }
 .pass.sect .pass-who { right: 100px; }
+.pass.sect:not(.has-photo) .num12 { top: 94px; }
