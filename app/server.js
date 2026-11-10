@@ -186,7 +186,9 @@ app.post('/api/assistant', requireAuth, requireJoiner, async (req, res) => {
   const question = String(req.body?.question ?? '').trim();
   if (!question || question.length > MAX_MESSAGE) return res.status(400).json({ error: `Questions must be 1 to ${MAX_MESSAGE} characters` });
   try {
-    const context = { day1: checklist.day1For(req.user.email), training: checklist.trainingFor(req.user.email) };
+    let j = null;
+    try { j = journey.journeyFor(req.user); } catch { /* no journey on this account */ }
+    const context = { day1: checklist.day1For(req.user.email), training: checklist.trainingFor(req.user.email), journey: j && { phase: j.phase, dayNumber: j.dayNumber, daysToStart: j.daysToStart } };
     res.json(await assistant.ask(req.user, question, context));
   } catch (err) {
     res.status(err.status ?? 500).json({ error: err.status ? err.message : 'The assistant is unavailable right now' });

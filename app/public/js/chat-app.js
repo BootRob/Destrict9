@@ -6,7 +6,16 @@ import { renderMarkdown } from '/js/markdown.js';
 
 const ASSISTANT = 'assistant';
 const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter' };
-const SUGGESTIONS = ['How long do background checks take?', 'What should I bring on my first day?', 'When will I get paid?', 'Can I move my start date?'];
+// Suggested questions follow the recruit's phase, so a joiner who has started isn't offered pre-start questions.
+const SUGGESTIONS = {
+  offer: ['How long do background checks take?', 'Can I move my start date?', 'When should I hand in my notice?', 'What happens after screening?'],
+  getting_ready: ['What should I bring on my first day?', 'When will I get paid?', 'What training do I do before I start?', 'Can I move my start date?'],
+  first_30: ['What mandatory training do I need to do, and by when?', 'What does BAU mean?', 'How do I book a desk?', 'What happens at my 30-day check-in?'],
+  days_30_60: ['What makes a good goal?', 'How do I write a development plan?', 'How does probation work?', 'How do I ask for feedback?'],
+  days_60_90: ['How do I find a mentor?', 'When can I apply for another role?', 'Are there colleague networks I can join?', 'How do volunteering days work?'],
+};
+let phaseId = null;
+const phaseReady = api('/api/journey').then(({ journey }) => { phaseId = journey.phase?.id ?? null; }).catch(() => {});
 
 const make = (tag, props = {}, ...children) => {
   const n = Object.assign(document.createElement(tag), props);
@@ -173,7 +182,7 @@ export async function mountChat(container) {
     if (!aiTurns.length) {
       nodes.push(
         make('div', { className: 'msg msg--theirs' }, make('div', { className: 'bubble', textContent: `Hi ${me.name.split(' ')[0]}! Ask me anything about joining: checks, pay, your first day, equipment or training.` })),
-        make('div', { className: 'ai-suggestions' }, ...SUGGESTIONS.map((s) => {
+        make('div', { className: 'ai-suggestions' }, ...(SUGGESTIONS[phaseId] ?? SUGGESTIONS.getting_ready).map((s) => {
           const b = make('button', { type: 'button', textContent: s });
           b.addEventListener('click', () => askAssistant(s));
           return b;
@@ -213,6 +222,7 @@ export async function mountChat(container) {
   }
 
   async function openAssistant() {
+    await phaseReady; // the suggested questions depend on the phase
     activeId = ASSISTANT;
     show('chat', { name: 'Onboarding assistant', av: 'Ask', sub: 'Answers from your onboarding guides' });
     avatar.classList.add('avatar--ai');
