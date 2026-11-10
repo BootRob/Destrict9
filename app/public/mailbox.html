@@ -12,7 +12,7 @@
     .banner { background: var(--lbg-charcoal); color: var(--lbg-white); padding: var(--lbg-space-3) var(--lbg-space-6); display: flex; gap: var(--lbg-space-4); align-items: center; }
     .banner strong { font-family: var(--lbg-font-strong); }
     .banner p { margin: 0; font-size: var(--lbg-text-sm); opacity: .9; }
-    .banner .lbg-btn { margin-left: auto; width: auto; min-height: 40px; padding: 8px 16px; font-size: var(--lbg-text-md); }
+    .banner .lbg-btn { margin-left: auto; flex: none; width: auto; min-height: 44px; padding: 8px 18px; font-size: var(--lbg-text-md); }
     .layout { flex: 1; display: grid; grid-template-columns: 380px 1fr; min-height: 0; }
     aside { background: var(--lbg-white); border-right: 1px solid var(--lbg-grey-200); display: flex; flex-direction: column; min-height: 0; }
     aside h1 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0; padding: var(--lbg-space-6) var(--lbg-space-6) var(--lbg-space-1); }
@@ -40,7 +40,33 @@
     .email .cta { padding: 0 var(--lbg-space-6) var(--lbg-space-8); }
     .email .cta .lbg-btn { max-width: 320px; }
     .email .cta small { display: block; margin-top: var(--lbg-space-3); color: var(--lbg-grey-600); font-size: 12px; overflow-wrap: anywhere; }
-    .empty { display: grid; place-items: center; height: 100%; color: var(--lbg-grey-600); text-align: center; }
+    .empty { display: grid; place-items: center; min-height: 100%; }
+    .empty-card { max-width: 420px; text-align: center; padding: var(--lbg-space-8) var(--lbg-space-6); }
+    .empty-card svg { width: 72px; height: 72px; color: var(--lbg-racing-green); margin-bottom: var(--lbg-space-4); }
+    .empty-card h2 { font-size: var(--lbg-text-h3); line-height: var(--lbg-lh-h3); margin: 0 0 var(--lbg-space-2); }
+    .empty-card > p { margin: 0 0 var(--lbg-space-6); color: var(--lbg-grey-600); }
+    .empty-card ol { list-style: none; counter-reset: step; margin: 0 0 var(--lbg-space-6); padding: 0; display: grid; gap: var(--lbg-space-2); text-align: left; }
+    .empty-card li { counter-increment: step; display: flex; gap: var(--lbg-space-3); align-items: center; background: var(--lbg-white); border-radius: var(--lbg-radius-md); box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-3) var(--lbg-space-4); font-size: var(--lbg-text-sm); }
+    .empty-card li::before { content: counter(step); flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--lbg-racing-green); color: var(--lbg-white); font-family: var(--lbg-font-strong); font-weight: 700; font-size: 13px; }
+    .empty-card .lbg-btn { max-width: none; }
+    .list-empty { padding: var(--lbg-space-4) var(--lbg-space-6); color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
+
+    /* Phones: one column, the list above the open email, and the page scrolls as a whole. */
+    @media (max-width: 720px) {
+      body { height: auto; min-height: 100dvh; overflow: visible; }
+      .banner { padding: var(--lbg-space-3) var(--lbg-space-4); align-items: flex-start; }
+      .banner p { font-size: 12px; }
+      .layout { display: block; }
+      aside { border-right: 0; border-bottom: 1px solid var(--lbg-grey-200); }
+      aside h1 { padding: var(--lbg-space-4) var(--lbg-space-4) var(--lbg-space-1); }
+      aside .sub { padding: 0 var(--lbg-space-4) var(--lbg-space-3); }
+      .list { max-height: 40vh; }
+      .item { padding: var(--lbg-space-3) var(--lbg-space-4); }
+      main { overflow: visible; padding: var(--lbg-space-4); }
+      .email header, .email .brandbar, .email .content { padding: var(--lbg-space-4); }
+      .email .cta { padding: 0 var(--lbg-space-4) var(--lbg-space-6); }
+      .email .cta .lbg-btn { max-width: none; }
+    }
   </style>
 </head>
 <body>
@@ -57,7 +83,7 @@
       <p class="sub" id="sub"></p>
       <ul class="list" id="list"></ul>
     </aside>
-    <main id="reader"><div class="empty"><p>No emails yet. Onboard an applicant from the recruiter hub.</p></div></main>
+    <main id="reader"></main>
   </div>
 
 <script type="module">
@@ -70,8 +96,24 @@
   let emails = [];
   let activeId = null;
 
+  const ENVELOPE = '<svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="18" width="56" height="38" rx="6"/><path d="M10 22l26 19 26-19"/></svg>';
+
+  function emptyState() {
+    const card = make('div', { className: 'empty-card' });
+    card.innerHTML = ENVELOPE;
+    card.append(
+      make('h2', { textContent: toFilter ? `Nothing for ${toFilter} yet` : 'No emails yet' }),
+      make('p', { textContent: 'Invites land here the moment a recruiter onboards a candidate.' }),
+      make('ol', {},
+        make('li', { textContent: 'Log in as Jordan Ellis, the recruiter' }),
+        make('li', { textContent: 'Open Applicants and onboard a successful candidate' }),
+        make('li', { textContent: 'Come back and press Refresh: their invite is here' })),
+      make('a', { className: 'lbg-btn lbg-btn--primary', href: '/login.html', target: '_blank', rel: 'noopener', textContent: 'Open the recruiter hub' }));
+    return make('div', { className: 'empty' }, card);
+  }
+
   function renderReader(e) {
-    if (!e) { $('reader').replaceChildren(make('div', { className: 'empty' }, make('p', { textContent: 'No emails yet. Onboard an applicant from the recruiter hub.' }))); return; }
+    if (!e) { $('reader').replaceChildren(emptyState()); return; }
     const sent = new Date(e.createdAt).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
     $('reader').replaceChildren(make('article', { className: 'email' },
       make('header', {},
@@ -97,7 +139,8 @@
       sub.append(all);
     }
     if (!shown.some((e) => e.id === activeId)) activeId = shown[0]?.id ?? null;
-    $('list').replaceChildren(...shown.map((e) => {
+    if (!shown.length) $('list').replaceChildren(make('li', { className: 'list-empty', textContent: 'Nothing sent yet.' }));
+    else $('list').replaceChildren(...shown.map((e) => {
       const btn = make('button', { type: 'button', className: 'item' },
         make('span', { className: 'row' }, make('strong', { textContent: e.from }), make('time', { textContent: fmtShort(e.createdAt) })),
         make('span', { className: 'subject', textContent: e.subject }),

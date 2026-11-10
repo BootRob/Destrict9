@@ -15,7 +15,7 @@ body.joiner, body.staff {
   --lbg-grey-100: #f3f0ea;
   --lbg-grey-200: #d9d4c8;
   --lbg-grey-300: #c9c3b5;
-  --lbg-grey-600: #6c6a63;
+  --lbg-grey-600: #65635c; /* 4.9:1 on the stone page (#6c6a63 was 4.43:1) */
   --lbg-shadow-card: 0 1px 0 #d9d4c8, 0 14px 30px -18px rgba(0, 0, 0, .25);
   --pass-card-bg: radial-gradient(120% 100% at 100% 0%, #1d2a25 0%, #0a0d0c 55%), #0a0d0c;
   font-variant-numeric: tabular-nums;
@@ -47,7 +47,7 @@ html[data-theme="dark"] :is(.joiner, .staff) :focus-visible { outline-color: var
 
 /* App bar */
 .joiner .appbar { background: color-mix(in srgb, var(--pass-page) 88%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom-color: var(--lbg-grey-200); }
-.joiner .appbar .theme-toggle { border: 1px solid var(--lbg-grey-200); width: 40px; height: 40px; margin-left: auto; }
+.joiner .appbar .theme-toggle { border: 1px solid var(--lbg-grey-200); width: 44px; height: 44px; margin-left: auto; }
 .joiner .appbar .avatar { background: var(--lbg-black); color: var(--lbg-white); letter-spacing: .06em; }
 /* theme.css forces white text on .avatar; on the light dark-mode circle the letters must be black */
 html[data-theme="dark"] .joiner .appbar .avatar { background: #f2f4f3; color: #070908; }
@@ -144,11 +144,11 @@ html[data-theme="dark"] .joiner .msg--mine .bubble { background: #f2f4f3; color:
 /* ---------- Staff app ---------- */
 .staff .staff-main, .staff .page-scroll { background: var(--pass-page); }
 .staff .page-head h1 { font-size: 2.5rem; line-height: 1.1; letter-spacing: -.04em; }
-.staff .lbg-btn--sm { min-height: 40px; padding: 0 18px; font-size: 15px; }
+.staff .lbg-btn--sm { min-height: 44px; padding: 0 18px; font-size: 15px; }
 .staff .lbg-card, .staff .modal { border-radius: 22px; }
 
 /* Sidebar: the pass card's surface (graphite in light mode, brand green in dark mode) with the horse behind it */
-.staff .staff-nav { position: relative; isolation: isolate; background: var(--pass-card-bg); color: #eef3f0; overflow-y: auto; }
+.staff .staff-nav { position: relative; isolation: isolate; background: var(--pass-card-bg); color: #eef3f0; overflow-y: auto; overflow-x: hidden; }
 .staff .staff-nav::before { content: ""; position: absolute; z-index: -1; left: -30px; bottom: 60px; width: 300px; height: 300px; background: url("/brand/logos/horse-white.svg") center / contain no-repeat; opacity: .07; pointer-events: none; }
 .staff .staff-nav .brand span { font-weight: 600; letter-spacing: -.02em; }
 .staff .staff-nav ul a { border-radius: 14px; font-weight: 600; }
@@ -161,6 +161,60 @@ html[data-theme="dark"] .staff .staff-nav .me .avatar, .staff .staff-nav .me .av
 /* Log out link with the icon-only theme switch to its right */
 .staff .staff-nav .me .me-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--lbg-space-1); }
 .staff .staff-nav .me .me-actions .link-btn { grid-column: auto; padding-left: 0; }
-.staff .staff-nav .me .me-actions .theme-toggle { grid-column: auto; justify-self: auto; width: 40px; height: 40px; color: #eef3f0; border: 1px solid rgba(255, 255, 255, .25); }
+.staff .staff-nav .me .me-actions .theme-toggle { grid-column: auto; justify-self: auto; width: 44px; height: 44px; color: #eef3f0; border: 1px solid rgba(255, 255, 255, .25); }
 .staff .staff-nav .me .me-actions .theme-toggle:hover { background: rgba(255, 255, 255, .14); }
 .joiner .cw-head.lbg-surface--racing { background: var(--pass-card-bg); color: #eef3f0; }
+
+/* Tap targets: at least 44px. The checklist ticks stay 28px to look at, with a 44px hit area around them. */
+.staff .tick { position: relative; }
+.staff .tick::after { content: ""; position: absolute; inset: -10px; }
+.joiner .ai-handoff, .joiner .ai-suggestions button { min-height: 44px; }
+
+/* ---------- Page headers (offer, screening, device, guides): the home screen's hero, not a green banner ---------- */
+.joiner .jbar { background: color-mix(in srgb, var(--pass-page) 88%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom-color: var(--lbg-grey-200); }
+.joiner .jhead, .joiner .ghead { background: none; color: var(--lbg-black); padding: var(--lbg-space-8) var(--lbg-space-4) var(--lbg-space-2); }
+.joiner :is(.jhead, .ghead) .eyebrow { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--lbg-heritage-green); opacity: 1; }
+html[data-theme="dark"] .joiner :is(.jhead, .ghead) .eyebrow { color: var(--pass-lime); }
+.joiner :is(.jhead, .ghead) h1 { font-size: 36px; line-height: 1.05; letter-spacing: -.04em; margin: 0 0 10px; }
+.joiner :is(.jhead, .ghead) p:not(.eyebrow) { color: var(--lbg-grey-600); opacity: 1; margin: 0; font-size: 17px; line-height: 1.45; }
+.joiner .jbody { padding-top: var(--lbg-space-6); }
+.joiner .callout-note { border-left: 0; border-radius: 18px; background: var(--lbg-white); box-shadow: var(--lbg-shadow-card); }
+.joiner .callout-note--warn { box-shadow: inset 4px 0 0 var(--lbg-error), var(--lbg-shadow-card); }
+.joiner .terms { background: var(--lbg-white); border-color: var(--lbg-grey-200); }
+.joiner .checks li, .joiner .provider { background: var(--lbg-white); border-radius: 14px; }
+.joiner .provider { border-color: var(--lbg-grey-200); }
+.joiner dialog.sheet { background: var(--pass-page); color: var(--lbg-black); border-radius: 26px 26px 0 0; }
+.joiner dialog.sheet textarea { background: var(--lbg-white); border-radius: 14px; }
+
+/* ---------- Log in and account activation: the first frames of the demo ---------- */
+.joiner .entry { max-width: 430px; margin: 0 auto; min-height: 100dvh; background: var(--pass-page); display: flex; flex-direction: column; }
+.joiner .entry-top { display: flex; align-items: center; justify-content: space-between; padding: var(--lbg-space-4) var(--lbg-space-6) 0; }
+.joiner .entry-top .logo { height: 32px; display: block; }
+.joiner .entry-hero { padding: var(--lbg-space-8) var(--lbg-space-6) 0; }
+.joiner .entry-hero .eyebrow { margin: 0 0 10px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--lbg-heritage-green); }
+html[data-theme="dark"] .joiner .entry-hero .eyebrow { color: var(--pass-lime); }
+.joiner .entry-hero h1 { font-size: 42px; line-height: 1.02; letter-spacing: -.04em; margin: 0 0 10px; }
+.joiner .entry-hero .lead { color: var(--lbg-grey-600); margin: 0 0 26px; font-size: 17px; line-height: 1.45; }
+.joiner .entry .pass { margin: 0 4px; }
+.joiner .entry main { padding: var(--lbg-space-8) var(--lbg-space-6) var(--lbg-space-12); flex: 1; }
+.joiner .entry .field input { min-height: 54px; border-radius: 14px; border-color: var(--lbg-grey-300); font-size: 17px; }
+.joiner .entry .field input:focus-visible { border-color: var(--lbg-black); }
+.joiner .entry form .lbg-btn { max-width: none; width: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .joiner .entry .pass { animation: pass-in .7s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes pass-in { from { opacity: 0; transform: translateY(18px) rotate(2deg); } to { opacity: 1; transform: rotate(-1.2deg); } }
+}
+
+/* ---------- Screening wait: one static timeline, no spinners ---------- */
+.joiner .wait { list-style: none; margin: 0; padding: var(--lbg-space-4) var(--lbg-space-4) var(--lbg-space-2); background: var(--lbg-white); border-radius: 18px; box-shadow: var(--lbg-shadow-card); }
+.joiner .wait li { position: relative; display: flex; gap: 14px; padding-bottom: var(--lbg-space-4); }
+.joiner .wait li:not(:last-child)::before { content: ""; position: absolute; left: 7px; top: 20px; bottom: 2px; width: 2px; background: var(--lbg-grey-200); }
+.joiner .wait li.done::before { background: var(--lbg-heritage-green); }
+.joiner .wait .dot { flex: none; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; border: 2px solid var(--lbg-grey-300); background: var(--lbg-white); }
+.joiner .wait .done .dot { border-color: var(--lbg-heritage-green); background: var(--lbg-heritage-green); }
+.joiner .wait .now .dot { border-color: var(--lbg-heritage-green); box-shadow: inset 0 0 0 3px var(--lbg-white); background: var(--lbg-heritage-green); }
+.joiner .wait b { display: block; font-weight: 600; }
+.joiner .wait .when { display: block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lbg-grey-600); margin-top: 2px; }
+.joiner .wait .next .when { color: var(--lbg-heritage-green); }
+html[data-theme="dark"] .joiner .wait .next .when { color: var(--pass-lime); }
+.joiner .wait p { margin: 4px 0 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }

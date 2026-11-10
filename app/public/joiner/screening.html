@@ -77,8 +77,9 @@
     <!-- After confirming: honest progress -->
     <div id="status-view" hidden>
       <section>
-        <h2>What's being checked</h2>
+        <h2 id="checks-title">What's being checked</h2>
         <ul class="checks" id="checks"></ul>
+        <ol class="wait" id="wait" hidden></ol>
       </section>
       <section>
         <h2>What happens next</h2>
@@ -111,10 +112,27 @@
     const done = s.result === 'clear';
     $('title').textContent = done ? 'Screening complete' : 'Your checks are underway';
     $('lead').textContent = done ? 'Everything came back clear.' : `You finished with ClearPath on ${fmtWhen(s.submittedAt)}.`;
-    $('checks').replaceChildren(...s.checks.map((c) => make('li', {},
-      done ? make('img', { src: '/brand/icons/list-style-tick-rounded-black.svg', alt: '' }) : make('span', { className: 'spinner', ariaHidden: 'true' }),
-      make('span', { className: 'label', textContent: c.label }),
-      make('span', { className: `state${done ? ' state--done' : ''}`, textContent: done ? 'Clear' : 'In progress' }))));
+    if (done) {
+      $('checks').replaceChildren(...s.checks.map((c) => make('li', {},
+        make('img', { src: '/brand/icons/list-style-tick-rounded-black.svg', alt: '' }),
+        make('span', { className: 'label', textContent: c.label }),
+        make('span', { className: 'state state--done', textContent: 'Clear' }))));
+    } else {
+      // One calm, static timeline instead of a spinner per check: nothing here is "live", so nothing moves.
+      const by = new Date(s.submittedAt); by.setDate(by.getDate() + 28); // top of the usual 2 to 4 weeks
+      const short = (d) => new Date(d).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+      const names = s.checks.map((c) => c.label.replace(/ \(.*\)$/, '').replace(/^./, (ch) => ch.toLowerCase()));
+      const step = (cls, title, when, text) => make('li', { className: cls },
+        make('span', { className: 'dot', ariaHidden: 'true' }),
+        make('div', {}, make('b', { textContent: title }), when ? make('span', { className: 'when', textContent: when }) : null, text ? make('p', { textContent: text }) : null));
+      $('checks-title').textContent = 'Where things are';
+      $('checks').hidden = true;
+      $('wait').replaceChildren(
+        step('done', 'Your details are with ClearPath', short(s.submittedAt), null),
+        step('now', `ClearPath runs ${s.checks.length} checks`, `Usually ${s.typicalDuration}`, `${names.slice(0, -1).join(', ').replace(/^./, (ch) => ch.toUpperCase())} and ${names.at(-1)}.`),
+        step('next', 'Your recruiter gets the result', `Usually done by ~${short(by)}`, 'Then your offer becomes unconditional, right here in the app.'));
+      $('wait').hidden = false;
+    }
     $('next').replaceChildren(...(done
       ? [make('p', { textContent: 'Your offer is now unconditional. Accept it from your home screen to meet your hiring manager.' })]
       : [make('p', { textContent: `Checks usually take ${s.typicalDuration}. No news is normal, and you don't need to do anything.` }),

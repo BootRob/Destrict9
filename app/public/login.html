@@ -3,43 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ece8e0">
   <title>Log in · Joiner companion</title>
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
   <link rel="stylesheet" href="/css/app.css">
   <style>
-    body { background: var(--lbg-grey-100); }
-    .wrap { max-width: 430px; margin: 0 auto; min-height: 100dvh; background: var(--lbg-white); display: flex; flex-direction: column; }
-    .hero { padding: var(--lbg-space-8) var(--lbg-space-6) var(--lbg-space-6); }
-    .hero img { height: 40px; display: block; margin-bottom: var(--lbg-space-8); }
-    .hero h1 { margin-bottom: var(--lbg-space-2); }
-    .hero p { margin: 0; opacity: .9; }
-    main { padding: var(--lbg-space-6); flex: 1; }
-    form .lbg-btn { max-width: none; }
-    .demo { margin-top: var(--lbg-space-8); padding-top: var(--lbg-space-6); border-top: 1px solid var(--lbg-grey-200); }
-    .demo h2 { font-size: var(--lbg-text-lg); line-height: var(--lbg-lh-lg); margin-bottom: var(--lbg-space-1); }
+    .demo { margin-top: var(--lbg-space-10, 40px); padding-top: var(--lbg-space-6); border-top: 1px solid var(--lbg-black); }
+    .demo h2 { font-size: 22px; line-height: 1.2; margin: 0 0 6px; }
     .demo p { margin: 0 0 var(--lbg-space-4); color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
-    .demo-list { display: grid; gap: var(--lbg-space-2); }
+    .demo p a { color: inherit; }
+    .demo-list { display: grid; gap: 8px; }
+    .demo-list h3 { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--lbg-grey-600); margin: var(--lbg-space-4) 0 2px; }
     .demo-user {
       display: flex; align-items: center; gap: var(--lbg-space-3); width: 100%; text-align: left; cursor: pointer;
-      background: var(--lbg-white); border: 1px solid var(--lbg-grey-300); border-radius: var(--lbg-radius-md);
-      padding: var(--lbg-space-3); min-height: 56px;
+      background: var(--lbg-white); border: 0; border-radius: 18px; box-shadow: var(--lbg-shadow-card);
+      padding: 12px 14px; min-height: 64px;
     }
-    .demo-user:hover { border-color: var(--lbg-black); }
-    .demo-user strong { display: block; font-family: var(--lbg-font-strong); }
+    .demo-user:hover { box-shadow: 0 0 0 1.5px var(--lbg-black); }
+    .demo-user strong { display: block; font-weight: 600; }
     .demo-user small { color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
-    .role { margin-left: auto; font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; padding: 0 var(--lbg-space-2); border-radius: var(--lbg-radius-pill); line-height: 22px; }
-    .role--staff { background: var(--lbg-racing-green); color: var(--lbg-white); }
-    .demo-list h3 { font-size: var(--lbg-text-sm); line-height: var(--lbg-lh-sm); margin: var(--lbg-space-3) 0 0; color: var(--lbg-charcoal); }
-    .role--joiner { background: var(--lbg-mint); color: var(--lbg-racing-green); }
+    .demo-user .avatar { background: var(--lbg-black); color: var(--lbg-white); }
+    html[data-theme="dark"] .demo-user .avatar { background: #f2f4f3; color: #070908; }
+    .demo-user .avatar--staff { background: var(--lbg-grey-200); color: var(--lbg-black); }
+    html[data-theme="dark"] .demo-user .avatar--staff { background: var(--lbg-grey-300); color: var(--lbg-black); }
+    .phase { margin-left: auto; flex: none; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lbg-grey-600); text-align: right; }
+    .phase b { display: block; font-size: 20px; line-height: 1; letter-spacing: -.02em; color: var(--lbg-black); text-transform: none; }
   </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
 </head>
-<body>
-<div class="wrap">
-  <div class="hero lbg-surface--pattern">
-    <img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
-    <h1>Joiner companion</h1>
-    <p>From offer to your first 30 days, with your manager one message away.</p>
+<body class="joiner">
+<div class="entry">
+  <div class="entry-top"><img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group"></div>
+  <div class="entry-hero">
+    <p class="eyebrow">Joiner companion</p>
+    <h1>From offer to your first 90 days</h1>
+    <p class="lead">Everything you need to join us, and your manager one message away.</p>
+    <div class="pass" aria-hidden="true">
+      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
+      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt=""><span class="chip">Joiner pass</span></div>
+      <div class="pass-who">
+        <div><div class="nm">Your name here</div><div class="rl">Saddling up to full horsepower</div></div>
+        <div class="no">Phases<b>5</b></div>
+      </div>
+    </div>
   </div>
 
   <main>
@@ -58,17 +67,19 @@
 
     <section class="demo" aria-labelledby="demo-title">
       <h2 id="demo-title">Demo accounts</h2>
-      <p>Tap one to fill in the form. The password for all of them is <strong>demo1234</strong>. Log in as a joiner in one window and one of their people in a private window to chat between them. To try onboarding, log in as Jordan, open <strong>Applicants</strong> and onboard a successful candidate. Their invite appears in the <a href="/mailbox.html" target="_blank" rel="noopener">demo mailbox</a>.</p>
+      <p>Tap one to fill in the form. Every password is <strong>demo1234</strong>. Log in as a joiner in one window and one of their people in a private window to chat between them. To try onboarding, log in as Jordan, open <strong>Applicants</strong> and onboard a successful candidate; the invite lands in the <a href="/mailbox.html" target="_blank" rel="noopener">demo mailbox</a>.</p>
       <div class="demo-list">
-        <h3>New joiners</h3>
-        <button type="button" class="demo-user" data-email="alex.kim@example.com"><span class="avatar avatar--racing">AK</span><span><strong>Alex Kim</strong><small>Software Engineer · offer accepted, starts 30 Nov</small></span><span class="role role--joiner">Joiner</span></button>
-        <button type="button" class="demo-user" data-email="priya.shah@example.com"><span class="avatar avatar--racing">PS</span><span><strong>Priya Shah</strong><small>Data Analyst · waiting for screening result</small></span><span class="role role--joiner">Joiner</span></button>
-        <button type="button" class="demo-user" data-email="owen.davies@example.com"><span class="avatar avatar--racing">OD</span><span><strong>Owen Davies</strong><small>Customer Service Advisor · offer accepted, laptop chosen</small></span><span class="role role--joiner">Joiner</span></button>
+        <h3>Joiners, by phase</h3>
+        <button type="button" class="demo-user" data-email="priya.shah@example.com"><span class="avatar">PS</span><span><strong>Priya Shah</strong><small>Data Analyst · waiting for screening</small></span><span class="phase">Phase<b>1</b></span></button>
+        <button type="button" class="demo-user" data-email="alex.kim@example.com"><span class="avatar">AK</span><span><strong>Alex Kim</strong><small>Software Engineer · starts 30 Nov</small></span><span class="phase">Phase<b>2</b></span></button>
+        <button type="button" class="demo-user" data-email="owen.davies@example.com"><span class="avatar">OD</span><span><strong>Owen Davies</strong><small>Customer Service Advisor · laptop chosen</small></span><span class="phase">Phase<b>2</b></span></button>
+        <button type="button" class="demo-user" data-email="ruby.ahmed@example.com"><span class="avatar">RA</span><span><strong>Ruby Ahmed</strong><small>Software Engineer · Day 12</small></span><span class="phase">Phase<b>3</b></span></button>
+        <button type="button" class="demo-user" data-email="tom.bennett@example.com"><span class="avatar">TB</span><span><strong>Tom Bennett</strong><small>Customer Service Advisor · Day 45</small></span><span class="phase">Phase<b>4</b></span></button>
         <h3>Their people</h3>
-        <button type="button" class="demo-user" data-email="sam.reid@example.com"><span class="avatar">SR</span><span><strong>Sam Reid</strong><small>Hiring manager for Alex and Priya</small></span><span class="role role--staff">Manager</span></button>
-        <button type="button" class="demo-user" data-email="jordan.ellis@example.com"><span class="avatar">JE</span><span><strong>Jordan Ellis</strong><small>Recruiter · start here to onboard applicants</small></span><span class="role role--staff">Recruiter</span></button>
-        <button type="button" class="demo-user" data-email="leah.thompson@example.com"><span class="avatar">LT</span><span><strong>Leah Thompson</strong><small>Recruiter · Cardiff, separate candidates</small></span><span class="role role--staff">Recruiter</span></button>
-        <button type="button" class="demo-user" data-email="hannah.price@example.com"><span class="avatar">HP</span><span><strong>Hannah Price</strong><small>Hiring manager for Owen</small></span><span class="role role--staff">Manager</span></button>
+        <button type="button" class="demo-user" data-email="sam.reid@example.com"><span class="avatar avatar--staff">SR</span><span><strong>Sam Reid</strong><small>Hiring manager for Alex, Priya and Ruby</small></span><span class="phase">Manager</span></button>
+        <button type="button" class="demo-user" data-email="jordan.ellis@example.com"><span class="avatar avatar--staff">JE</span><span><strong>Jordan Ellis</strong><small>Recruiter · start here to onboard applicants</small></span><span class="phase">Recruiter</span></button>
+        <button type="button" class="demo-user" data-email="leah.thompson@example.com"><span class="avatar avatar--staff">LT</span><span><strong>Leah Thompson</strong><small>Recruiter · Cardiff, separate candidates</small></span><span class="phase">Recruiter</span></button>
+        <button type="button" class="demo-user" data-email="hannah.price@example.com"><span class="avatar avatar--staff">HP</span><span><strong>Hannah Price</strong><small>Hiring manager for Owen and Tom</small></span><span class="phase">Manager</span></button>
       </div>
     </section>
   </main>

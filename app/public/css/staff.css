@@ -54,7 +54,7 @@ body.staff { margin: 0; height: 100vh; display: flex; flex-direction: column; ov
 .pill--accepted { background: var(--lbg-heritage-green); color: var(--lbg-white); }
 .pill--declined, .pill--withdrawn { background: var(--lbg-grey-100); color: var(--lbg-grey-700); }
 
-.lbg-btn--sm { min-height: 40px; padding: 8px 16px; font-size: var(--lbg-text-md); width: auto; max-width: none; }
+.lbg-btn--sm { min-height: 44px; padding: 8px 16px; font-size: var(--lbg-text-md); width: auto; max-width: none; }
 
 /* Toast */
 .toast {

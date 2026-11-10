@@ -195,7 +195,7 @@ app.post('/api/assistant', requireAuth, requireJoiner, async (req, res) => {
 
 // ---------- onboarding guides (knowledge/*.md) ----------
 const requireEditor = (req, res, next) => (guides.EDITOR_ROLES.includes(req.user.role) ? next() : res.status(403).json({ error: 'Only managers and recruiters can edit guides' }));
-const guideSummary = ({ markdown, ...g }) => g;
+const guideSummary = ({ markdown, ...g }) => ({ ...g, minutes: Math.max(1, Math.round(markdown.split(/\s+/).length / 200)) }); // reading time for the list
 const guideError = (res, err) => {
   if (!err.status) console.error('Saving guide failed:', err);
   res.status(err.status ?? 500).json({ error: err.status ? err.message : 'The guide could not be saved' });
