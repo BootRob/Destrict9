@@ -204,3 +204,17 @@ html[data-theme="dark"] .joiner .entry-hero .eyebrow { color: var(--pass-lime); 
   .joiner .entry .pass { animation: pass-in .7s cubic-bezier(.2, .8, .2, 1) both; }
   @keyframes pass-in { from { opacity: 0; transform: translateY(18px) rotate(2deg); } to { opacity: 1; transform: rotate(-1.2deg); } }
 }
+
+/* ---------- Screening wait: one static timeline, no spinners ---------- */
+.joiner .wait { list-style: none; margin: 0; padding: var(--lbg-space-4) var(--lbg-space-4) var(--lbg-space-2); background: var(--lbg-white); border-radius: 18px; box-shadow: var(--lbg-shadow-card); }
+.joiner .wait li { position: relative; display: flex; gap: 14px; padding-bottom: var(--lbg-space-4); }
+.joiner .wait li:not(:last-child)::before { content: ""; position: absolute; left: 7px; top: 20px; bottom: 2px; width: 2px; background: var(--lbg-grey-200); }
+.joiner .wait li.done::before { background: var(--lbg-heritage-green); }
+.joiner .wait .dot { flex: none; width: 16px; height: 16px; margin-top: 3px; border-radius: 50%; border: 2px solid var(--lbg-grey-300); background: var(--lbg-white); }
+.joiner .wait .done .dot { border-color: var(--lbg-heritage-green); background: var(--lbg-heritage-green); }
+.joiner .wait .now .dot { border-color: var(--lbg-heritage-green); box-shadow: inset 0 0 0 3px var(--lbg-white); background: var(--lbg-heritage-green); }
+.joiner .wait b { display: block; font-weight: 600; }
+.joiner .wait .when { display: block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--lbg-grey-600); margin-top: 2px; }
+.joiner .wait .next .when { color: var(--lbg-heritage-green); }
+html[data-theme="dark"] .joiner .wait .next .when { color: var(--pass-lime); }
+.joiner .wait p { margin: 4px 0 0; color: var(--lbg-grey-600); font-size: var(--lbg-text-sm); }
