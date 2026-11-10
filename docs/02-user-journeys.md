@@ -61,7 +61,7 @@ Recruiters and managers read, edit (Markdown with a live preview) and add onboar
 - **Link rules:** the link works once and expires in 7 days. Resending kills the old link. Clear messages explain each case: used, expired, replaced, invalid.
 
 ### 2. Welcome screen (`/joiner/welcome.html`)
-Shown once after each login and after activation, for about 3 seconds and skippable. The pass card animates in with the recruit's phase, its horse line (for example "Joining the stable") and one tip for that phase. It doesn't move on by itself if the recruit has reduced motion turned on.
+Shown once after each login and after activation. The pass card animates in with the recruit's phase, its horse line (for example "Joining the stable") and one tip for that phase. It stays until the recruit taps **Continue**, so there's time to read the tip.
 
 ### 3. Home screen (`/joiner/`)
 From top to bottom:

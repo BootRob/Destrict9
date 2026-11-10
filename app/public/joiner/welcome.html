@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="/css/pass.css">
   <link rel="stylesheet" href="/css/phases.css">
 </head>
-<!-- Shown once after login: the pass card, which phase the recruit is in, and one tip for it. Moves on by itself. -->
+<!-- Shown once after login: the pass card, which phase the recruit is in, and one tip for it. Continue goes home. -->
 <body class="joiner welcome">
 <main>
   <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
@@ -61,10 +61,7 @@
     $('line').textContent = `${j.phase.line}, ${me.name.split(' ')[0]}`;
     if (j.phase.tip) { $('tip-text').textContent = j.phase.tip; $('tip').hidden = false; }
 
-    // Move on by itself, unless the recruit prefers less motion: then they tap Continue.
-    const ms = 4500;
-    document.body.style.setProperty('--welcome-ms', `${ms}ms`);
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setTimeout(go, ms);
+    // Stays until the recruit taps Continue, so there's time to read the tip.
     $('go').focus();
   } catch {
     go(); // no journey on this account: straight to the app
