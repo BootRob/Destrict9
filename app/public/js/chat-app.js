@@ -2,6 +2,7 @@
 // Usage: mountChat(document.getElementById('chat'))   — see /joiner/chat.html.
 // Deep links: ?id=<conversation>, ?kind=manager|recruiter, ?assistant=1.
 import { api, initials, fmtShort, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
+import { renderMarkdown } from '/js/markdown.js';
 
 const ASSISTANT = 'assistant';
 const ROLE_LABELS = { manager: 'Hiring manager', recruiter: 'Recruiter' };
@@ -181,7 +182,8 @@ export async function mountChat(container) {
     for (const t of aiTurns) {
       nodes.push(make('div', { className: 'msg msg--mine' }, make('div', { className: 'bubble', textContent: t.question })));
       if (t.answer == null && !t.error) continue;
-      const rowEl = make('div', { className: 'msg msg--theirs' }, make('div', { className: 'bubble', textContent: t.error ?? t.answer }));
+      const bubble = t.error ? make('div', { className: 'bubble', textContent: t.error }) : make('div', { className: 'bubble bubble--md' }, renderMarkdown(t.answer));
+      const rowEl = make('div', { className: 'msg msg--theirs' }, bubble);
       if (t.sources?.length) {
         const links = t.sources.flatMap((s, n) => [n ? ' · ' : '', make('a', { href: `/joiner/guides.html?from=assistant#${encodeURIComponent(s.id)}`, textContent: s.title })]);
         rowEl.append(make('div', { className: 'ai-sources' }, 'From: ', ...links));
@@ -189,7 +191,7 @@ export async function mountChat(container) {
       if (t.handoff && t.handoff !== 'none') {
         const c = conversations.find((x) => x.kind === t.handoff);
         if (c) {
-          const b = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary ai-handoff', textContent: `Ask ${c.other.name.split(' ')[0]}, your ${ROLE_LABELS[t.handoff].toLowerCase()}` });
+          const b = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary ai-handoff', textContent: `Ask ${c.other.name.split(' ')[0]}`, title: `Message ${c.other.name}, your ${ROLE_LABELS[t.handoff].toLowerCase()}` });
           b.addEventListener('click', async () => {
             await openConversation(c.id);
             textarea.value = t.question;

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ece8e0">
+  <title>Your phase · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/journey.css">
+  <link rel="stylesheet" href="/css/joiner.css">
+  <style>
+    body { background: var(--lbg-grey-100); }
+    .phases { display: flex; gap: var(--lbg-space-2); overflow-x: auto; padding: var(--lbg-space-3) var(--lbg-space-4) 0; scrollbar-width: none; }
+    .phases::-webkit-scrollbar { display: none; }
+    .phases a { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 var(--lbg-space-3); border-radius: var(--lbg-radius-pill); border: 1px solid var(--lbg-grey-300, #cfcac0); color: inherit; text-decoration: none; font-size: var(--lbg-text-sm); white-space: nowrap; }
+    .phases a[aria-current="page"] { background: var(--lbg-black); border-color: var(--lbg-black); color: var(--lbg-white); }
+    .phases a .now { font-size: 11px; font-family: var(--lbg-font-strong); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--lbg-heritage-green); }
+    .phases a[aria-current="page"] .now { color: inherit; opacity: .8; }
+    .jhead .line { font-style: italic; opacity: .85; margin-top: var(--lbg-space-1); }
+    .preview { display: inline-block; margin-left: var(--lbg-space-2); padding: 2px 8px; border-radius: var(--lbg-radius-pill); background: var(--lbg-mint, #e0f2ea); color: var(--lbg-heritage-green); font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
+    .preview-note { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-4); }
+    .todo { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-3); counter-reset: todo; }
+    .todo li { counter-increment: todo; }
+    .todo .t { display: flex; gap: var(--lbg-space-3); align-items: flex-start; background: var(--lbg-white); border-radius: 18px; box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-4); color: inherit; text-decoration: none; min-height: 44px; }
+    .todo .t::before { content: counter(todo); flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); background: var(--lbg-grey-100); }
+    .todo strong { display: block; font-family: var(--lbg-font-strong); }
+    .todo span { display: block; font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin-top: 2px; }
+    .todo a.t { cursor: pointer; }
+    .todo a.t:hover strong { text-decoration: underline; }
+    .glist { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-2); }
+    .glist a { display: flex; align-items: center; gap: var(--lbg-space-3); min-height: 52px; padding: var(--lbg-space-3) var(--lbg-space-4); background: var(--lbg-white); border-radius: 14px; box-shadow: var(--lbg-shadow-card); color: inherit; text-decoration: none; font-family: var(--lbg-font-strong); }
+    .glist a span { flex: 1; }
+    .glist img { width: 12px; flex: none; }
+    .ask p { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-2); }
+    .nextphase { display: block; margin-top: var(--lbg-space-8); text-align: center; font-size: var(--lbg-text-sm); color: inherit; }
+  </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
+</head>
+<body class="joiner">
+<div class="jpage">
+  <header>
+    <div class="jbar">
+      <a href="/joiner/"><img src="/brand/icons/arrow-left.svg" alt="">Home</a>
+      <img class="logo" src="/brand/logos/lbg-logo.svg" alt="Lloyds Banking Group">
+    </div>
+    <nav class="phases" id="phases" aria-label="Phases"></nav>
+    <div class="jhead lbg-surface--pattern">
+      <p class="eyebrow" id="eyebrow">Your journey</p>
+      <h1 id="title">Loading…</h1>
+      <p id="intro"></p>
+      <p class="line" id="line"></p>
+    </div>
+  </header>
+
+  <main class="jbody">
+    <section aria-labelledby="todo-h">
+      <h2 id="todo-h">What to do now</h2>
+      <p class="preview-note" id="preview-note" hidden>A preview of what’s coming. We’ll guide you through it when you get there.</p>
+      <ol class="todo" id="todo"></ol>
+    </section>
+    <section aria-labelledby="guides-h" id="guides-sec">
+      <h2 id="guides-h">Guides for this phase</h2>
+      <ul class="glist" id="guides"></ul>
+    </section>
+    <section aria-labelledby="videos-h" id="videos-sec" hidden>
+      <h2 id="videos-h">Watch</h2>
+      <div id="videos"></div>
+    </section>
+    <section class="ask">
+      <p>Something not covered?</p>
+      <a class="lbg-btn lbg-btn--secondary" href="/joiner/chat.html?assistant=1">Ask the onboarding assistant</a>
+    </section>
+    <a class="nextphase" id="next" hidden></a>
+  </main>
+</div>
+
+<script type="module">
+  import { api } from '/js/chat.js';
+  import { PHASES, phaseById, currentPhaseId } from '/js/phase-content.js';
+  import { mountVideos } from '/js/video.js';
+
+  const $ = (id) => document.getElementById(id);
+  const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null)); return n; };
+
+  const [{ journey } = {}, { guides = [] } = {}] = await Promise.all([
+    api('/api/journey').catch(() => ({})),
+    api('/api/guides').catch(() => ({})),
+  ]);
+  const nowId = currentPhaseId(journey);
+  const titles = new Map(guides.map((g) => [g.id, g.title]));
+
+  function render() {
+    const asked = new URLSearchParams(location.search).get('id');
+    const p = phaseById(asked) ?? phaseById(nowId);
+    const isNow = p.id === nowId;
+
+    $('phases').replaceChildren(...PHASES.map((x) => {
+      const a = make('a', { href: `?id=${x.id}` }, make('span', { textContent: `${x.n}. ${x.name}` }), x.id === nowId ? make('span', { className: 'now', textContent: 'Now' }) : null);
+      if (x.id === p.id) a.setAttribute('aria-current', 'page');
+      return a;
+    }));
+    $('phases').querySelector('[aria-current]')?.scrollIntoView({ inline: 'center', block: 'nearest' });
+
+    $('eyebrow').textContent = `Phase ${p.n} of ${PHASES.length}${isNow ? ' · You are here' : ''}`;
+    $('title').replaceChildren(p.name, ...(p.preview ? [make('span', { className: 'preview', textContent: 'Preview' })] : []));
+    $('intro').textContent = p.intro;
+    $('line').textContent = p.line;
+    $('preview-note').hidden = !p.preview;
+    document.title = `${p.name} · Joiner companion`;
+
+    $('todo').replaceChildren(...p.todo.map((t) => {
+      const href = t.href ?? (t.guide && titles.has(t.guide) ? `/joiner/guides.html#${t.guide}` : null);
+      const inner = [make('div', {}, make('strong', { textContent: t.title }), make('span', { textContent: t.text }))];
+      return make('li', {}, href ? make('a', { className: 't', href }, ...inner) : make('div', { className: 't' }, ...inner));
+    }));
+
+    const gs = p.guides.filter((id) => titles.has(id));
+    $('guides-sec').hidden = !gs.length;
+    $('guides').replaceChildren(...gs.map((id) => make('li', {}, make('a', { href: `/joiner/guides.html#${id}` },
+      make('span', { textContent: titles.get(id) }), make('img', { src: '/brand/icons/chevron-right.svg', alt: '' })))));
+
+    $('videos-sec').hidden = !mountVideos($('videos'), { phase: p.id, jobTitle: journey?.offer?.jobTitle, location: journey?.offer?.location });
+
+    const next = PHASES[p.n];
+    $('next').hidden = !next;
+    if (next) { $('next').href = `?id=${next.id}`; $('next').textContent = `Next: ${next.name} →`; }
+  }
+
+  // Switch phases without a reload, keeping the URL shareable.
+  $('phases').addEventListener('click', (e) => go(e));
+  $('next').addEventListener('click', (e) => go(e));
+  function go(e) {
+    const a = e.target.closest('a[href^="?id="]');
+    if (!a) return;
+    e.preventDefault();
+    history.pushState(null, '', a.getAttribute('href'));
+    render();
+    scrollTo(0, 0);
+  }
+  addEventListener('popstate', render);
+  render();
+</script>
+<script type="module" src="/js/joiner-shell.js"></script>
+</body>
+</html>
