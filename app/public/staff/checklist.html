@@ -259,7 +259,12 @@
   await loadList();
   const fromHash = Number(location.hash.slice(1));
   if (joiners.some((j) => j.joiner.id === fromHash)) open(fromHash);
-  else if (joiners.length === 1) open(joiners[0].joiner.id);
+  else if (joiners.length === 1 || (joiners.length && matchMedia('(min-width: 761px)').matches)) {
+    // Side by side there's room for both, so never open on an empty pane: show whoever needs attention first.
+    // (On a phone the list is the starting screen, so we only jump in when there's just one recruit.)
+    const first = joiners.find((j) => j.progress.overdue) ?? joiners.find((j) => j.progress.done < j.progress.total) ?? joiners[0];
+    open(first.joiner.id);
+  }
 </script>
 </body>
 </html>

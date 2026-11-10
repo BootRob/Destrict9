@@ -110,6 +110,11 @@
     $('title').replaceChildren(p.name, ...(p.preview ? [make('span', { className: 'preview', textContent: 'Preview' })] : []));
     $('intro').textContent = p.intro;
     $('line').textContent = p.line;
+    // Previews are honest about being previews, but if this IS their phase, don't tell them "when you get there".
+    const mgr = journey?.offer?.hiringManager?.split(' ')[0] ?? 'your manager';
+    $('preview-note').textContent = isNow
+      ? `Here’s what this phase looks like. Talk it through with ${mgr}.`
+      : 'A preview of what’s coming. We’ll guide you through it when you get there.';
     $('preview-note').hidden = !p.preview;
     document.title = `${p.name} · Joiner companion`;
 

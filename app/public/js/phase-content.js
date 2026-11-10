@@ -38,7 +38,7 @@ export const PHASES = [
     id: 'days_30_60', n: 4, name: '30 to 60 days', line: 'Setting your course', preview: true,
     intro: 'Setting targets: clear goals with your manager, and a development plan to go with them.',
     todo: [
-      { title: 'Agree your objectives', text: 'Three to five clear goals, agreed at your 30-day check-in.', guide: '18-goals-and-development-plan' },
+      { title: 'Agree your objectives', text: 'Three clear goals, agreed at your 30-day check-in.', guide: '18-goals-and-development-plan' },
       { title: 'Write your development plan', text: 'The skills you want to build this year, and how you’ll build them.' },
       { title: 'Ask for feedback early', text: 'A quick “what should I do more or less of?” every couple of weeks.' },
       { title: 'Get ready for your 3-month check-in', text: 'Part of your 6-month probation.' },

@@ -33,7 +33,9 @@
     .tick { position: absolute; top: var(--lbg-space-3); right: var(--lbg-space-3); z-index: 1; width: 32px; height: 32px; border-radius: 50%; background: var(--lbg-heritage-green); display: none; place-items: center; }
     .tick img { width: 16px; filter: brightness(0) invert(1); }
     .device:has(input:checked) .tick { display: grid; }
-    .sticky { position: sticky; bottom: 0; background: var(--lbg-white); padding: var(--lbg-space-4) 0 calc(var(--lbg-space-4) + env(safe-area-inset-bottom)); margin-top: var(--lbg-space-6); border-top: 1px solid var(--lbg-grey-200); }
+    /* Sits just above the fixed bottom nav (.jnav: 64px + 1px border + safe area), on the page colour. */
+    .sticky { position: sticky; z-index: 1; bottom: calc(65px + env(safe-area-inset-bottom)); background: var(--pass-page, var(--lbg-white)); padding: var(--lbg-space-4) 0; margin-top: var(--lbg-space-6); box-shadow: 0 -16px 16px -16px rgba(0, 0, 0, .18); }
+    #pick fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
     .sticky .lbg-btn { max-width: none; }
     .chosen { display: flex; gap: var(--lbg-space-4); align-items: center; }
     .chosen img { width: 120px; height: auto; flex: none; }
@@ -73,7 +75,7 @@
     </section>
 
     <form id="pick" hidden>
-      <fieldset style="margin:0">
+      <fieldset>
         <legend class="visually-hidden" style="position:absolute;left:-9999px">Laptop</legend>
         <div class="devices" id="devices"></div>
       </fieldset>
