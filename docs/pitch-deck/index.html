@@ -181,6 +181,10 @@ h2 { font-size: 72px; }
 .s-close .col li::before { content: ""; position: absolute; left: 0; top: 14px; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); }
 .s-close .col.sim li::before { background: transparent; box-shadow: inset 0 0 0 4px rgba(255,255,255,.55); }
 .s-close .col.next li::before { background: transparent; box-shadow: inset 0 0 0 4px var(--lime); border-radius: 4px; transform: rotate(45deg) scale(.8); }
+.s-close .sum { position: absolute; left: 90px; top: 380px; width: 1500px; list-style: none; display: grid; gap: 34px; }
+.s-close .sum li { font-size: 46px; line-height: 1.25; font-weight: 500; padding-left: 48px; position: relative; color: rgba(255,255,255,.92); }
+.s-close .sum li::before { content: ""; position: absolute; left: 0; top: 18px; width: 20px; height: 20px; border-radius: 50%; background: var(--lime); }
+.s-close .sum b { color: var(--lime); font-weight: 700; }
 .s-close .thanks { position: absolute; left: 90px; bottom: 120px; font-size: 38px; font-weight: 600; letter-spacing: -.02em; }
 .s-close .thanks small { font-size: 26px; font-weight: 400; opacity: .75; margin-left: 20px; }
 
@@ -239,7 +243,7 @@ h2 { font-size: 72px; }
   <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
   <div class="head">
     <div class="eyebrow r">Our answer</div>
-    <h2 class="r" style="--d:.1s">Five phases to keep every colleague connected and engaged.</h2>
+    <h2 class="r" style="--d:.1s">Keeping every colleague connected and engaged.</h2>
   </div>
   <div class="tracker">
     <div class="line r fade" style="--d:.2s"></div>
@@ -304,13 +308,13 @@ h2 { font-size: 72px; }
   data-t="0:35" data-notes="Here's the live moment. In real life the screening company sends this result. Jordan records it: Clear. And on Ben's phone, the card changes to 'Your unconditional offer is ready'. Now it's safe to hand in his notice, and accepting opens a chat with his hiring manager. Note the internal note that Jordan can add never reaches Ben.">
   <img class="chrome-logo r" src="assets/lbg-logo.svg" alt="">
   <div class="actors r" style="--d:.3s"><div class="actor"><i>JE</i><span>Jordan Ellis<small>Recruiter</small></span></div><div class="actor ben"><i>BC</i><span>Ben Carter<small>Recruit</small></span></div></div>
-  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Jordan records the result. Ben’s phone changes.</h2></div>
+  <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Jordan records the result.</h2></div>
   <div class="win r slide-l" style="left:90px; top:300px; --w:960px; --d:.4s"><div class="bar"><b></b><b></b><b></b><em>Jordan · Record screening result</em></div><img src="assets/shots/17-jordan-record-result.png" alt="Record result dialog with Clear selected"></div>
   <div class="tag lime r pop" style="left:130px; top:860px; --d:1.2s">Internal note never reaches Ben</div>
   <div class="arrow" style="left:1080px; top:600px; --d:1.5s"><svg viewBox="0 0 120 24"><path d="M4 12 H112 M98 2 L112 12 L98 22"/></svg></div>
   <div class="phone r pop" style="left:1230px; top:290px; --w:330px; --d:1.7s"><img src="assets/shots/19-ben-unconditional-ready.png" alt="Ben's phone: unconditional offer ready"></div>
   <div class="live r pop" style="left:1590px; top:300px; --d:2.2s">Live</div>
-  <div class="cap r" style="left:1590px; top:400px; --w:240px; --d:2.2s; text-align:left; font-size:26px; font-weight:600">Now it’s safe to hand in your notice.</div>
+  <div class="cap r" style="left:1590px; top:400px; --w:240px; --d:2.2s; text-align:left; font-size:26px; font-weight:600">Ben’s app updates with his latest status.<br><br>Now it’s safe to hand in your notice.</div>
 </section>
 
 <!-- 8. GETTING READY -->
@@ -321,8 +325,8 @@ h2 { font-size: 72px; }
   <div class="head"><div class="eyebrow r">Phase 2 · Getting ready</div><h2 class="r" style="--d:.1s">Early choices, so Day 1 has no delays.</h2></div>
   <div class="phone r pop" style="left:90px; top:290px; --w:300px; --d:.4s"><img src="assets/shots/23-ben-laptop-selected.png" alt="Choose your laptop"></div>
   <div class="cap r" style="left:90px; top:955px; --w:300px; --d:.9s; font-size:22px"><b>Choose a laptop</b></div>
-  <div class="phone r pop" style="left:440px; top:290px; --w:300px; --d:.8s"><img src="assets/shots/26-ben-home-photo.png" alt="Home screen with photo"></div>
-  <div class="cap r" style="left:440px; top:955px; --w:300px; --d:1.3s; font-size:22px"><b>Add a photo</b></div>
+  <div class="phone r pop" style="left:440px; top:290px; --w:300px; --d:.8s"><img src="assets/shots/25-ben-photo-empty.png" alt="Add your photo page"></div>
+  <div class="cap r" style="left:440px; top:955px; --w:300px; --d:1.3s; font-size:22px"><b>Add your photo</b></div>
   <ul class="points" style="left:850px; top:300px; width:980px; gap:30px">
     <li class="r" style="--d:1s">Recommended for his role<small>HP EliteBook for a Cyber Security Analyst. He can change it until a week before he starts.</small></li>
     <li class="r" style="--d:1.5s">A photo for his building pass<small>Reception prints it ahead of Day 1, and it shows on his home screen. He can retake it later.</small></li>
@@ -397,29 +401,20 @@ h2 { font-size: 72px; }
   <div class="cap r" style="left:1460px; top:955px; --w:300px; --d:1.5s; font-size:22px"><b>5 · Full horsepower</b></div>
 </section>
 
-<!-- 13. CLOSE -->
+<!-- 13. SUMMARY -->
 <section class="slide dark s-close" data-phase="5"
-  data-t="0:25" data-notes="To close: what's real and what's simulated, because we think that matters. Real: login and roles, live messaging, the journey rules enforced on the server, the assistant grounded in guides, and the manager's checklist. Simulated: email, the screening company, printing the pass, and the seed data. Everything is synthetic. Built with Claude Code, with around 110 end-to-end checks. Next: the phase 4 and 5 for real, and a Day 30 measure of connected and confident. Thank you.">
+  data-t="0:25" data-notes="To close, the whole thing in three lines. The recruit always knows where they are and what's next. The recruiter onboards in one click and sees progress live. The manager prepares Day 1 and stays in touch with the recruit before they start. One journey, from offer to Day 90, keeping every colleague connected and engaged. Built with Claude Code, with around 110 end-to-end checks. Thank you, and we'd love to take your questions.">
   <img class="chrome-logo r" src="assets/lbg-logo-white.svg" alt="">
   <div class="head">
-    <div class="eyebrow r">Honest scope</div>
-    <h2 class="r" style="--d:.1s">Real, simulated, and what’s next.</h2>
+    <div class="eyebrow r">In summary</div>
+    <h2 class="r" style="--d:.1s">One journey, from offer to Day 90.</h2>
   </div>
-  <div class="col real r" style="left:90px; --d:.5s"><h3>Real</h3><ul>
-    <li>Login, roles and live messaging</li>
-    <li>The stage machine behind every step</li>
-    <li>The assistant, grounded in guides</li>
-    <li>Manager checklist and Day 1 details</li></ul></div>
-  <div class="col sim r" style="left:690px; --d:.8s"><h3>Simulated</h3><ul>
-    <li>Email (the demo mailbox)</li>
-    <li>ClearPath, the screening company</li>
-    <li>Phases 4 and 5: previews</li>
-    <li>All data synthetic</li></ul></div>
-  <div class="col next r" style="left:1290px; --d:1.1s"><h3>Next</h3><ul>
-    <li>Phases 4 and 5 for real</li>
-    <li>Real email and company sign-in</li>
-    <li>Measure “connected and confident” at Day 30</li></ul></div>
-  <div class="thanks r" style="--d:1.6s">Thank you.<small>destrict9 · built with Claude Code · about 110 end-to-end checks</small></div>
+  <ul class="sum">
+    <li class="r" style="--d:.5s"><b>Recruits</b> always know where they are and what’s next.</li>
+    <li class="r" style="--d:.8s"><b>Recruiters</b> onboard in one click and see progress live.</li>
+    <li class="r" style="--d:1.1s"><b>Managers</b> prepare Day 1 and stay in touch before it.</li>
+  </ul>
+  <div class="thanks r" style="--d:1.6s">Thank you. Any questions?<small>destrict9 · built with Claude Code · about 110 end-to-end checks</small></div>
 </section>
 
 <div id="bar"></div>
