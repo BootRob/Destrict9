@@ -11,9 +11,9 @@ const priya = await login('priya.shah@example.com');
 // ---------- applicants list and permissions
 let list = (await json('/api/applicants', jordan.cookie)).applicants;
 const count = (stage) => list.filter((a) => a.stage === stage).length;
-ok(list.length === 11, `Jordan sees his 11 applicants (got ${list.length})`);
-ok(count('successful') === 3 && count('accepted') === 2 && count('screening_submitted') === 1 && count('unsuccessful') === 3 && count('interviewing') === 2,
-  'stages: 3 ready, 2 accepted, 1 result needed, 3 unsuccessful, 2 interviewing');
+ok(list.length === 13, `Jordan sees his 13 applicants (got ${list.length})`);
+ok(count('successful') === 3 && count('accepted') === 4 && count('screening_submitted') === 1 && count('unsuccessful') === 3 && count('interviewing') === 2,
+  'stages: 3 ready, 4 accepted, 1 result needed, 3 unsuccessful, 2 interviewing');
 ok(!list.some((a) => a.name === 'Liam Scott'), "Jordan can't see Leah's candidates");
 ok((await json('/api/applicants', leah.cookie)).applicants.length === 2, 'Leah sees only her 2');
 ok((await req('/api/applicants', sam.cookie)).status === 403, 'managers cannot list applicants');
@@ -51,9 +51,11 @@ ok((await post('/api/activate', '', { token: tokenOf(offerMail), password: 'anot
 
 let j = (await json('/api/journey', benCookie)).journey;
 ok(j.stage === 'conditional_offer' && j.offer.salary === '£48,000' && j.offer.hiringManager === 'Sam Reid', 'Ben sees his conditional offer with role, salary and manager');
-ok(j.steps.length === 8 && j.steps.map((s) => s.label).join('|') === 'Conditional offer|Screening details|Screening checks|Unconditional offer|Meet your manager|Day 1|Week 1|Day 30', 'progress bar runs from offer to Day 30 (8 steps)');
+ok(j.steps.length === 9 && j.steps.map((s) => s.label).join('|') === 'Conditional offer|Screening details|Screening checks|Unconditional offer|Get ready for Day 1|Day 1 and your first week|Weeks 2 to 4|Set your goals|Grow your career', 'journey runs from offer to Day 90 (9 steps)');
+ok(j.phases.map((p) => p.id).join('|') === 'offer|getting_ready|first_30|days_30_60|days_60_90' && j.steps.map((s) => s.phase).join('|') === 'offer|offer|offer|getting_ready|getting_ready|first_30|first_30|days_30_60|days_60_90', 'steps are grouped into the five phases');
+ok(j.phase.id === 'offer' && j.phase.n === 1 && j.phase.of === 5 && j.phase.line && j.phase.tip && j.daysToStart > 0 && j.dayNumber === null, 'Ben is in phase 1 (Offer), counting down to his start date, with a tip');
 ok(j.steps[0].state === 'current' && j.steps.slice(1).every((s) => s.state === 'upcoming'), 'first step is current, the rest upcoming');
-ok(j.steps[5].on === '2027-01-04' && j.steps[6].on === '2027-01-11' && j.steps[7].on === '2027-02-03', 'Day 1, Week 1 and Day 30 are dated from the start date');
+ok(j.steps[5].on === '2027-01-04' && j.steps[6].on === '2027-01-11' && j.steps[7].on === '2027-02-03' && j.steps[8].on === '2027-03-05', 'Day 1, week 2, Day 30 and Day 60 are dated from the start date');
 let benConvs = (await json('/api/conversations', benCookie)).conversations;
 ok(benConvs.length === 1 && benConvs[0].kind === 'recruiter', 'Ben can only message his recruiter so far');
 ok(samListChanged === 0 && !(await json('/api/conversations', sam.cookie)).conversations.some((c) => c.joiner.name === 'Ben Carter'), 'hiring manager is not connected yet');
@@ -103,7 +105,7 @@ const samChanged = next(samSock, 'conversations:changed');
 const upd3 = next(jordanSock, 'applicant:updated');
 j = (await (await post('/api/journey/unconditional/accept', benCookie)).json()).journey;
 ok(j.stage === 'accepted' && j.managerConversationId, 'accepting the unconditional offer connects Ben to his manager');
-ok(j.steps.slice(0, 5).every((s) => s.state === 'done') && j.steps[5].state === 'current', 'progress: offer steps done, Day 1 is next');
+ok(j.steps.slice(0, 4).every((s) => s.state === 'done') && j.steps[4].state === 'current' && j.phase.id === 'getting_ready', 'progress: offer steps done, getting ready for Day 1 (phase 2)');
 await samChanged; ok(true, 'Sam is told live');
 ok((await upd3).stage === 'accepted', 'recruiter sees "Accepted" live');
 benConvs = (await json('/api/conversations', benCookie)).conversations;

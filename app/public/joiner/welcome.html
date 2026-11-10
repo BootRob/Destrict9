@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050706">
+  <title>Welcome · Joiner companion</title>
+  <link rel="icon" href="/brand/logos/favicon.ico">
+  <link rel="stylesheet" href="/brand/tokens.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/joiner.css">
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
+  <link rel="stylesheet" href="/css/phases.css">
+</head>
+<!-- Shown once after login: the pass card, which phase the recruit is in, and one tip for it. Moves on by itself. -->
+<body class="joiner welcome">
+<main>
+  <img class="logo" src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group">
+  <div class="stage">
+    <div class="pass" id="pass" aria-hidden="true">
+      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
+      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt=""><span class="chip" id="chip"></span></div>
+      <div class="pass-who">
+        <div><div class="nm" id="name"></div><div class="rl" id="role"></div></div>
+        <div class="no" id="day" hidden><span id="day-label">Day one</span><b id="date"></b></div>
+      </div>
+    </div>
+    <div class="copy">
+      <p class="phase-eyebrow" id="eyebrow"></p>
+      <h1 id="line">Welcome</h1>
+    </div>
+    <p class="tip" id="tip" hidden><b>Tip</b><span id="tip-text"></span></p>
+  </div>
+  <button class="go" id="go" type="button">Continue</button>
+</main>
+
+<script type="module">
+  import { api } from '/js/chat.js';
+
+  const HOME = '/joiner/';
+  const $ = (id) => document.getElementById(id);
+  const go = () => location.replace(HOME);
+  $('go').addEventListener('click', go);
+
+  try {
+    const [{ user: me }, { journey: j }] = await Promise.all([api('/api/me'), api('/api/journey')]);
+    $('name').textContent = me.name;
+    $('role').textContent = [me.jobTitle, me.location].filter(Boolean).join(' · ');
+    if (me.startDate) {
+      $('date').textContent = new Date(`${me.startDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      $('day-label').textContent = j.dayNumber ? 'Started' : 'Day one';
+      $('day').hidden = false;
+    }
+    $('pass').dataset.phase = j.phase.id;
+    $('chip').textContent = j.phase.name;
+    $('eyebrow').textContent = j.dayNumber
+      ? `Day ${j.dayNumber} · Phase ${j.phase.n} of ${j.phase.of}`
+      : `Phase ${j.phase.n} of ${j.phase.of} · ${j.phase.name}`;
+    $('line').textContent = `${j.phase.line}, ${me.name.split(' ')[0]}`;
+    if (j.phase.tip) { $('tip-text').textContent = j.phase.tip; $('tip').hidden = false; }
+
+    // Move on by itself, unless the recruit prefers less motion: then they tap Continue.
+    const ms = 4500;
+    document.body.style.setProperty('--welcome-ms', `${ms}ms`);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setTimeout(go, ms);
+    $('go').focus();
+  } catch {
+    go(); // no journey on this account: straight to the app
+  }
+</script>
+</body>
+</html>

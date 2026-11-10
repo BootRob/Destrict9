@@ -32,6 +32,7 @@
   <script src="/js/theme-init.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/pass.css">
+  <link rel="stylesheet" href="/css/phases.css">
 </head>
 <body class="joiner">
 <div class="phone">
@@ -49,12 +50,12 @@
       <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip" id="pass-chip">Pre-boarding</span></div>
       <div class="pass-who">
         <div><div class="nm" id="pass-name"></div><div class="rl" id="pass-role"></div></div>
-        <div class="no" id="pass-day" hidden>Day one<b id="pass-date"></b></div>
+        <div class="no" id="pass-day" hidden><span id="pass-day-label">Day one</span><b id="pass-date"></b></div>
       </div>
     </div>
     <dl class="facts" id="countdown" aria-label="Your progress" hidden>
-      <div id="days-tile"><dt>Days to go</dt><dd id="days">0</dd></div>
-      <div><dt>Stages done</dt><dd id="stages">0/0</dd></div>
+      <div id="days-tile"><dt id="days-label">Days to go</dt><dd id="days">0</dd></div>
+      <div><dt>Phase</dt><dd id="stages">0/0</dd></div>
     </dl>
   </div>
 
@@ -82,7 +83,7 @@
 </div>
 
 <script type="module">
-  import { api, logout, initials, daysUntil } from '/js/chat.js';
+  import { api, logout, initials } from '/js/chat.js';
   import { mountJourney } from '/js/journey-card.js';
 
   const $ = (id) => document.getElementById(id);
@@ -95,10 +96,8 @@
   $('pass-name').textContent = me.name;
   $('pass-role').textContent = [me.jobTitle, me.location].filter(Boolean).join(' · ');
   if (me.startDate) {
-    const [, mm, dd] = me.startDate.split('-');
-    $('pass-date').textContent = `${dd} · ${mm}`;
+    $('pass-date').textContent = new Date(`${me.startDate}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
     $('pass-day').hidden = false;
-    $('pass-chip').textContent = (daysUntil(me.startDate) ?? 1) > 0 ? 'Pre-boarding' : 'Welcome aboard';
   }
   $('pass').hidden = false;
   $('profile').title = 'Log out';
@@ -140,11 +139,15 @@
     const j = await journey.refresh();
     if (j) {
       offer = j.offer;
-      const done = j.steps.filter((s) => s.state === 'done').length;
-      $('stages').replaceChildren(String(done), make('small', { textContent: ` / ${j.steps.length}` }));
-      const d = daysUntil(me.startDate);
-      $('days').textContent = d;
-      $('days-tile').hidden = d == null || d < 0;
+      // The pass shows the phase; the facts show the countdown (or which day it is) and the phase number.
+      if (j.dayNumber) $('job').textContent = `Day ${j.dayNumber} as a ${me.jobTitle} in ${me.location}. ${j.phase.line}.`;
+      $('pass').dataset.phase = j.phase.id;
+      $('pass-chip').textContent = j.phase.name;
+      $('pass-day-label').textContent = j.dayNumber ? 'Started' : 'Day one';
+      $('stages').replaceChildren(String(j.phase.n), make('small', { textContent: ` / ${j.phase.of}` }));
+      $('days-label').textContent = j.dayNumber ? 'Today is day' : 'Days to go';
+      $('days').textContent = j.dayNumber ?? j.daysToStart;
+      $('days-tile').hidden = j.dayNumber == null && j.daysToStart == null;
       $('countdown').hidden = false;
     }
     await loadPeople();

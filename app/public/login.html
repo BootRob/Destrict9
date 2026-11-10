@@ -104,7 +104,7 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not log in');
-      location.href = data.home;
+      location.href = data.home === '/joiner/' ? '/joiner/welcome.html' : data.home; // joiners see the welcome screen first (WS1)
     } catch (err) {
       errorEl.querySelector('span').textContent = err.message;
       errorEl.hidden = false;

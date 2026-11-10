@@ -76,6 +76,12 @@ if (q.countAny.get().n === 0) {
   for (const [item, days] of [['laptop', 3], ['badge', 3], ['access', 2]]) q.setItem.run('alex.kim@example.com', item, 'done', ago(days), 'Sam Reid');
   q.setItem.run('alex.kim@example.com', 'rota', 'not_needed', ago(2), 'Sam Reid');
   db.prepare('INSERT INTO prestart_training (joiner_email, completed_at) VALUES (?, ?)').run('alex.kim@example.com', ago(1));
+  // Ruby and Tom have already started, so their managers have finished everything (added by WS1).
+  for (const [email, by, d, phone] of [['ruby.ahmed@example.com', 'Sam Reid', 20, '0113 496 0000'], ['tom.bennett@example.com', 'Hannah Price', 50, '029 2018 0000']]) {
+    for (const i of ITEMS.filter((i) => !i.auto)) q.setItem.run(email, i.id, i.optional ? 'not_needed' : 'done', ago(d), by);
+    q.setDay1.run(email, JSON.stringify({ time: '9:30am', place: 'Reception', meetBy: by, dressCode: 'Smart casual', phone }), ago(d), by);
+    db.prepare('INSERT INTO prestart_training (joiner_email, completed_at) VALUES (?, ?)').run(email, ago(d));
+  }
 }
 
 // The recruit's laptop choice comes from feat/recruiter-onboarding's applicants table, if it exists.
