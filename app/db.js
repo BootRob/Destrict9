@@ -5,7 +5,7 @@ import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
-const SCHEMA_VERSION = 7; // 7: recruits who have already started (Ruby, Day 12; Tom, Day 45)
+const SCHEMA_VERSION = 8; // 7: recruits who have already started (Ruby, Tom). 8: they start on Mondays
 
 const dataDir = fileURLToPath(new URL('./data/', import.meta.url));
 mkdirSync(dataDir, { recursive: true });
@@ -192,9 +192,14 @@ function seed() {
   const alex  = add('Alex Kim',    'alex.kim@example.com',    'joiner', 'Software Engineer',        'Leeds',   '2026-11-30');
   const priya = add('Priya Shah',  'priya.shah@example.com',  'joiner', 'Data Analyst',             'Leeds',   '2026-12-07');
   const owen  = add('Owen Davies', 'owen.davies@example.com', 'joiner', 'Customer Service Advisor', 'Cardiff', '2026-12-14');
-  // Recruits who have already started, dated from today so they stay on Day 12 and Day 45.
-  const startedDaysAgo = (d) => new Date(Date.now() - d * 86_400_000).toISOString().slice(0, 10);
-  const rubyStart = startedDaysAgo(11), tomStart = startedDaysAgo(44);
+  // Recruits who have already started. People start on a Monday, so these are the Monday of the
+  // current week minus some weeks: Ruby two weeks ago (phase 3), Tom six weeks ago (phase 4).
+  const mondayWeeksAgo = (w) => {
+    const d = new Date(); d.setUTCHours(0, 0, 0, 0);
+    d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7) - 7 * w);
+    return d.toISOString().slice(0, 10);
+  };
+  const rubyStart = mondayWeeksAgo(2), tomStart = mondayWeeksAgo(6);
   const ruby  = add('Ruby Ahmed', 'ruby.ahmed@example.com', 'joiner', 'Software Engineer',        'Leeds',   rubyStart);
   const tom   = add('Tom Bennett', 'tom.bennett@example.com', 'joiner', 'Customer Service Advisor', 'Cardiff', tomStart);
 

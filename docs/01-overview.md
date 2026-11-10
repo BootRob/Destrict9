@@ -110,7 +110,7 @@ The brief gave twelve prompts as context. Here's where each one shows up:
 | Login, sessions and role-based access | Accounts are seeded demo users, standing in for company SSO |
 | Live private messaging (Socket.IO) | |
 | Applicants, onboarding, the stage machine and activation links | Applicant data is seeded |
-| The phase tracker and journey rules; phases 1 to 3 | Calendar steps come from seeded start dates; Ruby (Day 12) and Tom (Day 45) are seeded relative to today |
+| The phase tracker and journey rules; phases 1 to 3 | Calendar steps come from seeded start dates; Ruby (Day 16) and Tom (Day 44) are seeded relative to today |
 | | **Phases 4 and 5** are previews: guides, what to do and videos, but no goal tracking or reviews |
 | | **Email**: written to a table and shown on the demo mailbox page (`/mailbox.html`), not sent |
 | | **ClearPath** (screening company): a labelled stand-in page; the recruiter records the result by hand |
