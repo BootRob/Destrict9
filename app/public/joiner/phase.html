@@ -20,8 +20,6 @@
     .phases a[aria-current="page"] .now { color: inherit; opacity: .8; }
     .jhead h1 { display: flex; flex-wrap: wrap; align-items: center; column-gap: var(--lbg-space-2); }
     .jhead .line { font-style: italic; opacity: .85; margin-top: var(--lbg-space-1); }
-    .preview { display: inline-block; padding: 2px 8px; line-height: 1.6; border-radius: var(--lbg-radius-pill); background: var(--lbg-mint, #e0f2ea); color: var(--lbg-heritage-green); font-size: 12px; font-family: var(--lbg-font-strong); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
-    .preview-note { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: 0 0 var(--lbg-space-4); }
     .todo { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lbg-space-3); counter-reset: todo; }
     .todo li { counter-increment: todo; }
     .todo .t { display: flex; gap: var(--lbg-space-3); align-items: flex-start; background: var(--lbg-white); border-radius: 18px; box-shadow: var(--lbg-shadow-card); padding: var(--lbg-space-4); color: inherit; text-decoration: none; min-height: 44px; }
@@ -60,7 +58,6 @@
   <main class="jbody">
     <section aria-labelledby="todo-h">
       <h2 id="todo-h">What to do now</h2>
-      <p class="preview-note" id="preview-note" hidden>A preview of what’s coming. We’ll guide you through it when you get there.</p>
       <ol class="todo" id="todo"></ol>
     </section>
     <section aria-labelledby="guides-h" id="guides-sec">
@@ -107,15 +104,9 @@
     $('phases').querySelector('[aria-current]')?.scrollIntoView({ inline: 'center', block: 'nearest' });
 
     $('eyebrow').textContent = `Phase ${p.n} of ${PHASES.length}${isNow ? ' · You are here' : ''}`;
-    $('title').replaceChildren(p.name, ...(p.preview ? [make('span', { className: 'preview', textContent: 'Preview' })] : []));
+    $('title').replaceChildren(p.name);
     $('intro').textContent = p.intro;
     $('line').textContent = p.line;
-    // Previews are honest about being previews, but if this IS their phase, don't tell them "when you get there".
-    const mgr = journey?.offer?.hiringManager?.split(' ')[0] ?? 'your manager';
-    $('preview-note').textContent = isNow
-      ? `Here’s what this phase looks like. Talk it through with ${mgr}.`
-      : 'A preview of what’s coming. We’ll guide you through it when you get there.';
-    $('preview-note').hidden = !p.preview;
     document.title = `${p.name} · Joiner companion`;
 
     $('todo').replaceChildren(...p.todo.map((t) => {

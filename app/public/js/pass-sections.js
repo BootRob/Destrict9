@@ -40,7 +40,7 @@ export function mountPassSections(pass) {
     const n = j?.phase?.n ?? 1;
     mask.style.left = `${n * 20}%`;
     mask.hidden = n >= 5;
-    pass.setAttribute('aria-label', `Your joiner pass: phase ${n} of 5${j?.phase?.name ? `, ${j.phase.name}` : ''}`);
+    pass.setAttribute('aria-label', `Your joiner card: phase ${n} of 5${j?.phase?.name ? `, ${j.phase.name}` : ''}`);
     const started = Boolean(j?.dayNumber);
     corner.hidden = !started && j?.daysToStart == null;
     cornerLabel.textContent = started ? 'Today is day' : 'Days to go';
