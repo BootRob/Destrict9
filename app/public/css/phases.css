@@ -89,3 +89,20 @@ html[data-theme="dark"] .pass .pass-photo img { border-color: var(--pass-lime); 
 .photo-status { min-height: 1.5em; margin: var(--lbg-space-3) 0 0; font-weight: 600; }
 .pass .pass-photo-slot[hidden] { display: none; }
 .photo-actions .lbg-btn { width: 100%; max-width: none; box-sizing: border-box; }
+
+/* The pass fills in by phase (js/pass-sections.js): a full-colour Lloyds green card in five sections,
+   with the sections not yet reached in greyscale, and a 12-digit countdown as its "card number". */
+.pass.sect, html[data-theme="dark"] .pass.sect { background: radial-gradient(120% 100% at 100% 0%, #11a574 0%, #006a4d 38%, #024731 80%), #024731; filter: none; }
+.pass.sect .chip { background: var(--pass-lime); color: #000; border-color: var(--pass-lime); }
+.pass.sect .no { display: none; }
+.pass.sect .pass-photo img { border-color: var(--pass-lime); }
+.pass .mask { position: absolute; top: 0; bottom: 0; right: 0; z-index: 5; pointer-events: none;
+  -webkit-backdrop-filter: grayscale(1) brightness(.85); backdrop-filter: grayscale(1) brightness(.85);
+  border-left: 1px solid rgba(255, 255, 255, .22); transition: left .8s ease; }
+.pass .mask[hidden] { display: none; }
+.pass .ticks { position: absolute; inset: 0; z-index: 6; pointer-events: none; display: grid; grid-template-columns: repeat(5, 1fr); }
+.pass .ticks i + i { border-left: 1px dashed rgba(255, 255, 255, .1); }
+.pass .num12 { position: absolute; left: 22px; top: 112px; font-size: 23px; line-height: 1; font-weight: 600; letter-spacing: .1em; word-spacing: .25em;
+  font-variant-numeric: tabular-nums; color: #f3f6f4; text-shadow: 0 1px 0 rgba(0, 0, 0, .7), 0 -1px 0 rgba(255, 255, 255, .18); white-space: nowrap; }
+.pass.has-photo .num12 { left: 102px; top: 104px; font-size: 20px; letter-spacing: .08em; }
+@media (prefers-reduced-motion: reduce) { .pass .mask { transition: none; } }

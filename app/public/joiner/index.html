@@ -86,6 +86,7 @@
   import { api, logout, initials } from '/js/chat.js';
   import { mountJourney } from '/js/journey-card.js';
   import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
+  import { mountPassSections } from '/js/pass-sections.js';
 
   const $ = (id) => document.getElementById(id);
   const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null && c !== false)); return n; };
@@ -135,6 +136,7 @@
     renderPeople();
   }
 
+  const passSections = mountPassSections($('pass'));
   const journey = mountJourney($('journey'), { onOpenChat: (kind) => chat(`kind=${kind}`) });
   async function refreshAll() {
     const j = await journey.refresh();
@@ -144,6 +146,7 @@
       if (j.dayNumber) $('job').textContent = `Day ${j.dayNumber} as a ${me.jobTitle} in ${me.location}. ${j.phase.line}.`;
       $('pass').dataset.phase = j.phase.id;
       showPassPhoto($('pass'), { src: passPhotoUrl(j), name: me.name });
+      passSections.update(j, me);
       $('pass-chip').textContent = j.phase.name;
       $('pass-day-label').textContent = j.dayNumber ? 'Started' : 'Day one';
       $('stages').replaceChildren(String(j.phase.n), make('small', { textContent: ` / ${j.phase.of}` }));
