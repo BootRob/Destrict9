@@ -1,7 +1,6 @@
-// Floating chat button (bottom left) with an unread count, opening a panel with the
-// user's conversations and, for joiners, the onboarding assistant.
-// Usage on any signed-in page: <script type="module" src="/js/chat-widget.js"></script>
-// Other scripts can open it: window.chatWidget.open({ kind: 'manager' }) or .open({ assistant: true }).
+// The in-app chat screen: conversation list, a thread with composer, and (for joiners) the onboarding assistant.
+// Usage: mountChat(document.getElementById('chat'))   — see /joiner/chat.html.
+// Deep links: ?id=<conversation>, ?kind=manager|recruiter, ?assistant=1.
 import { api, initials, fmtShort, Thread, bindComposer, typingIndicator, emitWithAck } from '/js/chat.js';
 
 const ASSISTANT = 'assistant';
@@ -24,23 +23,19 @@ function loadScript(src) {
   });
 }
 
-async function init() {
+export async function mountChat(container) {
   let me;
   try { ({ user: me } = await api('/api/me')); } catch { return; }
   const isJoiner = me.role === 'joiner';
 
-  document.head.append(make('link', { rel: 'stylesheet', href: '/css/chat-widget.css' }));
+  if (!document.querySelector('link[href="/css/chat-app.css"]')) document.head.append(make('link', { rel: 'stylesheet', href: '/css/chat-app.css' }));
 
   // ---------- DOM ----------
-  const badge = make('span', { className: 'cw-badge', hidden: true });
-  const fab = make('button', { type: 'button', className: 'cw-fab', ariaLabel: 'Chats', ariaExpanded: 'false' }, icon('quote'), badge);
-
   const backBtn = make('button', { type: 'button', className: 'cw-icon-btn', ariaLabel: 'Back to chats', hidden: true }, icon('arrow-left'));
-  const closeBtn = make('button', { type: 'button', className: 'cw-icon-btn', ariaLabel: 'Close chats' }, make('span', { textContent: '×', ariaHidden: 'true' }));
   const avatar = make('span', { className: 'avatar cw-head-avatar', hidden: true });
   const title = make('strong', { textContent: 'Chats' });
   const subtitle = make('small', { textContent: '' });
-  const head = make('header', { className: 'cw-head lbg-surface--racing' }, backBtn, avatar, make('div', { className: 'cw-head-text' }, title, subtitle), closeBtn);
+  const head = make('header', { className: 'cw-head lbg-surface--racing' }, backBtn, avatar, make('div', { className: 'cw-head-text' }, title, subtitle));
 
   const conn = make('div', { className: 'conn-banner', hidden: true, textContent: 'Reconnecting…' });
   const list = make('div', { className: 'cw-list' });
@@ -52,8 +47,8 @@ async function init() {
   const composer = make('form', { className: 'composer' }, textarea, sendBtn);
   const chatView = make('div', { className: 'cw-chat', hidden: true }, threadEl, typingEl, errorEl, composer);
 
-  const panel = make('section', { className: 'cw-panel', role: 'dialog', ariaLabel: 'Chats', hidden: true }, head, conn, list, chatView);
-  document.body.append(panel, fab);
+  container.replaceChildren(head, conn, list, chatView);
+  container.classList.add('cw-panel');
 
   // ---------- state ----------
   const thread = new Thread(threadEl, me.id);
@@ -62,20 +57,10 @@ async function init() {
   let activeId = null; // conversation id, ASSISTANT, or null for the list
   let aiTurns = [];
   let aiLoaded = false;
-  let isOpen = false;
   let offer = null; // joiner's offer: names the recruiter and hiring manager for every role, even before their chats open
 
-  const totalUnread = () => conversations.reduce((n, c) => n + c.unread, 0);
-  const baseTitle = document.title;
-
-  function renderBadge() {
-    const n = totalUnread();
-    badge.textContent = n > 99 ? '99+' : n;
-    badge.hidden = !n;
-    fab.ariaLabel = n ? `Chats, ${n} unread` : 'Chats';
-    document.title = `${n ? `(${n}) ` : ''}${baseTitle}`;
-    document.dispatchEvent(new CustomEvent('chatwidget:unread', { detail: { count: n } }));
-  }
+  // The nav badge and tab title are kept by joiner-shell.js; this just tells the page when things change.
+  const renderBadge = () => document.dispatchEvent(new CustomEvent('chat:changed'));
 
   // ---------- list view ----------
   function row({ av, avClass = '', role, name, preview, unread, onClick, time }) {
@@ -154,7 +139,7 @@ async function init() {
   }
 
   const markRead = () => {
-    if (!isOpen || activeId == null || activeId === ASSISTANT || document.visibilityState !== 'visible') return;
+    if (activeId == null || activeId === ASSISTANT || document.visibilityState !== 'visible') return;
     const c = conversations.find((x) => x.id === activeId);
     if (c?.unread) { c.unread = 0; renderBadge(); }
     api(`/api/conversations/${activeId}/read`, { method: 'POST' }).catch(() => {});
@@ -260,35 +245,7 @@ async function init() {
     }
   }
 
-  // ---------- open / close ----------
-  async function open(target) {
-    isOpen = true;
-    panel.hidden = false;
-    fab.ariaExpanded = 'true';
-    fab.classList.add('cw-fab--open');
-    document.documentElement.classList.add('cw-lock');
-    if (target?.assistant && isJoiner) return openAssistant();
-    if (target?.kind || target?.id) {
-      if (!conversations.length) await loadConversations();
-      const c = conversations.find((x) => (target.id != null ? x.id === target.id : x.kind === target.kind));
-      if (c) return openConversation(c.id);
-    }
-    if (activeId == null) showList(); else if (activeId !== ASSISTANT) markRead();
-  }
-
-  function close() {
-    isOpen = false;
-    panel.hidden = true;
-    fab.ariaExpanded = 'false';
-    fab.classList.remove('cw-fab--open');
-    document.documentElement.classList.remove('cw-lock');
-    fab.focus();
-  }
-
-  fab.addEventListener('click', () => (isOpen ? close() : open()));
-  closeBtn.addEventListener('click', close);
-  backBtn.addEventListener('click', showList);
-  panel.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  backBtn.addEventListener('click', () => { history.replaceState(null, '', location.pathname); showList(); });
   document.addEventListener('visibilitychange', markRead);
 
   // ---------- composer ----------
@@ -315,7 +272,7 @@ async function init() {
     const c = conversations.find((x) => x.id === m.conversationId);
     if (!c) return loadConversations();
     c.lastMessage = { body: m.body, createdAt: m.createdAt, senderId: m.senderId };
-    const viewing = isOpen && m.conversationId === activeId;
+    const viewing = m.conversationId === activeId;
     if (viewing) {
       thread.add(m);
       if (m.senderId !== me.id) { typingEl.hidden = true; markRead(); }
@@ -324,7 +281,7 @@ async function init() {
     }
     conversations.sort((a, b) => (b.lastMessage?.createdAt ?? '').localeCompare(a.lastMessage?.createdAt ?? ''));
     renderBadge();
-    if (isOpen && activeId == null) renderList();
+    if (activeId == null) renderList();
   }
 
   await loadScript('/socket.io/socket.io.js').catch(() => {});
@@ -337,16 +294,17 @@ async function init() {
     socket.on('conversations:changed', loadConversations);
     socket.on('journey:updated', loadConversations);
     socket.on('conversation:read', ({ conversationId, readerId, at }) => { if (conversationId === activeId && readerId !== me.id) thread.markReadBy(readerId, at); });
-    socket.on('typing', ({ conversationId, name }) => { if (conversationId === activeId && isOpen) showTyping(name); });
+    socket.on('typing', ({ conversationId, name }) => { if (conversationId === activeId) showTyping(name); });
   }
 
-  window.chatWidget = { open, close, refresh: loadConversations };
-  document.dispatchEvent(new CustomEvent('chatwidget:ready'));
-  if (location.hash === '#assistant' && isJoiner) { history.replaceState(null, '', location.pathname + location.search); open({ assistant: true }); }
   if (isJoiner) {
     api('/api/journey').then(({ journey }) => { offer = journey.offer; if (activeId == null) renderList(); }).catch(() => {});
   }
   await loadConversations();
-}
 
-init();
+  const params = new URLSearchParams(location.search);
+  const target = conversations.find((c) => (params.get('id') ? c.id === Number(params.get('id')) : c.kind === params.get('kind')));
+  if (params.has('assistant') && isJoiner) await openAssistant();
+  else if (target) await openConversation(target.id);
+  else showList();
+}

@@ -50,6 +50,9 @@
       .layout:not(.open) main { display: none; }
     }
   </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
 </head>
 <body class="staff">
   <div class="staff-app">
@@ -203,6 +206,5 @@
   if (guides.some((g) => g.id === fromHash)) openGuide(fromHash);
   else show('empty');
 </script>
-<script type="module" src="/js/chat-widget.js"></script>
 </body>
 </html>

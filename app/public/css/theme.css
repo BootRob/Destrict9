@@ -1,0 +1,62 @@
+/* Light/dark theme. Light is the brand default (brand/tokens.css). Dark remaps the neutral tokens, then fixes the
+   places that use a token for "always white" or "always green". Load last in <head>. Switch: js/theme-toggle.js */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --lbg-black:    #f2f4f3;  /* text */
+  --lbg-white:    #1b1e1d;  /* surfaces: cards, bars, panels */
+  --lbg-charcoal: #cfd3d0;
+  --lbg-grey-100: #262a28;
+  --lbg-grey-200: #343836;
+  --lbg-grey-300: #454a47;
+  --lbg-grey-400: #6b706d;
+  --lbg-grey-600: #a6aba8;
+  --lbg-grey-700: #c0c4c1;
+  --lbg-link-green: #4fd195;
+  --lbg-mint:     #17382c;
+  --lbg-error:    #ff7b7b;
+  --lbg-info:     #7db1ff;
+  --lbg-shadow-card: 0 2px 8px rgba(0, 0, 0, .45);
+  --theme-page: #101312;
+  --theme-green-text: #4fd195;
+  --theme-mint-text: #b9f5cf;
+}
+html[data-theme="dark"] body.joiner, html[data-theme="dark"] body.staff { background: var(--theme-page); }
+html[data-theme="dark"] .page-scroll { background: var(--theme-page); }
+
+/* Always-white text on green surfaces and avatars */
+html[data-theme="dark"] :is(.lbg-surface--heritage, .lbg-surface--racing, .lbg-surface--pattern, .next-step.lbg-surface--racing, .next-step.lbg-surface--heritage, .staff-nav, .avatar, .msg--mine .bubble, .pill--active, .pill--accepted, .cw-count) { color: #fff; }
+html[data-theme="dark"] .avatar--ai, html[data-theme="dark"] .task .icon--ai, html[data-theme="dark"] .provider .mark { background: #323233; color: #fff; }
+html[data-theme="dark"] :is(.cw-head .cw-head-avatar, .staff-nav .me .avatar) { background: #fff; color: var(--lbg-racing-green); }
+html[data-theme="dark"] .cw-head .cw-head-avatar.avatar--ai { background: #323233; color: #fff; }
+html[data-theme="dark"] .lbg-btn--on-dark { background: #fff; color: #000; }
+html[data-theme="dark"] .lbg-btn--accent { color: #000; }
+html[data-theme="dark"] .lbg-btn--primary { background: #f2f4f3; color: #101312; }
+html[data-theme="dark"] .composer .lbg-btn--primary { background: var(--lbg-accent-green); color: #000; }
+html[data-theme="dark"] .next-step .eyebrow { color: #c7ffc6; }
+html[data-theme="dark"] .next-step:not(.lbg-surface--racing):not(.lbg-surface--heritage) .eyebrow { color: var(--theme-green-text); }
+
+/* Brand-green text needs to be lighter on a dark surface */
+html[data-theme="dark"] :is(.cw-row-role, .ai-suggestions button, .person .role, .step-detail .eyebrow, .checks .state--done, .jnav [aria-current="page"], .stat--todo b, .circle .you, .saved, .ok, .pill--invited, .pill--conditional_offer, .pill--screening, .pill--unconditional_offer) { color: var(--theme-green-text); }
+html[data-theme="dark"] :is(.ai-suggestions button) { border-color: var(--theme-green-text); }
+html[data-theme="dark"] .jnav [aria-current="page"]::before { background: var(--theme-green-text); }
+html[data-theme="dark"] .pill--invited, html[data-theme="dark"] .pill--conditional_offer, html[data-theme="dark"] .pill--screening, html[data-theme="dark"] .pill--unconditional_offer { box-shadow: inset 0 0 0 1px var(--theme-green-text); }
+
+/* Dark-green text on mint chips becomes light mint on deep green */
+html[data-theme="dark"] :is(.pill--successful, .pill.yes, .role--joiner) { color: var(--theme-mint-text); }
+
+/* Images: black icons and the dark logo flip to light. :where() keeps this at zero specificity so any icon
+   that already sets its own filter (white-on-green, black-on-tick) keeps it. */
+html[data-theme="dark"] :where(img[src^="/brand/icons/"]) { filter: invert(1); }
+html[data-theme="dark"] :where(img[src$="/lbg-logo.svg"]) { filter: brightness(0) invert(1); }
+html[data-theme="dark"] .jnav img[src$="/quote.svg"] { filter: brightness(0) invert(1); }
+html[data-theme="dark"] .jbar a img, html[data-theme="dark"] .appbar .back img { filter: invert(1); }
+
+/* The theme switch */
+.theme-toggle { all: unset; box-sizing: border-box; cursor: pointer; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--lbg-black); flex: none; }
+.theme-toggle:hover { background: var(--lbg-grey-100); }
+.theme-toggle:focus-visible { box-shadow: var(--lbg-focus-ring); }
+.appbar .theme-toggle { margin-left: auto; }
+.jbar .theme-toggle { margin-left: 0; }
+.theme-toggle--label { display: inline-flex; gap: var(--lbg-space-2); width: auto; height: 44px; padding: 0 var(--lbg-space-2); border-radius: var(--lbg-radius-md); color: inherit; font-family: var(--lbg-font-strong); font-weight: 700; font-size: var(--lbg-text-sm); }
+.theme-toggle--label:hover { background: rgba(255, 255, 255, .12); }
+.staff-nav .me .theme-toggle { grid-column: 1 / -1; justify-self: start; }

@@ -107,3 +107,8 @@ dialog.sheet .lbg-btn + .lbg-btn { margin-top: var(--lbg-space-2); }
 .step-detail .lbg-btn { max-width: none; }
 .step-detail--upcoming { background: var(--lbg-grey-100); box-shadow: none; }
 .step-back { display: block; margin-top: var(--lbg-space-2); }
+
+/* The next-step card's white background (above) must not hide the coloured surface classes: their white text vanished */
+.next-step.lbg-surface--racing { background: var(--lbg-racing-green); color: var(--lbg-white); }
+.next-step.lbg-surface--heritage { background: var(--lbg-heritage-green); color: var(--lbg-white); }
+.next-step-img { width: 56%; max-width: 240px; }

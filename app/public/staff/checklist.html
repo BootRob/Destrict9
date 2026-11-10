@@ -72,6 +72,9 @@
       .day1 { grid-template-columns: 1fr; }
     }
   </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
 </head>
 <body class="staff">
   <div class="staff-app">
@@ -258,6 +261,5 @@
   if (joiners.some((j) => j.joiner.id === fromHash)) open(fromHash);
   else if (joiners.length === 1) open(joiners[0].joiner.id);
 </script>
-<script type="module" src="/js/chat-widget.js"></script>
 </body>
 </html>

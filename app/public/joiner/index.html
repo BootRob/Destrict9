@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
-  <meta name="theme-color" content="#024731">
+  <meta name="theme-color" content="#ece8e0">
   <title>Your journey · Joiner companion</title>
   <link rel="icon" href="/brand/logos/favicon.ico">
   <link rel="stylesheet" href="/brand/tokens.css">
@@ -29,6 +29,9 @@
     .task .chev { width: 12px; }
     .privacy { font-size: var(--lbg-text-sm); color: var(--lbg-grey-600); margin: var(--lbg-space-2) 0 0; }
   </style>
+  <script src="/js/theme-init.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/pass.css">
 </head>
 <body class="joiner">
 <div class="phone">
@@ -37,14 +40,22 @@
     <button class="avatar" id="profile" type="button" aria-label="Your profile. Log out"></button>
   </header>
 
-  <div class="hero lbg-surface--pattern">
+  <div class="hero">
     <p class="eyebrow">Your joining journey</p>
     <h1 id="hello">Welcome</h1>
     <p id="job"></p>
-    <div class="countdown" id="countdown" aria-label="Time until your first day" hidden>
-      <div id="days-tile"><strong id="days">0</strong><span>days to go</span></div>
-      <div><strong id="stages">0/0</strong><span>stages done</span></div>
+    <div class="pass" id="pass" aria-label="Your joiner pass" hidden>
+      <img class="horse" src="/brand/logos/horse-white.svg" alt="">
+      <div class="pass-top"><img src="/brand/logos/lbg-logo-white.svg" alt="Lloyds Banking Group"><span class="chip" id="pass-chip">Pre-boarding</span></div>
+      <div class="pass-who">
+        <div><div class="nm" id="pass-name"></div><div class="rl" id="pass-role"></div></div>
+        <div class="no" id="pass-day" hidden>Day one<b id="pass-date"></b></div>
+      </div>
     </div>
+    <dl class="facts" id="countdown" aria-label="Your progress" hidden>
+      <div id="days-tile"><dt>Days to go</dt><dd id="days">0</dd></div>
+      <div><dt>Stages done</dt><dd id="stages">0/0</dd></div>
+    </dl>
   </div>
 
   <section class="jsection journey" id="journey" hidden></section>
@@ -81,11 +92,20 @@
   $('hello').textContent = `Welcome, ${me.name.split(' ')[0]}`;
   $('job').textContent = `Your journey to starting as ${me.jobTitle} in ${me.location}.`;
   $('profile').textContent = initials(me.name);
+  $('pass-name').textContent = me.name;
+  $('pass-role').textContent = [me.jobTitle, me.location].filter(Boolean).join(' · ');
+  if (me.startDate) {
+    const [, mm, dd] = me.startDate.split('-');
+    $('pass-date').textContent = `${dd} · ${mm}`;
+    $('pass-day').hidden = false;
+    $('pass-chip').textContent = (daysUntil(me.startDate) ?? 1) > 0 ? 'Pre-boarding' : 'Welcome aboard';
+  }
+  $('pass').hidden = false;
   $('profile').title = 'Log out';
   $('profile').addEventListener('click', () => { if (confirm(`Log out ${me.name}?`)) logout(); });
 
-  const chat = (arg) => window.chatWidget ? window.chatWidget.open(arg) : document.addEventListener('chatwidget:ready', () => window.chatWidget.open(arg), { once: true });
-  $('open-assistant').addEventListener('click', () => chat({ assistant: true }));
+  const chat = (query) => { location.href = `/joiner/chat.html?${query}`; };
+  $('open-assistant').addEventListener('click', () => chat('assistant=1'));
 
   // The recruiter and hiring manager are both named on the offer. The manager's chat opens once the unconditional offer is accepted.
   let conversations = [];
@@ -106,7 +126,7 @@
         return make('div', { className: 'person lbg-card person--quiet' }, face, info);
       }
       const btn = make('button', { type: 'button', className: 'lbg-btn lbg-btn--secondary' }, 'Message', c.unread ? make('span', { className: 'unread', textContent: c.unread, ariaLabel: `${c.unread} unread` }) : '');
-      btn.addEventListener('click', () => chat({ id: c.id }));
+      btn.addEventListener('click', () => chat(`id=${c.id}`));
       return make('div', { className: 'person lbg-card' }, face, info, btn);
     }));
   }
@@ -115,13 +135,13 @@
     renderPeople();
   }
 
-  const journey = mountJourney($('journey'), { onOpenChat: (kind) => chat({ kind }) });
+  const journey = mountJourney($('journey'), { onOpenChat: (kind) => chat(`kind=${kind}`) });
   async function refreshAll() {
     const j = await journey.refresh();
     if (j) {
       offer = j.offer;
       const done = j.steps.filter((s) => s.state === 'done').length;
-      $('stages').textContent = `${done}/${j.steps.length}`;
+      $('stages').replaceChildren(String(done), make('small', { textContent: ` / ${j.steps.length}` }));
       const d = daysUntil(me.startDate);
       $('days').textContent = d;
       $('days-tile').hidden = d == null || d < 0;
@@ -132,7 +152,7 @@
   await refreshAll();
 
   // Keep the page live without owning a chat connection: the chat widget has one, so reuse its events.
-  document.addEventListener('chatwidget:unread', loadPeople);
+  document.addEventListener('chat:unread', loadPeople);
   const socketScript = make('script', { src: '/socket.io/socket.io.js' });
   socketScript.onload = () => { const s = window.io(); s.on('journey:updated', refreshAll); s.on('conversations:changed', loadPeople); };
   document.head.append(socketScript);
