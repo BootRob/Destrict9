@@ -10,6 +10,8 @@ For the **private qualifying walkthrough** (10 minutes on a phone, then 5 minute
 4. **Laptop window B (private):** the demo mailbox, `/mailbox.html`.
 5. Each browser window or private window keeps its own login. On localhost, cookies are shared across ports, so keep separate users in separate windows.
 
+For two presenters, one on the phone and one on the laptop showing live messaging, use the [demo runbook](07-demo-runbook.md).
+
 ## The 3-minute demo: five phases
 
 Use this when time is short. Each step is a different recruit, so nothing has to happen live. Log out between steps, or use a private window per recruit.
@@ -35,7 +37,7 @@ Use this when time is short. Each step is a different recruit, so nothing has to
 | 3:00 | **Phone**: the welcome screen, then home: the phase tracker "Phase 1 of 5" and the offer card | "Prompt 3, *where am I?*: five phases from offer to Day 90, and one thing to do next." |
 | 3:30 | **Offer**: terms, conditions, **Accept and continue to screening**. Point at **Jordan's screen updating live** | "Notice the advice not to resign yet. And Jordan sees it instantly." |
 | 4:15 | **Screening**: reassurance, "Have these ready", **Go to ClearPath** | "We don't collect personal details at all. They go straight to the screening company." |
-| 4:45 | Back, then **I've added my details**, then the checks with spinners | "Prompt 2, *honest progress*: what's being checked, the usual timeframe, no news is normal." |
+| 4:45 | Back, then **I've added my details**, then the calm screening timeline | "Prompt 2, *honest progress*: what's being checked, the usual timeframe, no news is normal." |
 | 5:30 | **Jordan**: Ben shows "Result needed", then **Record result**, **Clear** | "In real life the screening company returns this. The internal note never reaches Ben." |
 | 6:00 | **Phone** updates: "Your unconditional offer is ready", **Accept offer** | "Now it's safe to resign. And acceptance opens the chat with his hiring manager." |
 | 6:45 | **Choose your laptop**: MacBook or HP, recommendation, choose | "Prompt 6, *early choices*. It can be changed until a week before he starts." |

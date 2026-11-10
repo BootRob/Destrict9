@@ -12,6 +12,7 @@ The app is a mobile-first companion that takes a new joiner from **offer to feel
 | [04 Demo script](04-demo-script.md) | A timed walkthrough for the 10-minute qualifying demo and the final |
 | [05 Build log](05-build-log.md) | What we built on Day 1 and Day 2, the decisions and why, how the team worked, and what's left |
 | [06 Morning plan](06-morning-plan.md) | The Day 2 plan agreed at 08:00: the five phases, the three parallel workstreams and their file ownership, the shared API contract, the videos, the timeline and the demo order |
+| [07 Demo runbook](07-demo-runbook.md) | The two-presenter demo, about 5 minutes: the recruit on a phone, the recruiter and manager on a laptop, with live screening results, messaging and Day 1 details |
 
 For **running the app**, see [`app/README.md`](../app/README.md). It has setup, demo accounts, configuration and the full API tables. These documents explain the *why* and the *how it fits together*; the app README is the operating manual.
 
