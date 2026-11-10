@@ -85,6 +85,7 @@
 <script type="module">
   import { api, logout, initials } from '/js/chat.js';
   import { mountJourney } from '/js/journey-card.js';
+  import { showPassPhoto, passPhotoUrl } from '/js/pass-photo.js';
 
   const $ = (id) => document.getElementById(id);
   const make = (tag, props = {}, ...children) => { const n = Object.assign(document.createElement(tag), props); n.append(...children.filter((c) => c != null && c !== false)); return n; };
@@ -142,6 +143,7 @@
       // The pass shows the phase; the facts show the countdown (or which day it is) and the phase number.
       if (j.dayNumber) $('job').textContent = `Day ${j.dayNumber} as a ${me.jobTitle} in ${me.location}. ${j.phase.line}.`;
       $('pass').dataset.phase = j.phase.id;
+      showPassPhoto($('pass'), { src: passPhotoUrl(j), name: me.name });
       $('pass-chip').textContent = j.phase.name;
       $('pass-day-label').textContent = j.dayNumber ? 'Started' : 'Day one';
       $('stages').replaceChildren(String(j.phase.n), make('small', { textContent: ` / ${j.phase.of}` }));

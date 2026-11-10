@@ -177,6 +177,48 @@ function calendarFor(a) {
   return diff > 0 ? { daysToStart: diff, dayNumber: null } : { daysToStart: 0, dayNumber: 1 - diff };
 }
 
+// ---------- pass photo ----------
+// The recruit's selfie for their building pass. It is kept in its own table, keyed by email (like the
+// checklist), so it doesn't depend on db.js's schema version. It is a small square JPEG as a data URL,
+// resized on the phone first.
+db.exec(`CREATE TABLE IF NOT EXISTS pass_photos (
+  joiner_email TEXT PRIMARY KEY,
+  image        TEXT NOT NULL,
+  updated_at   TEXT NOT NULL
+)`);
+const photoQ = {
+  get: db.prepare('SELECT image, updated_at FROM pass_photos WHERE joiner_email = ?'),
+  meta: db.prepare('SELECT updated_at FROM pass_photos WHERE joiner_email = ?'),
+  set: db.prepare(`INSERT INTO pass_photos (joiner_email, image, updated_at) VALUES (?, ?, ?)
+    ON CONFLICT (joiner_email) DO UPDATE SET image = excluded.image, updated_at = excluded.updated_at`),
+};
+const MAX_PHOTO_CHARS = 60_000; // about 45 KB of JPEG
+const PHOTO_RE = /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/;
+
+/** Whether the recruit has a pass photo, and if they can add or change one (after accepting the unconditional offer). */
+function photoInfo(a) {
+  const row = photoQ.meta.get(a.email);
+  return { has: Boolean(row), updatedAt: row?.updated_at ?? null, available: a.journey_stage === 'accepted' };
+}
+
+/** Recruit adds or replaces their pass photo. */
+export function setPassPhoto(user, image) {
+  const a = applicantForJoiner(user);
+  if (a.journey_stage !== 'accepted') throw new OnboardingError(409, 'You can add your pass photo once you have accepted your unconditional offer');
+  if (typeof image !== 'string' || image.length > MAX_PHOTO_CHARS || !PHOTO_RE.test(image)) throw new OnboardingError(400, 'That photo could not be used. Please try again.');
+  photoQ.set.run(a.email, image, now());
+  return toApplicant(aq.byId.get(a.id));
+}
+
+/** The recruit's own pass photo as { mime, bytes }, or null. */
+export function passPhotoFor(user) {
+  const a = applicantForJoiner(user);
+  const row = photoQ.get.get(a.email);
+  if (!row) return null;
+  const [, b64] = row.image.split(',');
+  return { mime: 'image/jpeg', bytes: Buffer.from(b64, 'base64'), updatedAt: row.updated_at };
+}
+
 /** Whether (and until when) the recruit can choose or change their laptop. */
 function deviceInfo(a) {
   const cutoff = a.start_date ? addDays(a.start_date, -CHANGE_CUTOFF_DAYS) : null;
@@ -226,6 +268,7 @@ export function journeyFor(user) {
     },
     declinedOffer: a.declined_offer,
     device: deviceInfo(a),
+    photo: photoInfo(a),
     managerConversationId: q.managerConv.get(a.user_id)?.id ?? null,
   };
 }

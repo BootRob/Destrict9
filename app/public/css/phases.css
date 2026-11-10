@@ -70,3 +70,22 @@ body.welcome { margin: 0; min-height: 100dvh; background: radial-gradient(120% 8
 
 /* A quiet secondary action under a next-step card's main button */
 .next-step .next-step-link { display: block; width: 100%; margin-top: 6px; text-align: center; font-size: 15px; }
+
+/* Pass photo: the recruit's selfie in a green frame with their full name under it, like a real
+   building pass. The big name moves under the photo, so it isn't shown twice. */
+.pass.has-photo .nm { display: none; }
+.pass :is(.pass-photo, .pass-photo-slot) { position: absolute; left: 22px; top: 60px; margin: 0; display: grid; justify-items: start; gap: 5px; }
+.pass .pass-photo img { display: block; width: 64px; height: 80px; object-fit: cover; border: 3px solid var(--lbg-everyday-green); border-radius: 8px; background: #1b2420; }
+.pass :is(.pass-photo, .pass-photo-slot) figcaption { font-size: 14px; line-height: 1.1; font-weight: 600; letter-spacing: -.01em; color: #fff; white-space: nowrap; }
+html[data-theme="dark"] .pass .pass-photo img { border-color: var(--pass-lime); }
+
+/* photo.html: taking the selfie */
+.photo-page .pass { margin: 0 auto var(--lbg-space-6); max-width: 360px; }
+.photo-page .pass-photo--empty { width: 64px; height: 80px; border: 3px dashed rgba(255, 255, 255, .45); border-radius: 8px; display: grid; place-items: center; color: #cfd9d4; font-size: 11px; text-align: center; line-height: 1.2; }
+.photo-tips { margin: 0 0 var(--lbg-space-6); padding-left: 1.2em; }
+.photo-tips li { margin-bottom: 4px; }
+.photo-actions { display: grid; gap: var(--lbg-space-3); }
+.photo-actions input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.photo-status { min-height: 1.5em; margin: var(--lbg-space-3) 0 0; font-weight: 600; }
+.pass .pass-photo-slot[hidden] { display: none; }
+.photo-actions .lbg-btn { width: 100%; max-width: none; box-sizing: border-box; }
