@@ -128,3 +128,9 @@ html[data-theme="dark"] .pass .pass-photo img { border-color: var(--pass-lime); 
   padding-bottom: 4px; box-sizing: border-box; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #fff; text-decoration: none;
   background: linear-gradient(transparent 60%, rgba(0, 0, 0, .55)); }
 .pass .pass-photo-edit:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* Pass card: days to go (or today's day number) in the bottom-right corner */
+.pass .dtg { position: absolute; right: 22px; bottom: 20px; display: grid; justify-items: end; gap: 2px; font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #cfe0d8; }
+.pass .dtg b { font-size: 26px; line-height: 1; letter-spacing: -.01em; color: #fff; font-variant-numeric: tabular-nums; }
+.pass .dtg[hidden] { display: none; }
+.pass.sect .pass-who { right: 100px; }
