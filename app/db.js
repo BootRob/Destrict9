@@ -5,7 +5,7 @@ import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7; // 7: recruits who have already started (Ruby, Day 12; Tom, Day 45)
 
 const dataDir = fileURLToPath(new URL('./data/', import.meta.url));
 mkdirSync(dataDir, { recursive: true });
@@ -192,6 +192,11 @@ function seed() {
   const alex  = add('Alex Kim',    'alex.kim@example.com',    'joiner', 'Software Engineer',        'Leeds',   '2026-11-30');
   const priya = add('Priya Shah',  'priya.shah@example.com',  'joiner', 'Data Analyst',             'Leeds',   '2026-12-07');
   const owen  = add('Owen Davies', 'owen.davies@example.com', 'joiner', 'Customer Service Advisor', 'Cardiff', '2026-12-14');
+  // Recruits who have already started, dated from today so they stay on Day 12 and Day 45.
+  const startedDaysAgo = (d) => new Date(Date.now() - d * 86_400_000).toISOString().slice(0, 10);
+  const rubyStart = startedDaysAgo(11), tomStart = startedDaysAgo(44);
+  const ruby  = add('Ruby Ahmed', 'ruby.ahmed@example.com', 'joiner', 'Software Engineer',        'Leeds',   rubyStart);
+  const tom   = add('Tom Bennett', 'tom.bennett@example.com', 'joiner', 'Customer Service Advisor', 'Cardiff', tomStart);
 
   const insertConv = db.prepare('INSERT INTO conversations (joiner_id, staff_id, kind) VALUES (?, ?, ?) RETURNING id');
   const conv = (joiner, staff, kind) => insertConv.get(joiner, staff, kind).id;
@@ -201,6 +206,10 @@ function seed() {
   const priyaRec = conv(priya, jordan, 'recruiter'); // Priya is waiting on screening: no manager chat yet
   const owenRec = conv(owen, jordan, 'recruiter');
   conv(owen, hannah, 'manager');
+  const rubyMgr = conv(ruby, sam, 'manager');
+  conv(ruby, jordan, 'recruiter');
+  const tomMgr = conv(tom, hannah, 'manager');
+  conv(tom, jordan, 'recruiter');
 
   const insertMsg = db.prepare('INSERT INTO messages (conversation_id, sender_id, body, created_at, read_at) VALUES (?, ?, ?, ?, ?)');
   const ago = (h) => new Date(Date.now() - h * 3600_000).toISOString();
@@ -217,6 +226,11 @@ function seed() {
 
   msg(priyaRec, jordan, "Hi Priya, thanks for completing your screening form. The checks are with our screening partner now. I'll message you as soon as there's news.", 90);
   msg(owenRec, jordan, "Welcome aboard, Owen! You're now connected with Hannah, your hiring manager.", 60);
+  msg(rubyMgr, sam, 'Great first week, Ruby! Your 1:1s are on Thursdays at 10. Shout if anything is blocking you.', 70);
+  msg(rubyMgr, ruby, "Thanks Sam. I've got my dev environment working. Who's best to ask about the release process?", 50);
+  msg(rubyMgr, sam, 'Priti on the platform team. I\'ve introduced you both on Teams.', 49, false);
+  msg(tomMgr, hannah, "Hi Tom, let's use Friday's 1:1 to agree your goals for the next couple of months. Have a think about what you'd like to get better at.", 30);
+  msg(tomMgr, tom, 'Will do. I would like to get more confident with mortgage queries.', 28);
 
   // Applicants
   const insertApplicant = db.prepare(`
@@ -239,6 +253,12 @@ function seed() {
   applicant('Owen Davies', 'owen.davies@example.com', 'Customer Service Advisor', 'Cardiff', jordan, hannah, 'successful',
     { applied: 50, start: '2026-12-14', user: owen,  onboarded: 14, stage: 'accepted', accepted: 13, submitted: 12, result: 'clear', resultAt: 3, uncond: 3, uncondAccepted: 2.5 });
   db.prepare("UPDATE applicants SET device_choice = 'hp', device_chosen_at = ? WHERE user_id = ?").run(daysAgo(2), owen);
+  applicant('Ruby Ahmed', 'ruby.ahmed@example.com', 'Software Engineer',        'Leeds',   jordan, sam,    'successful',
+    { applied: 90, start: rubyStart, user: ruby, onboarded: 60, stage: 'accepted', accepted: 59, submitted: 58, result: 'clear', resultAt: 40, uncond: 40, uncondAccepted: 39 });
+  applicant('Tom Bennett', 'tom.bennett@example.com', 'Customer Service Advisor', 'Cardiff', jordan, hannah, 'successful',
+    { applied: 120, start: tomStart, user: tom, onboarded: 95, stage: 'accepted', accepted: 94, submitted: 93, result: 'clear', resultAt: 75, uncond: 75, uncondAccepted: 74 });
+  db.prepare("UPDATE applicants SET device_choice = 'mac', device_chosen_at = ? WHERE user_id = ?").run(daysAgo(35), ruby);
+  db.prepare("UPDATE applicants SET device_choice = 'hp', device_chosen_at = ? WHERE user_id = ?").run(daysAgo(70), tom);
   applicant('Ben Carter',    'ben.carter@example.org',    'Cyber Security Analyst',   'Leeds',   jordan, sam,    'successful',   { applied: 34, start: '2027-01-04', note: 'Verbal offer accepted 6 Nov' });
   applicant('Chloe Evans',   'chloe.evans@example.org',   'Mortgage Advisor',         'Cardiff', jordan, hannah, 'successful',   { applied: 31, start: '2027-01-11', note: 'Verbal offer accepted 5 Nov' });
   applicant('Daniel Wright', 'daniel.wright@example.org', 'Software Engineer',        'Leeds',   jordan, sam,    'successful',   { applied: 28, start: '2027-01-18', note: 'Verbal offer accepted 8 Nov' });

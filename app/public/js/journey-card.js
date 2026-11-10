@@ -3,7 +3,6 @@
 //        socket.on('journey:updated', journey.refresh);
 import { api, fmtDate } from '/js/chat.js';
 
-const SHORT_LABELS = { conditional_offer: 'Offer', screening: 'Details', screening_submitted: 'Checks', unconditional_offer: 'Final offer', accepted: 'Manager', day1: 'Day 1', week1: 'Week 1', day30: 'Day 30' };
 const fmtDay = (ymd) => new Date(`${ymd}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 
 const make = (tag, props = {}, ...children) => {
@@ -14,33 +13,69 @@ const make = (tag, props = {}, ...children) => {
 const link = (href, label, kind = 'primary') => make('a', { className: `lbg-btn lbg-btn--${kind}`, href, textContent: label });
 const fmtWhen = (iso) => new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 
-/** Filled bar with "Step N of M" plus the step-by-step tracker, from offer to Day 30. */
-export function renderTracker(steps, { selected, onSelect } = {}) {
+/**
+ * The five phases as a tappable tracker, with one progress measure ("Phase 2 of 5").
+ * Each phase shows a dot per step inside it; tapping a phase opens its details.
+ */
+export function renderTracker(j, { selected, onSelect } = {}) {
+  const { steps, phases, phase } = j;
+  const stopped = steps.find((s) => s.state === 'stopped');
+  const complete = steps.every((s) => s.state === 'done');
+  const label = complete ? 'Journey complete: welcome to the herd!'
+    : stopped ? `Stopped at: ${stopped.label}`
+    : `Phase ${phase.n} of ${phase.of}: ${phase.name}`;
   const done = steps.filter((s) => s.state === 'done').length;
-  const current = steps.find((s) => s.state === 'current' || s.state === 'stopped');
-  const pct = Math.round(((done + (current?.state === 'current' ? 0.5 : 0)) / steps.length) * 100);
-  const label = !current ? 'Journey complete: welcome to the team!'
-    : current.state === 'stopped' ? `Stopped at: ${current.label}`
-    : `Step ${steps.indexOf(current) + 1} of ${steps.length}: ${current.label}`;
+  const pct = Math.round((done / steps.length) * 100);
 
   const bar = make('div', { className: 'progress' },
-    make('div', { className: 'progress-label' }, make('strong', { textContent: label }), make('span', { textContent: `${pct}%` })),
-    make('div', { className: 'progress-track', role: 'progressbar', ariaValueMin: 0, ariaValueMax: 100, ariaValueNow: pct, ariaLabel: 'Journey progress' },
+    make('div', { className: 'progress-label' }, make('strong', { textContent: label }), make('span', { className: 'phase-line', textContent: phase.line })),
+    make('div', { className: 'progress-track', role: 'progressbar', ariaValueMin: 0, ariaValueMax: steps.length, ariaValueNow: done, ariaValueText: label, ariaLabel: 'Journey progress' },
       make('span', { className: 'progress-fill', style: `width:${pct}%` })));
 
-  const list = make('ol', { className: 'tracker', ariaLabel: 'Your journey, offer to Day 30. Select a step for details.' }, ...steps.map((s) => {
-    const btn = make('button', { type: 'button', className: 'tracker-step', ariaPressed: String(s.id === selected) },
-      make('span', { className: 'dot' }, s.state === 'done' ? make('img', { src: '/brand/icons/checked.svg', alt: '' }) : null),
-      make('span', { textContent: SHORT_LABELS[s.id] ?? s.label }),
-      s.on ? make('small', { textContent: fmtDay(s.on) }) : null);
-    btn.title = `${s.label}: ${s.state}${s.on ? ` (${fmtDay(s.on)})` : ''}`;
-    btn.addEventListener('click', () => onSelect?.(s.id));
-    const li = make('li', { className: `${s.state}${s.id === selected ? ' selected' : ''}` }, btn);
-    if (s.state === 'current') li.setAttribute('aria-current', 'step');
+  const list = make('ol', { className: 'phase-tracker', ariaLabel: 'Your five phases. Select a phase for details.' }, ...phases.map((p, i) => {
+    const mine = steps.filter((s) => s.phase === p.id);
+    const state = mine.some((s) => s.state === 'stopped') ? 'stopped'
+      : mine.every((s) => s.state === 'done') ? 'done'
+      : p.id === phase.id ? 'current' : 'upcoming';
+    const btn = make('button', { type: 'button', className: 'phase-btn', ariaPressed: String(p.id === selected) },
+      make('span', { className: 'phase-dots', ariaHidden: 'true' }, ...mine.map((s) => make('i', { className: s.state }))),
+      make('span', { className: 'phase-name', textContent: p.name }));
+    btn.title = `Phase ${i + 1}: ${p.name} (${state})`;
+    btn.addEventListener('click', () => onSelect?.(p.id));
+    const li = make('li', { className: `${state}${p.id === selected ? ' selected' : ''}` }, btn);
+    if (state === 'current') li.setAttribute('aria-current', 'step');
     return li;
   }));
-  list.style.setProperty('--steps', steps.length);
   return make('div', { className: 'journey-progress' }, bar, list);
+}
+
+const phaseLink = (id, label, kind = 'primary') => link(`/joiner/phase.html?id=${id}`, label, kind);
+
+/** The next-step card once the recruit has started: what this phase is about, and who to talk to. */
+function startedCard(j, chatBtn) {
+  const o = j.offer;
+  const mgr = o.hiringManager?.split(' ')[0];
+  const msg = j.managerConversationId && mgr ? chatBtn('manager', `Message ${mgr}`, 'secondary') : null;
+  const eyebrow = make('p', { className: 'eyebrow', textContent: `Day ${j.dayNumber} · ${j.phase.name}` });
+  switch (j.phase.id) {
+    case 'first_30':
+      return make('div', { className: 'next-step' }, eyebrow,
+        make('h3', { textContent: j.dayNumber <= 7 ? 'Your first week' : 'Finding your stride' }),
+        make('p', { textContent: j.dayNumber <= 7
+          ? 'Get set up, meet your team and start your mandatory training. Nobody expects you to deliver yet.'
+          : 'Book intro chats with the people you work with, finish your mandatory training, and learn how your team works.' }),
+        phaseLink('first_30', 'See your first 30 days'), msg);
+    case 'days_30_60':
+      return make('div', { className: 'next-step' }, eyebrow,
+        make('h3', { textContent: `Agree your goals with ${mgr ?? 'your manager'}` }),
+        make('p', { textContent: 'By Day 60, have three clear goals and a development plan that you have agreed together.' }),
+        phaseLink('days_30_60', 'Set your goals'), msg);
+    default:
+      return make('div', { className: 'next-step' }, eyebrow,
+        make('h3', { textContent: 'Full horsepower' }),
+        make('p', { textContent: 'Find a mentor, join a colleague network and look at where your Lloyds career could go next.' }),
+        phaseLink('days_60_90', 'Grow your career'), msg);
+  }
 }
 
 function card(j, onOpenChat) {
@@ -76,6 +111,7 @@ function card(j, onOpenChat) {
         make('p', { textContent: `Your checks are clear. Accept your offer to be connected with ${o.hiringManager}, your hiring manager.` }),
         link('/joiner/offer.html', 'View and accept', 'accent'));
     case 'accepted':
+      if (j.dayNumber) return startedCard(j, chatBtn);
       if (j.device?.available && !j.device.choice && j.device.canChange) {
         return make('div', { className: 'next-step lbg-surface--racing' },
           make('p', { className: 'eyebrow', textContent: 'Your next step' }),
@@ -145,23 +181,30 @@ function stepDetail(step, j) {
       break;
     case 'accepted':
       t.text = step.state === 'upcoming' ? `You're connected with ${o.hiringManager}, your hiring manager, once you accept your unconditional offer.`
-        : `You're connected with ${o.hiringManager}, your hiring manager. Message them any time, and choose your laptop.`;
-      t.rows = [row('Hiring manager', o.hiringManager), row('Laptop', j.device?.choice ? DEVICE_NAMES[j.device.choice] : j.device?.available ? 'Not chosen yet' : null)];
-      t.link = j.device?.available ? ['/joiner/device.html', j.device.choice ? 'Your laptop' : 'Choose your laptop'] : null;
+        : step.state === 'done' ? `You got ready with ${o.hiringManager}: laptop chosen, Day 1 details shared and pre-start training done.`
+        : `You're connected with ${o.hiringManager}, your hiring manager. Choose your laptop, read your Day 1 details and do your pre-start training.`;
+      t.rows = [row('Hiring manager', o.hiringManager), row('Start date', o.startDate && fmtDate(o.startDate)), row('Laptop', j.device?.choice ? DEVICE_NAMES[j.device.choice] : j.device?.available ? 'Not chosen yet' : null)];
+      t.link = j.device?.available && !j.dayNumber ? ['/joiner/device.html', j.device.choice ? 'Your laptop' : 'Choose your laptop'] : null;
       break;
     case 'day1':
-      t.text = 'Your first day. Your hiring manager will have your equipment and Day 1 plan ready.';
-      t.rows = [row('Date', o.startDate && fmtDate(o.startDate)), row('Location', o.location)];
-      t.link = ['/joiner/guides.html', 'Read the first-day guides'];
+      t.text = 'Day 1 and your first week: meeting the team, getting set up and starting your mandatory training.';
+      t.rows = [row('Day 1', o.startDate && fmtDate(o.startDate)), row('Location', o.location)];
+      t.link = [`/joiner/phase.html?id=${step.phase}`, 'Your first 30 days'];
       break;
-    case 'week1':
-      t.text = 'Your first week: meeting the team, getting set up and learning how things work.';
-      t.rows = [row('Week ends', step.on && fmtDate(step.on))];
-      t.link = ['/joiner/guides.html', 'Read the guides'];
+    case 'settling_in':
+      t.text = 'Weeks 2 to 4: intro chats, learning our systems and ways of working, and finishing your training.';
+      t.rows = [row('From', step.on && fmtDate(step.on))];
+      t.link = [`/joiner/phase.html?id=${step.phase}`, 'Your first 30 days'];
       break;
     case 'day30':
-      t.text = 'Thirty days in: a check-in on how you feel connected and confident.';
-      t.rows = [row('Date', step.on && fmtDate(step.on))];
+      t.text = 'Days 30 to 60: agree clear goals and a development plan with your manager.';
+      t.rows = [row('From', step.on && fmtDate(step.on))];
+      t.link = [`/joiner/phase.html?id=${step.phase}`, 'Goals and development'];
+      break;
+    case 'day60':
+      t.text = 'Day 60 to 90 and beyond: mentoring, networks and growing your Lloyds career.';
+      t.rows = [row('From', step.on && fmtDate(step.on))];
+      t.link = [`/joiner/phase.html?id=${step.phase}`, 'Grow your career'];
       break;
     default:
   }
@@ -169,30 +212,43 @@ function stepDetail(step, j) {
   return t;
 }
 
-function detailPanel(step, j) {
-  const d = stepDetail(step, j);
-  return make('div', { className: `step-detail step-detail--${step.state}`, role: 'region', ariaLabel: `${d.title} details` },
-    make('p', { className: 'eyebrow', textContent: d.status }),
-    make('h3', { textContent: d.title }),
+const STATE_TEXT = { done: 'Done', current: 'Now', upcoming: 'Coming up', stopped: 'Stopped here' };
+
+/** Details for one phase: its steps, and what the most relevant step means for the recruit. */
+function phasePanel(phaseId, j) {
+  const n = j.phases.findIndex((p) => p.id === phaseId);
+  const p = j.phases[n];
+  const mine = j.steps.filter((s) => s.phase === phaseId);
+  const focus = mine.find((s) => s.state === 'current' || s.state === 'stopped')
+    ?? (mine.every((s) => s.state === 'done') ? mine.at(-1) : mine[0]);
+  const d = stepDetail(focus, j);
+  const status = mine.every((s) => s.state === 'done') ? 'Completed' : phaseId === j.phase.id ? 'You are here' : 'Coming up';
+  return make('div', { className: 'step-detail phase-detail', role: 'region', ariaLabel: `${p.name} details` },
+    make('p', { className: 'eyebrow', textContent: `Phase ${n + 1} · ${status}` }),
+    make('h3', { textContent: p.name }),
+    make('p', { className: 'phase-line', textContent: p.line }),
+    make('ol', { className: 'phase-steps' }, ...mine.map((s) => make('li', { className: s.state },
+      make('span', { textContent: s.label }),
+      make('small', { textContent: s.state === 'upcoming' && s.on ? fmtDate(s.on) : STATE_TEXT[s.state] })))),
     d.text ? make('p', { textContent: d.text }) : null,
     d.rows.length ? make('dl', { className: 'terms' }, ...d.rows.map(([k, v]) => make('div', {}, make('dt', { textContent: k }), make('dd', { textContent: v })))) : null,
     d.link ? make('a', { className: 'lbg-btn lbg-btn--secondary', href: d.link[0], textContent: d.link[1] }) : null);
 }
 
 export function mountJourney(container, { onOpenChat } = {}) {
-  let selected = null; // step id the user clicked; null shows the next-step card
+  let selected = null; // phase id the user tapped; null shows the next-step card
   let last = null;
 
   function render(journey) {
-    const step = journey.steps.find((s) => s.id === selected);
+    const open = journey.phases.some((p) => p.id === selected);
     container.replaceChildren(...[
       make('h2', { textContent: 'Your journey' }),
-      renderTracker(journey.steps, {
+      renderTracker(journey, {
         selected,
         onSelect: (id) => { selected = selected === id ? null : id; render(last); },
       }),
-      step ? detailPanel(step, journey) : card(journey, onOpenChat),
-      step ? make('button', { type: 'button', className: 'link-btn step-back', textContent: 'Back to your next step', onclick: () => { selected = null; render(last); } }) : null,
+      open ? phasePanel(selected, journey) : card(journey, onOpenChat),
+      open ? make('button', { type: 'button', className: 'link-btn step-back', textContent: 'Back to your next step', onclick: () => { selected = null; render(last); } }) : null,
     ].filter(Boolean)); // replaceChildren would print a null child as the text "null"
     container.hidden = false;
   }

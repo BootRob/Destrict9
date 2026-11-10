@@ -41,6 +41,8 @@ Log in with any demo account. The password for all of them is `demo1234`:
 |---|---|
 | `jordan.ellis@example.com` | Recruiter. Start here: open **Applicants** and onboard a candidate. |
 | `alex.kim@example.com` | Recruit, offer accepted. Best on a phone, or in browser device mode (F12, then Ctrl+Shift+M). |
+| `ruby.ahmed@example.com` | Recruit on Day 12 (phase 3, First 30 days). |
+| `tom.bennett@example.com` | Recruit on Day 45 (phase 4, 30 to 60 days). |
 | `sam.reid@example.com` | Hiring manager, with the Day 1 checklist. |
 
 To see both sides at once, log in as the recruit in one window and as a staff member in a private window. To see the whole journey from the start, onboard a successful candidate such as Ben Carter as Jordan, then open the **demo mailbox** (`/mailbox.html`) to read the offer email and activate the account.

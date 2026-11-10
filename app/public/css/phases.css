@@ -1,0 +1,72 @@
+/* The five phases: the phase tracker on the joiner home screen, the phase detail panel,
+   the pass card's phase states, and the welcome screen after login. Builds on pass.css. */
+
+/* Progress label: "Phase 2 of 5: Getting ready", with the phase's line underneath */
+.joiner .progress-label { flex-direction: column; gap: 2px; font-size: 16px; }
+.joiner .progress-label .phase-line { font-family: inherit; font-weight: 400; font-size: 14px; color: var(--lbg-grey-700); }
+
+/* Phase tracker: five tappable segments, each with a dot per step */
+.phase-tracker { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.phase-btn { all: unset; box-sizing: border-box; display: grid; gap: 8px; align-content: start; width: 100%; min-height: 64px; padding: 10px 6px 8px; border-radius: 14px; cursor: pointer; text-align: center;
+  background: color-mix(in srgb, var(--lbg-grey-200) 55%, transparent); }
+.phase-btn:focus-visible { outline: 2px solid var(--lbg-black); outline-offset: 2px; }
+.phase-dots { display: flex; justify-content: center; gap: 4px; }
+.phase-dots i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--lbg-grey-400); box-sizing: border-box; }
+.phase-dots i.done { background: var(--lbg-black); border-color: var(--lbg-black); }
+.phase-dots i.current { background: var(--pass-lime); border-color: var(--lbg-heritage-green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pass-lime) 30%, transparent); }
+.phase-dots i.stopped { background: var(--lbg-grey-400); }
+.phase-name { font-size: 12px; line-height: 1.2; font-weight: 600; color: var(--lbg-grey-700); }
+.phase-tracker .done .phase-name, .phase-tracker .current .phase-name { color: var(--lbg-black); }
+.phase-tracker .current .phase-btn { background: var(--lbg-black); }
+.phase-tracker .current .phase-name { color: #fff; }
+.phase-tracker .current .phase-dots i { border-color: #7d8a84; }
+.phase-tracker .current .phase-dots i.done { background: #fff; border-color: #fff; }
+.phase-tracker .selected .phase-btn { box-shadow: 0 0 0 2px var(--lbg-black); }
+.phase-tracker .current.selected .phase-btn { box-shadow: 0 0 0 2px var(--pass-lime); }
+
+html[data-theme="dark"] .phase-dots i.done { background: #fff; border-color: #fff; }
+html[data-theme="dark"] .phase-tracker .done .phase-name { color: #fff; }
+html[data-theme="dark"] .phase-tracker .current .phase-btn { background: var(--pass-lime); }
+html[data-theme="dark"] .phase-tracker .current .phase-name { color: #000; }
+html[data-theme="dark"] .phase-tracker .current .phase-dots i { border-color: #000; }
+html[data-theme="dark"] .phase-tracker .current .phase-dots i.done { background: #000; border-color: #000; }
+html[data-theme="dark"] .phase-tracker .current .phase-dots i.current { background: #fff; border-color: #000; box-shadow: none; }
+
+/* Phase detail panel */
+.phase-detail .phase-line { margin-top: -6px; font-style: italic; color: var(--lbg-grey-700); }
+.phase-steps { list-style: none; margin: 12px 0 16px; padding: 0; border-top: 1px solid var(--lbg-grey-200); }
+.phase-steps li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--lbg-grey-200); font-weight: 600; }
+.phase-steps small { font-size: 13px; font-weight: 600; color: var(--lbg-grey-700); white-space: nowrap; }
+.phase-steps li.current small { color: var(--lbg-heritage-green); }
+html[data-theme="dark"] .phase-steps li.current small { color: var(--pass-lime); }
+.phase-steps li.upcoming span { color: var(--lbg-grey-700); font-weight: 400; }
+
+/* The pass card follows the phase: provisional at offer, standard while getting ready, live once started */
+.pass[data-phase="offer"] { filter: saturate(.4) brightness(1.15); }
+.pass[data-phase="offer"] .chip { color: #dfe6e2; border-color: rgba(255, 255, 255, .4); }
+.pass:is([data-phase="first_30"], [data-phase="days_30_60"], [data-phase="days_60_90"]) .chip { background: var(--pass-lime); color: #000; border-color: var(--pass-lime); }
+.pass .chip { font-size: 11px; }
+
+/* Welcome screen after login */
+body.welcome { margin: 0; min-height: 100dvh; background: radial-gradient(120% 80% at 80% 0%, #10241c 0%, #050706 60%); color: #eef3f0; font-family: var(--lbg-font-body); }
+.welcome main { box-sizing: border-box; max-width: 480px; min-height: 100dvh; margin: 0 auto; padding: max(28px, env(safe-area-inset-top)) 24px max(28px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+.welcome .logo { height: 34px; align-self: flex-start; }
+.welcome .stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+.welcome .pass { transform: rotate(-3deg); animation: pass-in .9s cubic-bezier(.2, .8, .2, 1) both; }
+.welcome .phase-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--pass-lime); margin: 0; }
+.welcome h1 { font-size: 40px; line-height: 1.05; letter-spacing: -.03em; margin: 6px 0 0; color: #fff; }
+.welcome .tip { margin: 0; padding: 16px 18px; border-radius: 18px; background: rgba(255, 255, 255, .07); font-size: 17px; line-height: 1.45; }
+.welcome .tip b { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a9bcb3; margin-bottom: 4px; }
+.welcome .copy > * { animation: rise .6s .35s ease both; }
+.welcome .tip { animation: rise .6s .6s ease both; }
+.welcome .go { display: block; box-sizing: border-box; width: 100%; min-height: 52px; border: 0; border-radius: 99px; background: var(--pass-lime); color: #000; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; position: relative; overflow: hidden; }
+.welcome .go::after { content: ""; position: absolute; inset: auto 0 0 0; height: 3px; background: rgba(0, 0, 0, .35); transform-origin: left; animation: countdown var(--welcome-ms, 4500ms) linear both; }
+.welcome .go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+@keyframes pass-in { from { opacity: 0; transform: translateY(60px) rotate(-9deg) scale(.92); } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes countdown { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .welcome .pass, .welcome .copy > *, .welcome .tip { animation: none; }
+  .welcome .go::after { display: none; }
+}
