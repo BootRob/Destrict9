@@ -16,21 +16,23 @@
 ```
 app/
 ├── server.js          Express routes, auth middleware, Socket.IO rooms and events
-├── db.js              Schema (version 6), password hashing, synthetic seed data
+├── db.js              Schema (version 7), password hashing, synthetic seed data
 ├── onboarding.js      Applicants, Onboard, activation links (invites), shared helpers
-├── journey.js         Recruit stage machine, progress steps (offer to Day 30), laptop catalogue
+├── journey.js         Recruit stage machine, five phases and nine steps (offer to Day 90), laptop catalogue
 ├── mailer.js          sendEmail(): stores email for the demo mailbox (swap for a real service)
 ├── assistant.js       Onboarding assistant: providers, grounded prompt, handoffs
 ├── guides.js          Guides in knowledge/*.md: read, create, edit, conflict detection
 ├── checklist.js       Manager Day 1 checklist, Day 1 details, pre-start training (own tables)
-├── knowledge/         14 synthetic onboarding guides (Markdown)
+├── knowledge/         19 synthetic onboarding guides (Markdown)
 └── public/
     ├── brand/         LBG tokens, logos, Cancara pattern, icons (copied from the skill)
     ├── css/           app.css (shared), staff.css (staff layout), journey.css (recruit journey)
     ├── js/            chat.js (API, thread, composer), staff-shell.js (sidebar),
-    │                  journey-card.js (progress bar and next step), markdown.js (safe renderer)
+    │                  journey-card.js (pass card, phase tracker, next step), markdown.js (safe renderer),
+    │                  phase-content.js (what to do, guides per phase), video.js (tap-to-load video cards),
+    │                  chat-app.js (chat and assistant; assistant answers rendered with markdown.js)
     ├── login.html  activate.html  mailbox.html  clearpath.html
-    ├── joiner/        index (home), offer, screening, device, guides
+    ├── joiner/        index (home), welcome, phase, offer, screening, device, guides
     ├── staff/         index (messages), applicants, checklist, guides
     └── img/devices/   macbook-pro.svg, hp-elitebook.svg (our own illustrations)
 .claude/skills/lbg-style/   Claude Code skill: LBG design rules and assets
@@ -67,7 +69,23 @@ docs/                       This documentation
 
 Every transition is a conditional `UPDATE … WHERE journey_stage = <expected>`, so repeated or out-of-order requests are refused with a 409 and can't corrupt the state.
 
-The **progress bar** (`stepsFor` in `journey.js`) maps this to 8 steps. The last three (Day 1, Week 1 and Day 30) come from the calendar: after acceptance, the current step is whichever of those comes next, based on today's date and the start date.
+### Phases and steps
+
+`GET /api/journey` returns `phase: { id, n, of, name, line, startsOn, tip }`, the list of all five `phases`, `daysToStart`, `dayNumber` (null before the start date) and nine `steps`, each tagged with its `phase`.
+
+| Phase id | How it's decided |
+|---|---|
+| `offer` | Every stage before the unconditional offer is accepted |
+| `getting_ready` | Accepted, before the start date |
+| `first_30` | From the start date |
+| `days_30_60` | From start + 30 days |
+| `days_60_90` | From start + 60 days |
+
+Phases 1 and 2 follow the stage machine; phases 3 to 5 follow the calendar. The phase screen's content (what to do, which guides) lives in `public/js/phase-content.js`, so it can be edited without touching the server.
+
+### Videos
+
+`public/js/video.js` holds a small catalogue of official Lloyds Banking Group YouTube videos, each tagged with phases and, optionally, roles (a regex on the job title) and cities. `videosFor()` drops videos aimed at another role or city and ranks role and city matches first. A card shows only a thumbnail; the `youtube-nocookie.com` player is created when the recruit taps it, so nothing from YouTube's player loads until then.
 
 ## API (summary)
 
@@ -120,6 +138,8 @@ Each socket connects with the session cookie (unauthenticated sockets are refuse
 - **Prompt injection:**
   - Guides can't contain `<document>` tags, which would break the assistant's prompt boundary.
   - The assistant's cited sources are checked against the real guides.
+  - Assistant answers are rendered as Markdown by `markdown.js`, which builds DOM nodes with `textContent` only, so model output can't inject HTML.
+  - Videos come from `youtube-nocookie.com` and load only on tap, so YouTube's player sets no cookies until the recruit chooses to watch.
 - **Guides:**
   - IDs must match a pattern, which blocks path traversal.
   - Writes are atomic, and there's a size limit.

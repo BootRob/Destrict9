@@ -1,6 +1,6 @@
 # Joiner companion: messaging prototype
 
-A recruit (on a phone) follows their journey from offer to Day 30: conditional offer, pre-employment screening, unconditional offer, laptop choice and meeting their manager. Along the way they chat privately with their **recruiter** and, once their offer is unconditional, their **hiring manager**. Staff use a desktop web app. Everything sits behind a login, is styled with the `lbg-style` skill, and uses only synthetic data.
+A recruit (on a phone) follows their journey in five phases, from offer to Day 90: conditional offer, pre-employment screening, unconditional offer, laptop choice and meeting their manager. Along the way they chat privately with their **recruiter** and, once their offer is unconditional, their **hiring manager**. Staff use a desktop web app. Everything sits behind a login, is styled with the `lbg-style` skill, and uses only synthetic data.
 
 ## Run it
 
@@ -94,7 +94,7 @@ The password for every account is `demo1234`. These are demo credentials for syn
 
 ## The recruit's journey
 
-The recruit's home screen shows a **progress bar from offer to Day 30** (8 steps), plus a card for whatever needs doing next.
+The journey has **five phases**: Offer, Getting ready, First 30 days, 30 to 60 days, and 60 to 90 days and beyond. Phases 4 and 5 are previews. The home screen shows a phase tracker ("Phase 2 of 5") and a card for whatever needs doing next. Each phase opens `/joiner/phase.html?id=<phase>`, with what to do now, its guides and videos chosen by phase, role and city. The nine steps are:
 
 | Step | What the recruit does | What moves it on |
 |---|---|---|
@@ -102,8 +102,9 @@ The recruit's home screen shows a **progress bar from offer to Day 30** (8 steps
 | Screening details | Goes to ClearPath, the third-party screening company (simulated), completes their details there, then taps **I've added my details** | Recruit |
 | Screening checks | Sees what's being checked and a typical timeframe. "No news is normal" | Recruiter records the result: clear or not clear |
 | Unconditional offer | Accepts or rejects | Recruit |
-| Meet your manager | The hiring-manager chat opens; the recruit chooses a laptop | Recruit |
-| Day 1, Week 1, Day 30 | Countdown and milestones | The calendar, from the start date |
+| Get ready for Day 1 | The hiring-manager chat opens; the recruit chooses a laptop and sees their Day 1 details | The start date |
+| Day 1 and your first week, Weeks 2 to 4 | Phase 3: the first 30 days, mandatory training | The calendar, from the start date |
+| Set your goals, Grow your career | Phases 4 and 5 (previews), from Day 30 and Day 60 | The calendar |
 
 - **Laptop choice:** an Apple MacBook Pro or HP EliteBook 840, with pictures and specs (`public/img/devices/*.svg`, our own illustrations). The recommended one depends on the role. It can be changed until a week before the start date, and the recruiter can see the choice. To use official product photos, replace the two SVG files.
 - **Privacy:** the app never collects personal details for screening. The recruit gives them directly to ClearPath, and the app only records when they confirmed. `/clearpath.html` is a plainly labelled stand-in for ClearPath's own site.
