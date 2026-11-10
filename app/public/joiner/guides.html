@@ -32,6 +32,16 @@
     .day1 dt { font-family: var(--lbg-font-strong); font-weight: 700; }
     .day1 dd { margin: 0; }
     .day1 p { margin: var(--lbg-space-2) 0 0; font-size: var(--lbg-text-sm); }
+    .day1--past { margin: var(--lbg-space-6) 0 0; padding: 0; background: var(--lbg-white); }
+    .day1--past summary { cursor: pointer; padding: var(--lbg-space-3) var(--lbg-space-4); min-height: 44px; display: flex; align-items: center; }
+    .day1--past summary h2 { margin: 0; font-size: var(--lbg-text-md); }
+    .day1--past summary { list-style: none; justify-content: space-between; }
+    .day1--past summary::-webkit-details-marker { display: none; }
+    .day1--past summary::after { content: ""; width: 16px; height: 16px; background: url(/brand/icons/black-chevron-down.svg) center / contain no-repeat; transition: transform .2s; }
+    html[data-theme="dark"] .day1--past summary::after { filter: invert(1); }
+    .day1--past details[open] summary::after { transform: rotate(180deg); }
+    .day1--past details > :not(summary) { margin-left: var(--lbg-space-4); margin-right: var(--lbg-space-4); }
+    .day1--past details[open] { padding-bottom: var(--lbg-space-4); }
     .updated { font-size: 12px; color: var(--lbg-grey-600); margin: var(--lbg-space-6) 0 0; }
   </style>
   <script src="/js/theme-init.js"></script>
@@ -43,7 +53,7 @@
   <header class="lbg-surface--pattern">
     <div class="bar">
       <a href="/joiner/" id="back" aria-label="Back"><img src="/brand/icons/arrow-left.svg" alt=""></a>
-      <div><h1 id="title">Your guides</h1><p id="subtitle">Everything you need to know before you start</p></div>
+      <div><h1 id="title">Your guides</h1><p id="subtitle"></p></div>
     </div>
   </header>
 
@@ -76,6 +86,10 @@
 
   // Day 1 details shared by the recruit's manager (from their Day 1 checklist).
   const { day1, training } = await api('/api/day1').catch(() => ({}));
+  // Once they've started, Day 1 is history: the page is about the first 90 days, and the Day 1 card folds away below the list.
+  const started = (await api('/api/journey').catch(() => ({})))?.journey?.dayNumber != null;
+  const SUBTITLE = started ? 'Guides for your first 90 days' : 'Everything you need to know before you start';
+  if (started) { $('list').after($('day1')); $('day1').classList.add('day1--past'); }
   function renderDay1() {
     const box = $('day1');
     if (!day1) {
@@ -87,13 +101,18 @@
         make('dl', {}, ...rows.flatMap(([k, v]) => [make('dt', { textContent: k }), make('dd', { textContent: v })])),
         make('p', { textContent: training?.completedAt ? "You've finished your pre-start onboarding training, so lunch with your team is on us." : 'Finish your pre-start onboarding training before Day 1 and lunch with your team is on us.' }));
     }
+    if (started) {
+      const title = box.querySelector('h2');
+      const details = make('details', {}, make('summary', {}, title), ...[...box.childNodes]);
+      box.replaceChildren(details);
+    }
   }
 
   function showList() {
     renderDay1();
     $('day1').hidden = false;
     $('title').textContent = 'Your guides';
-    $('subtitle').textContent = 'Everything you need to know before you start';
+    $('subtitle').textContent = SUBTITLE;
     $('back').href = '/joiner/';
     $('body').hidden = true; $('updated').hidden = true; $('list').hidden = false;
     $('list').replaceChildren(...guides.map((g) => {
