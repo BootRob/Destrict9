@@ -27,7 +27,7 @@ export const PHASES = [
     id: 'first_30', n: 3, name: 'First 30 days', line: 'Finding your stride',
     intro: 'What to do, where to find things, and the training to finish in your first month.',
     todo: [
-      { title: 'Week 1: get set up and meet people', text: 'Log in, set up Teams and Outlook, meet your team and your buddy.' },
+      { title: 'Week 1: get set up and meet people', text: 'Log in, set up Teams and Outlook, and meet your team.' },
       { title: 'Start your mandatory training', text: 'Seven modules, about 6 hours in work time, all due within 30 days.', guide: '17-mandatory-training' },
       { title: 'Learn the systems and the jargon', text: 'Where things live, and what the acronyms mean.', guide: '16-systems-and-ways-of-working' },
       { title: 'Prepare for your 30-day check-in', text: 'How the month went, training done, and your first objectives.' },

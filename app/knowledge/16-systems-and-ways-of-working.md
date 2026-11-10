@@ -5,7 +5,7 @@
 ## Email, chat and calendar
 - **Outlook** is for email and your calendar. **Microsoft Teams** is for chat, calls, meetings and team channels.
 - Most day-to-day conversation happens in Teams. Use email for anything formal, external, or that needs a record.
-- Your manager or buddy will add you to your team's channels in Week 1. Ask them which ones matter most.
+- Your manager will add you to your team's channels in Week 1. Ask them which ones matter most.
 - You can use the Teams and Outlook apps on your personal phone once you've set up MFA (see *Your laptop, accounts and IT*).
 
 ## The intranet

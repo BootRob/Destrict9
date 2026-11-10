@@ -46,7 +46,7 @@ Day 2 decisions:
 | **Videos load only when tapped**, from `youtube-nocookie.com` | No YouTube player or cookies until the recruit chooses to watch, and a lighter page on a phone |
 | **Assistant answers first, in about 60 words** | Answers were correct but long on a phone |
 | **Opus stays the assistant's default.** Haiku was timed: 5.0 s against 5.9 s on average over 5 questions through the CLI, where CLI start-up dominates | Too small a difference to swap. Haiku once handed off to the recruiter when it didn't need to |
-| **New guide details to confirm:** a buddy in Week 1, 25- and 50-minute meetings, probation extension of up to 3 months, about 12 months in role before an internal move, 2 volunteering days | Written for the prototype; the assistant will quote them |
+| **New guide details to confirm:** 25- and 50-minute meetings, probation extension of up to 3 months, about 12 months in role before an internal move, 2 volunteering days | Written for the prototype; the assistant will quote them |
 
 The laptop ran out of memory at 08:33 with three sessions running headless browsers that kept their profiles in `/tmp`, which is in RAM. The fix was to keep scratch files on disk and run one headless browser at a time.
 
