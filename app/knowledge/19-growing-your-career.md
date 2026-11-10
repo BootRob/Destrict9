@@ -28,7 +28,7 @@ After probation, you move onto the normal yearly cycle of objectives, mid-year a
 
 ## Mentoring
 - A mentor is an experienced colleague outside your reporting line who helps you think about your growth.
-- Find a mentor through the **mentoring scheme on the intranet**, or ask your manager or buddy for an introduction.
+- Find a mentor through the **mentoring scheme on the intranet**, or ask your manager for an introduction.
 - Most mentoring relationships meet for **about an hour a month** for 6 to 12 months.
 - You can also become a reverse mentor: sharing your perspective with a senior leader.
 
